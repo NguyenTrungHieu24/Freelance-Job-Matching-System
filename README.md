@@ -1,7 +1,7 @@
 # Freelance-Job-Matching-System
 Build a website to connect job seekers and freelancers.
 
-Mình tóm tắt lại chủ đề dự án sau và phân công luôn nhé :
+Mình tóm tắt lại chủ đề dự án sau :
 - Tên dự án : Freelancer Job Matching System (Xây dựng website kết nối người tìm việc và bên thuê freelancer) màu chủ đạo giống freelancerviet.vn
 - Công cụ : Backend: ASP.NET Core MVC 
             Frontend: Razor View + Bootstrap (hoặc React.js)
