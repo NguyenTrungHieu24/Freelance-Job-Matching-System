@@ -8,5 +8,15 @@
         "DebugTarget": "http"
       }
     ]
+  },
+  {
+    "Name": "Run Without Swagger",
+    "Projects": [
+      {
+        "Path": "API\\API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
   }
 ]
