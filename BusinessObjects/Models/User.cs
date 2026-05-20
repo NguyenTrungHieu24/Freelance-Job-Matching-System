@@ -26,6 +26,9 @@ namespace BusinessObjects.Models
         public string PasswordHash { get; set; }
 
         public bool IsActive { get; set; } = true;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime? LastLoginAt { get; set; }
 
         public int RoleId { get; set; }
 

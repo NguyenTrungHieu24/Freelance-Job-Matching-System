@@ -23,6 +23,9 @@ namespace BusinessObjects.Models
 
         public string Status { get; set; }
 
+        public DateTime? Deadline { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         public int EmployerProfileId { get; set; }
 
         public int CategoryId { get; set; }

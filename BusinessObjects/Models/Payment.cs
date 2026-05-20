@@ -19,6 +19,8 @@ namespace BusinessObjects.Models
 
         public string PaymentMethod { get; set; }
 
+        public string TransactionCode { get; set; }
+
         public string Status { get; set; }
 
         public DateTime PaidAt { get; set; } = DateTime.Now;
