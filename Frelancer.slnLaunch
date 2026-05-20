@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "Run With Swagger",
+    "Projects": [
+      {
+        "Path": "API\\API.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      }
+    ]
+  }
+]

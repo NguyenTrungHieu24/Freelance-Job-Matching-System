@@ -25,6 +25,6 @@ namespace BusinessObjects.Models
         public string Logo { get; set; }
 
         [ForeignKey("AccountId")]
-        public Account Account { get; set; }
+        public User Account { get; set; }
     }
 }

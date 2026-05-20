@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Models;
+﻿using BusinessObjects.Enums;
+using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessObjects
@@ -10,7 +11,7 @@ namespace BusinessObjects
         {
         }
 
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<FreelancerProfile> FreelancerProfiles { get; set; }
         public DbSet<EmployerProfile> EmployerProfiles { get; set; }
@@ -76,6 +77,7 @@ namespace BusinessObjects
                 .WithMany(a => a.Notifications)
                 .HasForeignKey(n => n.AccountId)
                 .OnDelete(DeleteBehavior.NoAction);
+
         }
     }
 }

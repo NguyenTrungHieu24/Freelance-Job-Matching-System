@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Models
 {
-    public class Account
+    public class User
     {
         [Key]
         public int Id { get; set; }

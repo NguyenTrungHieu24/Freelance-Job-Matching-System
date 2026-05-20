@@ -23,9 +23,9 @@ namespace BusinessObjects.Models
         public string Comment { get; set; }
 
         [ForeignKey("ReviewerId")]
-        public Account Reviewer { get; set; }
+        public User Reviewer { get; set; }
 
         [ForeignKey("RevieweeId")]
-        public Account Reviewee { get; set; }
+        public User Reviewee { get; set; }
     }
 }

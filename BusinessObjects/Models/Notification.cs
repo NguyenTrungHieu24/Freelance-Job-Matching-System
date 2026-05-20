@@ -23,6 +23,6 @@ namespace BusinessObjects.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("AccountId")]
-        public Account Account { get; set; }
+        public User Account { get; set; }
     }
 }
