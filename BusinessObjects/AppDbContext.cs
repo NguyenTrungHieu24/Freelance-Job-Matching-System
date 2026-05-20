@@ -29,6 +29,7 @@ namespace BusinessObjects
         public DbSet<FreelancerSkill> FreelancerSkills { get; set; }
 
         public DbSet<JobSkill> JobSkills { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -78,6 +79,23 @@ namespace BusinessObjects
                 .HasForeignKey(n => n.AccountId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            modelBuilder.Entity<Report>()
+                .HasOne(x => x.Reporter)
+                .WithMany()
+                .HasForeignKey(x => x.ReporterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(x => x.ReportedUser)
+                .WithMany()
+                .HasForeignKey(x => x.ReportedUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(x => x.Resolver)
+                .WithMany()
+                .HasForeignKey(x => x.ResolvedBy)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
