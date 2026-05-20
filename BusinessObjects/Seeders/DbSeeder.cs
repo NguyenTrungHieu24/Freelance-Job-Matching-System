@@ -17,6 +17,10 @@ namespace BusinessObjects.Seeders
             await RoleSeeder.SeedAsync(context);
 
             await UserSeeder.SeedAsync(context);
+
+            await SkillSeeder.SeedAsync(context);
+
+            await CategorySeeder.SeedAsync(context);
         }
     }
 }
