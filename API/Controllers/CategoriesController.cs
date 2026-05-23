@@ -1,4 +1,6 @@
-﻿using BusinessObjects;
+﻿using API.Services.Auth;
+using AutoMapper;
+using BusinessObjects;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,14 +9,10 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/categories")]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController : BaseController
     {
-        private readonly AppDbContext _context;
-
-        public CategoriesController(
-            AppDbContext context)
+        public CategoriesController(AppDbContext context, IMapper mapper, IUserService user) : base(context, mapper, user)
         {
-            _context = context;
         }
 
         // GET: api/categories

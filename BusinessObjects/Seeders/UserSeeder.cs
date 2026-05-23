@@ -16,7 +16,7 @@ namespace BusinessObjects.Seeders
             AppDbContext context
         )
         {
-            var adminEmail = "admin@freelancer.com";
+            var adminEmail = "admin-freelancer@gmail.com";
 
             var existingAdmin = await context.Users
                 .FirstOrDefaultAsync(
@@ -31,15 +31,9 @@ namespace BusinessObjects.Seeders
                 FullName = "System Admin",
                 Email = adminEmail,
                 IsActive = true,
-                RoleId = (int)RoleEnum.ADMIN
+                RoleId = (int)RoleEnum.ADMIN,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
             };
-
-            var passwordHasher = new PasswordHasher<User>();
-
-            admin.PasswordHash = passwordHasher.HashPassword(
-                admin,
-                "Admin@123"
-            );
 
             context.Users.Add(admin);
 

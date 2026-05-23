@@ -1,5 +1,9 @@
-﻿using BusinessObjects;
+﻿using API.Services.Auth;
+using AutoMapper;
+using BusinessObjects;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,18 +11,16 @@ namespace API.Controllers
 {
     [Route("api/skills")]
     [ApiController]
-    public class SkillsController : ControllerBase
+    public class SkillsController : BaseController
     {
-        private readonly AppDbContext _context;
-
-        public SkillsController(
-            AppDbContext context)
+        public SkillsController(AppDbContext context, IMapper mapper, IUserService user) : base(context, mapper, user)
         {
-            _context = context;
         }
 
+
         // GET: api/skills
-        [HttpGet("/")]
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Skill>>>
             GetSkills()
         {
