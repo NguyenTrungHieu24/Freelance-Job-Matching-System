@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
 
     <title>@ViewData["Title"]</title>
-    <link rel="icon" href="https://i.pinimg.com/736x/41/4a/ea/414aeac3c1c987fa8ddb96e579108681.jpg">
+    <link rel="icon" href="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -30,7 +30,6 @@
             <ul class="navbar-nav ml-auto">
                 @if (CurrentUser.IsAuthenticated)
                 {
-                    <div>@(CurrentUser.IsAuthenticated)</div>
                     var avatarChar = CurrentUser.Name?.Substring(0, 1).ToUpper() ?? "U";
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
@@ -60,10 +59,12 @@
         <!-- Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
-            <a href="/" class="brand-link">
-                <span class="brand-text font-weight-light">
-                    Freelandcer
-                </span>
+            <a href="/" class="d-flex align-items-center justify-content-center gap-2 p-2">
+                <img class="img-fluid rounded-circle" width="60" height="60" src="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg" />
+                <div class="text-left">
+                    <b>TalentBridge</b>
+                    <div class="text-muted fs-tiny" style="font-size: 12px;">Freelancer Job Matching System</div>
+                </div>
             </a>
 
             <div class="sidebar">
