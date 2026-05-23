@@ -1,8 +1,9 @@
 using API.Services;
 using API.Services.Auth;
 using BusinessObjects;
+using BusinessObjects.Enums;
 using BusinessObjects.Seeders;
-using BussinessObjects.Mapping;
+using BusinessObjects.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -82,6 +83,12 @@ builder.Services.AddSwaggerGen(options =>
             new string[] {}
         }
     });
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.ADMIN)));
 });
 
 var app = builder.Build();

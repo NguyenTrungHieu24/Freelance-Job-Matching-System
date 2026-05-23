@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Mapping
+namespace BusinessObjects.Mapping
 {
     public class MappingProfile : Profile
     {
