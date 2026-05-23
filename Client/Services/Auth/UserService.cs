@@ -1,6 +1,6 @@
-﻿using BusinessObjects.Enums;
+﻿using System.Security.Claims;
+using BusinessObjects.Enums;
 using Client.Models.Auth;
-using System.Text.Json;
 
 namespace Client.Services.Auth
 {
@@ -13,28 +13,22 @@ namespace Client.Services.Auth
             _http = http;
         }
 
-        private ISession Session => _http.HttpContext!.Session;
+        private ClaimsPrincipal? User => _http.HttpContext?.User;
 
-        public string? Jwt => Session.GetString("Auth.JWT");
+        public bool IsAuthenticated => User?.Identity?.IsAuthenticated ?? false;
 
-        public string? Role => Session.GetString("Auth.Role");
+        public string? Role => User?.FindFirst(ClaimTypes.Role)?.Value;
 
-        public bool IsAuthenticated => !string.IsNullOrEmpty(Jwt);
+        public string? Email => User?.FindFirst(ClaimTypes.Email)?.Value;
 
-        public CurrentUser? Info
-        {
-            get
-            {
-                var json = Session.GetString("Auth.User");
-                return string.IsNullOrEmpty(json)
-                    ? null
-                    : JsonSerializer.Deserialize<CurrentUser>(json);
-            }
-        }
+        public string? Name => User?.FindFirst(ClaimTypes.Name)?.Value;
 
-        public bool IsAdmin => Role == nameof(RoleEnum.ADMIN);
-        public bool IsFreelancer => Role == nameof(RoleEnum.FREELANCER);
-        public bool IsEmployer => Role == nameof(RoleEnum.EMPLOYER);
-        public bool IsGuest => Role == null || Role  == nameof(RoleEnum.GUEST);
+        public bool IsAdmin => User?.IsInRole(nameof(RoleEnum.ADMIN)) ?? false;
+
+        public bool IsFreelancer => User?.IsInRole(nameof(RoleEnum.FREELANCER)) ?? false;
+
+        public bool IsEmployer => User?.IsInRole(nameof(RoleEnum.EMPLOYER)) ?? false;
+
+        public bool IsGuest => !IsAuthenticated;
     }
 }

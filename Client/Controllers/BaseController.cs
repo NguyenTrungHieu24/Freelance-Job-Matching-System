@@ -19,34 +19,6 @@ namespace Client.Controllers
             _factory = factory;
         }
 
-        protected CurrentUserViewModel GetCurrentUser()
-        {
-            var jwt = HttpContext.Session.GetString("Auth.JWT");
-            var role = HttpContext.Session.GetString("Auth.Role");
-            var userJson = HttpContext.Session.GetString("Auth.User");
-
-            CurrentUser? user = null;
-
-            if (!string.IsNullOrEmpty(userJson))
-            {
-                try
-                {
-                    user = JsonSerializer.Deserialize<CurrentUser>(userJson);
-                }
-                catch
-                {
-                    // log nếu cần
-                }
-            }
-
-            return new CurrentUserViewModel
-            {
-                Jwt = jwt,
-                Role = role,
-                Info = user
-            };
-        }
-
         private HttpClient CreateClient()
         {
             var client = _factory.CreateClient("API");

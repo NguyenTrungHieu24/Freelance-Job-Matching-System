@@ -46,8 +46,10 @@ namespace Client.Controllers
                 SaveAuthSession(result);
 
                 var claims = new List<Claim>{
-                        new Claim(ClaimTypes.Role, result.Role)
-                    };
+                new Claim(ClaimTypes.Name, result.User.Name),
+                    new Claim(ClaimTypes.Email, result.User.Email),
+                new Claim(ClaimTypes.Role, result.Role),
+ };
 
                 var identity = new ClaimsIdentity(claims, "Cookies");
                 var principal = new ClaimsPrincipal(identity);
@@ -115,7 +117,7 @@ namespace Client.Controllers
                 }
 
                 // Auto login
-                SaveAuthSession(result);
+                //SaveAuthSession(result);
 
                 if (result.Role == "Admin")
                     return RedirectToAction("Index", "Admin");
@@ -130,13 +132,11 @@ namespace Client.Controllers
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await HttpContext.SignOutAsync("Cookies");
 
             Response.Cookies.Delete("Auth.JWT");
-            Response.Cookies.Delete("Auth.Role");
-            Response.Cookies.Delete("Auth.User");
 
             return RedirectToAction("Index", "Home");
         }

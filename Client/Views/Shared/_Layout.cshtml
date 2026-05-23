@@ -28,9 +28,10 @@
             </ul>
 
             <ul class="navbar-nav ml-auto">
-                @if (CurrentUser.IsAuthenticated && CurrentUser.Info != null)
+                @if (CurrentUser.IsAuthenticated)
                 {
-                    var avatarChar = CurrentUser.Info.Name?.Substring(0, 1).ToUpper() ?? "U";
+                    <div>@(CurrentUser.IsAuthenticated)</div>
+                    var avatarChar = CurrentUser.Name?.Substring(0, 1).ToUpper() ?? "U";
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
@@ -39,7 +40,7 @@
                             </div>
 
                             <div class="ms-2">
-                                <strong>@CurrentUser.Info.Name</strong>
+                                <strong>@CurrentUser.Name</strong>
                                 <div>
                                     <span class="badge bg-info">@CurrentUser.Role</span>
                                 </div>
@@ -61,7 +62,7 @@
 
             <a href="/" class="brand-link">
                 <span class="brand-text font-weight-light">
-                    Freelance Job Matching System
+                    Freelandcer
                 </span>
             </a>
 

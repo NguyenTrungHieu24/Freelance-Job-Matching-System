@@ -52,6 +52,10 @@ namespace API.Controllers
             _context.EmployerProfiles.Add(e);
             await _context.SaveChangesAsync();
 
+            await _context.Entry(account)
+                .Reference(x => x.Role)
+                .LoadAsync();
+
             var token = _jwt.GenerateToken(account);
 
             return Ok(new

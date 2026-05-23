@@ -1,4 +1,5 @@
 ﻿using Client.Models.Auth;
+using System.Security.Claims;
 
 namespace Client.Services.Auth
 {
@@ -6,8 +7,8 @@ namespace Client.Services.Auth
     {
         bool IsAuthenticated { get; }
         string? Role { get; }
-        CurrentUser? Info { get; }
-
+        string? Name { get; }
+        string? Email { get; }
         bool IsAdmin { get; }
         bool IsFreelancer { get; }
         bool IsEmployer { get; }
