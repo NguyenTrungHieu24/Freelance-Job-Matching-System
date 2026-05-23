@@ -15,24 +15,13 @@ namespace BusinessObjects.Seeders
             if (context.Roles.Any())
                 return;
 
-            var roles = new List<Role>{
-                new Role {
-                    Id = (int)RoleEnum.ADMIN,
-                    Name = RoleEnum.ADMIN.ToString(),
-                },
-                new Role {
-                    Id = (int)RoleEnum.EMPLOYER,
-                    Name = RoleEnum.EMPLOYER.ToString(),
-                },
-                new Role {
-                    Id = (int)RoleEnum.FREELANCER,
-                    Name = RoleEnum.FREELANCER.ToString(),
-                },
-                new Role {
-                    Id = (int)RoleEnum.GUEST,
-                    Name = RoleEnum.GUEST.ToString(),
-                }
-            };
+            var roles = Enum.GetValues<RoleEnum>()
+                .Select(role => new Role
+                {
+                    Id = (int)role,
+                    Name = role.ToString()
+                })
+                .ToList();
 
             context.Roles.AddRange(roles);
 
