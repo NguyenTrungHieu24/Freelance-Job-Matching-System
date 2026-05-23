@@ -9,6 +9,8 @@ namespace Client.Services.Auth
         CurrentUser? Info { get; }
 
         bool IsAdmin { get; }
-        bool IsRunner { get; }
+        bool IsFreelancer { get; }
+        bool IsEmployer { get; }
+        bool IsGuest { get; }
     }
 }

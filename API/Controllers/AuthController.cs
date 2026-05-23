@@ -93,12 +93,12 @@ namespace API.Controllers
             return Ok(new
             {
                 Token = token,
-                Role = user.Role,
+                Role = user.Role.Name,
                 User = new
                 {
                     Name = user.FullName,
                     Email = user.Email,
-                    Role = user.Role,
+                    Role = user.Role.Name,
                 }
             });
         }

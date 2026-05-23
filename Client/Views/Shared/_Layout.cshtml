@@ -1,49 +1,142 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@inject IUserService CurrentUser
+
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Client</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Client.styles.css" asp-append-version="true" />
+
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" href="https://i.pinimg.com/736x/41/4a/ea/414aeac3c1c987fa8ddb96e579108681.jpg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Client</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+
+<body class="hold-transition sidebar-mini">
+
+    @RenderSection("Styles", required: false)
+
+    <div class="wrapper">
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+                @if (CurrentUser.IsAuthenticated && CurrentUser.Info != null)
+                {
+                    var avatarChar = CurrentUser.Info.Name?.Substring(0, 1).ToUpper() ?? "U";
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                 style="width:40px;height:40px;">
+                                @avatarChar
+                            </div>
+
+                            <div class="ms-2">
+                                <strong>@CurrentUser.Info.Name</strong>
+                                <div>
+                                    <span class="badge bg-info">@CurrentUser.Role</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item"> <form asp-controller="auth" asp-action="logout" method="post" class="d-inline"> <button type="submit" class="btn btn-sm nav-link text-danger"> Logout </button> </form> </li>
+                }
+                else
+                {
+                    <li class="nav-item"> <a class="nav-link" asp-controller="auth" asp-action="login">Login</a> </li>
+                    <li class="nav-item"> <a class="nav-link" asp-controller="auth" asp-action="register">Register</a> </li>
+                }
+            </ul>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+        <!-- Sidebar -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+            <a href="/" class="brand-link">
+                <span class="brand-text font-weight-light">
+                    Freelance Job Matching System
+                </span>
+            </a>
+
+            <div class="sidebar">
+                <nav>
+                    <ul class="nav nav-pills nav-sidebar flex-column">
+
+                        <li class="nav-item">
+                            <a href="/" class="nav-link">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </li>
+                        @if (CurrentUser.IsAdmin)
+                        {
+                            @await Html.PartialAsync("Menu/_Admin")
+                        }
+
+                        @if (CurrentUser.IsEmployer)
+                        {
+                            @await Html.PartialAsync("Menu/_Employer")
+                        }
+
+                        @if (CurrentUser.IsFreelancer)
+                        {
+                            @await Html.PartialAsync("Menu/_Freelancer")
+                        }
+
+                        @if (CurrentUser.IsGuest)
+                        {
+                            @await Html.PartialAsync("Menu/_Guest")
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <div class="content-wrapper p-3">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
             @RenderBody()
-        </main>
+        </div>
+
+        @await Html.PartialAsync("Components/_LoadingOverlay")
+
+        <div class="js-modal-list">
+            @RenderSection("Modals", required: false)
+        </div>
+
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Client - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="~/js/ui.js"></script>
+    <script src="~/js/modal.js"></script>
+    <script src="~/js/app.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
 </body>
 </html>

@@ -74,9 +74,9 @@ namespace Client.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
-            catch
+            catch (Exception e)
             {
-                ViewBag.Error = "System error occurred.";
+                ViewBag.Error = e.Message;
                 return View(model);
             }
         }

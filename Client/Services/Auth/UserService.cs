@@ -1,4 +1,5 @@
-﻿using Client.Models.Auth;
+﻿using BusinessObjects.Enums;
+using Client.Models.Auth;
 using System.Text.Json;
 
 namespace Client.Services.Auth
@@ -31,7 +32,9 @@ namespace Client.Services.Auth
             }
         }
 
-        public bool IsAdmin => Role == "Admin";
-        public bool IsRunner => Role == "Runner";
+        public bool IsAdmin => Role == nameof(RoleEnum.ADMIN);
+        public bool IsFreelancer => Role == nameof(RoleEnum.FREELANCER);
+        public bool IsEmployer => Role == nameof(RoleEnum.EMPLOYER);
+        public bool IsGuest => Role == null || Role  == nameof(RoleEnum.GUEST);
     }
 }
