@@ -23,9 +23,9 @@ namespace Client.Controllers
         {
             var client = _factory.CreateClient("API");
 
-            var token = HttpContext.Session.GetString("Auth.JWT");
+            var token = Request.Cookies["Auth.JWT"];
 
-            if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrWhiteSpace(token))
             {
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
@@ -43,7 +43,11 @@ namespace Client.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
-                throw new Exception(error);
+                throw new Exception(
+                    $"[{(int)response.StatusCode}] {response.StatusCode}\n" +
+                    $"Endpoint: {endpoint}\n" +
+                    $"Response: {error}"
+                );
             }
 
             return await response.Content.ReadFromJsonAsync<T>();

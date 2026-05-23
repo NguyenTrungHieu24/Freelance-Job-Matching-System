@@ -43,18 +43,29 @@ namespace Client.Controllers
                     return View(model);
                 }
 
-                SaveAuthSession(result);
+                //SaveAuthSession(result);
 
                 var claims = new List<Claim>{
-                new Claim(ClaimTypes.Name, result.User.Name),
+                    new Claim(ClaimTypes.Name, result.User.Name),
                     new Claim(ClaimTypes.Email, result.User.Email),
-                new Claim(ClaimTypes.Role, result.Role),
- };
+                    new Claim(ClaimTypes.Role, result.Role),
+                };
 
                 var identity = new ClaimsIdentity(claims, "Cookies");
                 var principal = new ClaimsPrincipal(identity);
 
                 await HttpContext.SignInAsync("Cookies", principal);
+
+                Response.Cookies.Append(
+                    "Auth.JWT",
+                    result.Token,
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Lax,
+                        Expires = DateTimeOffset.UtcNow.AddDays(7)
+                    });
 
                 // Safe redirect
                 if (!string.IsNullOrEmpty(model.Path))

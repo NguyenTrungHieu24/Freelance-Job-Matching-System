@@ -1,6 +1,8 @@
 ﻿using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
+using BusinessObjects.Common;
+using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,20 +23,44 @@ namespace API.Controllers
         // GET: api/skills
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Skill>>>
-            GetSkills()
+        public async Task<ActionResult<PaginateResult<SkillDTO>>> GetSkills([FromQuery] FilterSkillDTO q)
         {
-            var skills = await _context.Skills
-                .OrderBy(x => x.Name)
+            var query = _context.Skills.AsQueryable();
+
+            query = BindingQuery(query, q);
+            var totalItems = await query.CountAsync();
+
+
+            var skills = await query
+                .Skip((q.Page - 1) * q.PageSize)
+                .Take(q.PageSize)
                 .ToListAsync();
 
-            return Ok(skills);
+            return Ok(new PaginateResult<SkillDTO>
+            {
+                Items = _mapper.Map<List<SkillDTO>>(skills),
+                PageNumber = q.Page,
+                PageSize = q.PageSize,
+                TotalItems = totalItems
+            });
+        }
+
+        private IQueryable<Skill> BindingQuery(IQueryable<Skill> query, FilterSkillDTO args)
+        {
+            if (!string.IsNullOrWhiteSpace(args.Keyword))
+            {
+                query = query.Where(e => e.Name.Contains(args.Keyword));
+            }
+            else
+            {
+            }
+
+            return query;
         }
 
         // GET: api/skills/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Skill>>
-            GetSkill(int id)
+        public async Task<ActionResult<Skill>> GetSkill(int id)
         {
             var skill = await _context.Skills
                 .FindAsync(id);
@@ -52,8 +78,7 @@ namespace API.Controllers
 
         // POST: api/skills
         [HttpPost]
-        public async Task<ActionResult<Skill>>
-            CreateSkill([FromBody] Skill skill)
+        public async Task<ActionResult<Skill>> CreateSkill([FromBody] Skill skill)
         {
             _context.Skills.Add(skill);
 
@@ -68,10 +93,7 @@ namespace API.Controllers
 
         // PUT: api/skills/1
         [HttpPut("{id}")]
-        public async Task<ActionResult>
-            UpdateSkill(
-                int id,
-                [FromBody] Skill updatedSkill)
+        public async Task<ActionResult> UpdateSkill(int id, [FromBody] Skill updatedSkill)
         {
             var skill = await _context.Skills
                 .FindAsync(id);
@@ -96,8 +118,7 @@ namespace API.Controllers
 
         // DELETE: api/skills/1
         [HttpDelete("{id}")]
-        public async Task<ActionResult>
-            DeleteSkill(int id)
+        public async Task<ActionResult> DeleteSkill(int id)
         {
             var skill = await _context.Skills
                 .FindAsync(id);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,9 @@ namespace BusinessObjects.Mapping
         public MappingProfile()
         {
             // Add Mapping here: 
+
+            CreateMap<Skill, SkillDTO>();
+
         }
     }
 }

@@ -1,0 +1,110 @@
+﻿@inject IUserService CurrentUser
+
+@model Client.Models.Skills.ListSkillsModel
+
+@{
+    ViewData["Title"] = "Skills List";
+    Layout = "_Layout";
+}
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <h3>List Skills</h3>
+            <button class="btn btn-sm btn-primary d-flex align-items-center gap-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addSkill">
+                <i class="bi bi-plus-circle-dotted"></i> Create
+            </button>
+        </div>
+        <div class="d-flex justify-content-between">
+            <div>
+                <form method="get" class="card p-3 mb-4 shadow-sm">
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+                            <input asp-for="Filter.Keyword" class="form-control"
+                                   placeholder="Search by name..." />
+                        </div>
+
+                        <div class="col-md-1 d-grid">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+
+        @if (Model.Skills.Items.Count == 0)
+        {
+            <div class="d-flex flex-column gap-2 align-items-center">
+                <h4>Oops... There are no skills</h4>
+                <div class="d-flex gap-2">
+                    @if (Model.HasFilter())
+                    {
+                        <a class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                           asp-action="Index">
+                            Clear filter
+                        </a>
+                    }
+                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addSkill">
+                        <i class="bi bi-plus-circle-dotted"></i> Create
+                    </button>
+                </div>
+            </div>
+        }
+        else
+        {
+
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Skills)
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Skills.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-warning"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editSkill"
+                                        data-skill-id="@item.Id"
+                                        data-skill-name="@item.Name">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+
+                                <button class="btn btn-sm btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteSkill"
+                                        data-skill-id="@item.Id"
+                                        data-skill-name="@item.Name">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Skills)
+        }
+    </div>
+</div>
