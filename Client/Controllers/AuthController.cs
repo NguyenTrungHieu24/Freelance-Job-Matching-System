@@ -1,0 +1,161 @@
+﻿using Client.Models.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+
+namespace Client.Controllers
+{
+    [Route("auth")]
+    public class AuthController : BaseController
+    {
+        public AuthController(IHttpClientFactory factory)
+            : base(factory)
+        {
+        }
+
+
+        [HttpGet("login")]
+        public IActionResult Login([FromQuery] string? path)
+        {
+            ViewData["Path"] = path;
+            return View();
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var result = await PostAsync<LoginViewModel, LoginResponse>(
+                    "api/auth/login",
+                    model
+                );
+
+                if (result == null)
+                {
+                    ViewBag.Error = "Invalid credentials.";
+                    return View(model);
+                }
+
+                SaveAuthSession(result);
+
+                var claims = new List<Claim>{
+                        new Claim(ClaimTypes.Role, result.Role)
+                    };
+
+                var identity = new ClaimsIdentity(claims, "Cookies");
+                var principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync("Cookies", principal);
+
+                // Safe redirect
+                if (!string.IsNullOrEmpty(model.Path))
+                {
+                    try
+                    {
+                        var decoded = Encoding.UTF8.GetString(
+                            Convert.FromBase64String(model.Path)
+                        );
+
+                        if (Url.IsLocalUrl(decoded))
+                            return Redirect(decoded);
+                    }
+                    catch
+                    {
+                        // ignore invalid base64
+                    }
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                ViewBag.Error = "System error occurred.";
+                return View(model);
+            }
+        }
+
+
+        [HttpGet("register")]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ViewBag.Error = "Password not match.";
+                return View(model);
+            }
+
+            try
+            {
+                var result = await PostAsync<RegisterViewModel, LoginResponse>(
+                    "api/auth/register",
+                    model
+                );
+
+                if (result == null)
+                {
+                    ViewBag.Error = "Register failed.";
+                    return View(model);
+                }
+
+                // Auto login
+                SaveAuthSession(result);
+
+                if (result.Role == "Admin")
+                    return RedirectToAction("Index", "Admin");
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(model);
+            }
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            Response.Cookies.Delete("Auth.JWT");
+            Response.Cookies.Delete("Auth.Role");
+            Response.Cookies.Delete("Auth.User");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet("access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+
+        private void SaveAuthSession(LoginResponse result)
+        {
+            HttpContext.Session.SetString("Auth.JWT", result.Token);
+            HttpContext.Session.SetString("Auth.Role", result.Role);
+            HttpContext.Session.SetString(
+                "Auth.User",
+                JsonSerializer.Serialize(result.User)
+            );
+        }
+    }
+}

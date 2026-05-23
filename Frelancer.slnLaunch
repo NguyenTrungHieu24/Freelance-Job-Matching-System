@@ -6,6 +6,11 @@
         "Path": "API\\API.csproj",
         "Action": "Start",
         "DebugTarget": "http"
+      },
+      {
+        "Path": "Client\\Client.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
       }
     ]
   },
@@ -14,6 +19,11 @@
     "Projects": [
       {
         "Path": "API\\API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "Client\\Client.csproj",
         "Action": "Start",
         "DebugTarget": "https"
       }
