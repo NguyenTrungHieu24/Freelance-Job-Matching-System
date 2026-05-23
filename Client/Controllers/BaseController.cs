@@ -43,6 +43,7 @@ namespace Client.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
+
                 throw new Exception(
                     $"[{(int)response.StatusCode}] {response.StatusCode}\n" +
                     $"Endpoint: {endpoint}\n" +

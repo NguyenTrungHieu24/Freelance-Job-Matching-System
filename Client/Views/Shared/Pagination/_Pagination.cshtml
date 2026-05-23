@@ -6,7 +6,7 @@
         <ul class="pagination justify-content-end">
 
             <!-- Previous -->
-            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+            <li class="page-item @(Model.HasPreviousPage ? "disabled" : "")">
                 <a class="page-link"
                    asp-route-page="@(Model.PageNumber - 1)">
                     Previous
@@ -24,7 +24,7 @@
             }
 
             <!-- Next -->
-            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+            <li class="page-item @(Model.HasNextPage ? "disabled" : "")">
                 <a class="page-link"
                    asp-route-page="@(Model.PageNumber + 1)">
                     Next
