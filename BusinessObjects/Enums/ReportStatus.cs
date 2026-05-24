@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Enums
 {
-    public enum ReportStatusEnum
+    public enum ReportStatus
     {
         [Description("Pending")]
         PENDING = 1,

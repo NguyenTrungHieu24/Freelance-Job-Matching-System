@@ -56,11 +56,20 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h6 class="text-muted">Total Jobs</h6>
-                    <h2 id="totalJobs" class="fw-bold">--</h2>
-                    <small class="text-primary" id="activeJobs">
-                        0 active jobs
-                    </small>
+
+                    <div id="jobsLoading">
+                        <div class="skeleton skeleton-text skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-sm"></div>
+                    </div>
+
+                    <div id="jobsContent" class="d-none">
+                        <h6 class="text-muted">Total Jobs</h6>
+                        <h2 id="totalJobs" class="fw-bold">--</h2>
+                        <small class="text-primary" id="activeJobs">
+                            0 active jobs
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -68,11 +77,20 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h6 class="text-muted">Applications</h6>
-                    <h2 id="totalApplications" class="fw-bold">--</h2>
-                    <small class="text-warning" id="matchRate">
-                        0% match rate
-                    </small>
+
+                    <div id="applicationsLoading">
+                        <div class="skeleton skeleton-text skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-sm"></div>
+                    </div>
+
+                    <div id="applicationsContent" class="d-none">
+                        <h6 class="text-muted">Applications</h6>
+                        <h2 id="totalApplications" class="fw-bold">--</h2>
+                        <small class="text-warning" id="matchRate">
+                            0% match rate
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,11 +98,21 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body">
-                    <h6 class="text-muted">Revenue</h6>
-                    <h2 id="totalRevenue" class="fw-bold">$0</h2>
-                    <small class="text-success" id="monthlyRevenue">
-                        $0 this month
-                    </small>
+
+                    <div id="revenueLoading">
+                        <div class="skeleton skeleton-text skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-sm"></div>
+                    </div>
+
+                    <div id="revenueContent" class="d-none">
+                        <h6 class="text-muted">Revenue</h6>
+                        <h2 id="totalRevenue" class="fw-bold">$0</h2>
+                        <small class="text-success" id="monthlyRevenue">
+                            $0 this month
+                        </small>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -102,7 +130,16 @@
                 </div>
 
                 <div class="card-body">
-                    <canvas id="userGrowthChart" height="120"></canvas>
+
+                    <div id="userGrowthLoading"
+                         class="skeleton skeleton-chart">
+                    </div>
+
+                    <canvas id="userGrowthContent"
+                            height="120"
+                            class="d-none">
+                    </canvas>
+
                 </div>
             </div>
         </div>
@@ -115,7 +152,16 @@
                 </div>
 
                 <div class="card-body">
-                    <canvas id="jobGrowthChart" height="120"></canvas>
+
+                    <div id="jobGrowthLoading"
+                         class="skeleton skeleton-chart">
+                    </div>
+
+                    <canvas id="jobGrowthContent"
+                            height="120"
+                            class="d-none">
+                    </canvas>
+
                 </div>
             </div>
         </div>
@@ -141,13 +187,22 @@
                                 <th>Joined</th>
                             </tr>
                         </thead>
+                        <tbody id="recentUsersLoading">
 
-                        <tbody id="recentUsersTable">
                             <tr>
-                                <td colspan="3" class="text-center py-4">
-                                    Loading...
+                                <td colspan="3">
+
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+
                                 </td>
                             </tr>
+
+                        </tbody>
+
+                        <tbody id="recentUsersTable"
+                               class="d-none">
                         </tbody>
                     </table>
                 </div>
@@ -171,12 +226,22 @@
                             </tr>
                         </thead>
 
-                        <tbody id="recentJobsTable">
+                        <tbody id="recentJobsLoading">
+
                             <tr>
-                                <td colspan="3" class="text-center py-4">
-                                    Loading...
+                                <td colspan="3">
+
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+
                                 </td>
                             </tr>
+
+                        </tbody>
+
+                        <tbody id="recentJobsTable"
+                               class="d-none">
                         </tbody>
                     </table>
                 </div>
@@ -187,195 +252,9 @@
 
 </div>
 
-@section Styles {
-    <style>
-
-        
-
-    </style>
-}
-
 @section Scripts {
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-
-        let userGrowthChart;
-        let jobGrowthChart;
-
-        document.addEventListener("DOMContentLoaded", async function () {
-
-            await loadDashboard();
-
-            document.getElementById("dashboardRange")
-                .addEventListener("change", async function () {
-                    await loadDashboard();
-                });
-        });
-
-        async function loadDashboard() {
-
-            const range = document.getElementById("dashboardRange").value;
-
-            await Promise.all([
-                loadOverview(range),
-                loadUserGrowthChart(range),
-                loadJobGrowthChart(range),
-                loadRecentUsers(),
-                loadRecentJobs()
-            ]);
-        }
-
-        async function loadOverview(range) {
-
-            const response = await fetch(`/api/dashboard/overview?range=${range}`);
-            const data = await response.json();
-
-            // USERS
-            document.getElementById("totalUsers").innerText =
-                data.userStats.totalUsers;
-
-            document.getElementById("newUsers").innerText =
-                `+${data.userStats.totalNewUsers} new users`;
-
-            // JOBS
-            document.getElementById("totalJobs").innerText =
-                data.jobStats.totalJobs;
-
-            document.getElementById("activeJobs").innerText =
-                `${data.jobStats.activeJobs} active jobs`;
-
-            // APPLICATIONS
-            document.getElementById("totalApplications").innerText =
-                data.applicationStats.totalApplications;
-
-            document.getElementById("matchRate").innerText =
-                `${data.applicationStats.matchRate}% match rate`;
-
-            // REVENUE
-            document.getElementById("totalRevenue").innerText =
-                `$${data.revenueStats.totalRevenue}`;
-
-            document.getElementById("monthlyRevenue").innerText =
-                `$${data.revenueStats.monthlyRevenue} this month`;
-        }
-
-        async function loadUserGrowthChart(range) {
-
-            const response = await fetch(`/api/dashboard/user-growth?range=${range}`);
-            const data = await response.json();
-
-            const labels = data.map(x => x.label);
-            const freelancers = data.map(x => x.freelancers);
-            const employers = data.map(x => x.employers);
-
-            if (userGrowthChart) {
-                userGrowthChart.destroy();
-            }
-
-            const ctx = document.getElementById("userGrowthChart");
-
-            userGrowthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Freelancers',
-                            data: freelancers
-                        },
-                        {
-                            label: 'Employers',
-                            data: employers
-                        }
-                    ]
-                }
-            });
-        }
-
-        async function loadJobGrowthChart(range) {
-
-            const response = await fetch(`/api/dashboard/job-growth?range=${range}`);
-            const data = await response.json();
-
-            const labels = data.map(x => x.label);
-            const jobs = data.map(x => x.jobs);
-            const applications = data.map(x => x.applications);
-
-            if (jobGrowthChart) {
-                jobGrowthChart.destroy();
-            }
-
-            const ctx = document.getElementById("jobGrowthChart");
-
-            jobGrowthChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Jobs',
-                            data: jobs
-                        },
-                        {
-                            label: 'Applications',
-                            data: applications
-                        }
-                    ]
-                }
-            });
-        }
-
-        async function loadRecentUsers() {
-
-            const response = await fetch(`/api/dashboard/recent-users`);
-            const data = await response.json();
-
-            let html = '';
-
-            data.forEach(user => {
-
-                html += `
-                    <tr>
-                        <td>${user.fullName}</td>
-                        <td>${user.role}</td>
-                        <td>${formatDate(user.createdAt)}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById("recentUsersTable").innerHTML = html;
-        }
-
-        async function loadRecentJobs() {
-
-            const response = await fetch(`/api/dashboard/recent-jobs`);
-            const data = await response.json();
-
-            let html = '';
-
-            data.forEach(job => {
-
-                html += `
-                    <tr>
-                        <td>${job.title}</td>
-                        <td>${job.employerName}</td>
-                        <td>${formatDate(job.createdAt)}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById("recentJobsTable").innerHTML = html;
-        }
-
-        function formatDate(dateString) {
-
-            const date = new Date(dateString);
-
-            return date.toLocaleDateString();
-        }
-
-    </script>
+    <script src="~/js/pages/admin/dashboard.js" asp-append-version="true"></script>
 }

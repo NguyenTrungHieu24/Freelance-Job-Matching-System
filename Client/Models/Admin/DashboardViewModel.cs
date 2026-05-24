@@ -2,13 +2,7 @@
 {
     public class DashboardViewModel
     {
-        public DashboardFilter Filter { get; set; } = new();
-
-        public UserStats UserStats { get; set; } = new();
-
-        public JobStats JobStats { get; set; } = new();
-
-        public ApplicationStats ApplicationStats { get; set; } = new();
+        public OverviewStats OverviewStats { get; set; } = new();
 
         public RevenueStats RevenueStats { get; set; } = new();
 
@@ -23,6 +17,18 @@
         public List<RecentUserItem> RecentUsers { get; set; } = [];
 
         public List<RecentJobItem> RecentJobs { get; set; } = [];
+    }
+
+
+    public class OverviewStats
+    {
+        public UserStats UserStats { get; set; }
+
+        public JobStats JobStats { get; set; }
+
+        public ApplicationStats ApplicationStats { get; set; }
+
+        public RevenueStats RevenueStats { get; set; }
     }
 
     #region Filters
@@ -95,6 +101,8 @@
     {
         public int TotalApplications { get; set; }
 
+        public int NewApplications { get; set; }
+
         public int TotalMatches { get; set; }
 
         public int PendingApplications { get; set; }
@@ -113,12 +121,8 @@
     public class RevenueStats
     {
         public decimal TotalRevenue { get; set; }
-
-        public decimal MonthlyRevenue { get; set; }
-
-        public decimal TodayRevenue { get; set; }
-
-        public decimal AverageRevenuePerEmployer { get; set; }
+        public decimal RevenueInRange { get; set; }
+        public decimal TotalTransactions { get; set; }
     }
 
     #endregion
@@ -166,9 +170,11 @@
     {
         public string Label { get; set; } = string.Empty;
 
-        public int Jobs { get; set; }
+        public int TotalJobs { get; set; }
 
-        public int Applications { get; set; }
+        public int ActiveJobs { get; set; }
+
+        public int ClosedJobs { get; set; }
     }
 
     #endregion
@@ -177,7 +183,7 @@
 
     public class RecentUserItem
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
         public string FullName { get; set; } = string.Empty;
 
@@ -188,7 +194,7 @@
 
     public class RecentJobItem
     {
-        public Guid JobId { get; set; }
+        public int JobId { get; set; }
 
         public string Title { get; set; } = string.Empty;
 

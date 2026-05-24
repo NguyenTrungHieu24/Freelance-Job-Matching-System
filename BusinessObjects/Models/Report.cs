@@ -34,8 +34,8 @@ namespace BusinessObjects.Models
         [MaxLength(500)]
         public string? EvidenceUrl { get; set; }
 
-        public ReportStatusEnum Status { get; set; }
-            = ReportStatusEnum.PENDING;
+        public ReportStatus Status { get; set; }
+            = ReportStatus.PENDING;
 
         public DateTime CreatedAt { get; set; }
             = DateTime.UtcNow;
