@@ -1,7 +1,5 @@
 ﻿using BusinessObjects.Common;
 using BusinessObjects.DTOs;
-using BusinessObjects.Models;
-using Client.Models;
 using Client.Models.Skills;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
