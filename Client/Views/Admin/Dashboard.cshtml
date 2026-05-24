@@ -1,0 +1,381 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Dashboard</h2>
+            <p class="text-muted mb-0">
+                Overview of system statistics and activities
+            </p>
+        </div>
+
+        <div>
+            <select id="dashboardRange" class="form-select">
+                <option value="Today">Today</option>
+                <option value="ThisWeek">This Week</option>
+                <option value="ThisMonth" selected>This Month</option>
+                <option value="ThisYear">This Year</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- OVERVIEW CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+
+                    <div id="usersLoading">
+                        <div class="skeleton skeleton-text skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-sm"></div>
+                    </div>
+
+                    <div id="usersContent" class="d-none">
+
+                        <h6 class="text-muted">Total Users</h6>
+
+                        <h2 id="totalUsers" class="fw-bold">0</h2>
+
+                        <small class="text-success" id="newUsers">
+                            +0 new users
+                        </small>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Jobs</h6>
+                    <h2 id="totalJobs" class="fw-bold">--</h2>
+                    <small class="text-primary" id="activeJobs">
+                        0 active jobs
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted">Applications</h6>
+                    <h2 id="totalApplications" class="fw-bold">--</h2>
+                    <small class="text-warning" id="matchRate">
+                        0% match rate
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h6 class="text-muted">Revenue</h6>
+                    <h2 id="totalRevenue" class="fw-bold">$0</h2>
+                    <small class="text-success" id="monthlyRevenue">
+                        $0 this month
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-4">
+
+        <!-- USER GROWTH -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">User Growth</h5>
+                </div>
+
+                <div class="card-body">
+                    <canvas id="userGrowthChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- JOB GROWTH -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Job Statistics</h5>
+                </div>
+
+                <div class="card-body">
+                    <canvas id="jobGrowthChart" height="120"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLES -->
+    <div class="row g-4">
+
+        <!-- RECENT USERS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Recent Users</h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="recentUsersTable">
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT JOBS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Recent Jobs</h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Employer</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="recentJobsTable">
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Styles {
+    <style>
+
+        
+
+    </style>
+}
+
+@section Scripts {
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        let userGrowthChart;
+        let jobGrowthChart;
+
+        document.addEventListener("DOMContentLoaded", async function () {
+
+            await loadDashboard();
+
+            document.getElementById("dashboardRange")
+                .addEventListener("change", async function () {
+                    await loadDashboard();
+                });
+        });
+
+        async function loadDashboard() {
+
+            const range = document.getElementById("dashboardRange").value;
+
+            await Promise.all([
+                loadOverview(range),
+                loadUserGrowthChart(range),
+                loadJobGrowthChart(range),
+                loadRecentUsers(),
+                loadRecentJobs()
+            ]);
+        }
+
+        async function loadOverview(range) {
+
+            const response = await fetch(`/api/dashboard/overview?range=${range}`);
+            const data = await response.json();
+
+            // USERS
+            document.getElementById("totalUsers").innerText =
+                data.userStats.totalUsers;
+
+            document.getElementById("newUsers").innerText =
+                `+${data.userStats.totalNewUsers} new users`;
+
+            // JOBS
+            document.getElementById("totalJobs").innerText =
+                data.jobStats.totalJobs;
+
+            document.getElementById("activeJobs").innerText =
+                `${data.jobStats.activeJobs} active jobs`;
+
+            // APPLICATIONS
+            document.getElementById("totalApplications").innerText =
+                data.applicationStats.totalApplications;
+
+            document.getElementById("matchRate").innerText =
+                `${data.applicationStats.matchRate}% match rate`;
+
+            // REVENUE
+            document.getElementById("totalRevenue").innerText =
+                `$${data.revenueStats.totalRevenue}`;
+
+            document.getElementById("monthlyRevenue").innerText =
+                `$${data.revenueStats.monthlyRevenue} this month`;
+        }
+
+        async function loadUserGrowthChart(range) {
+
+            const response = await fetch(`/api/dashboard/user-growth?range=${range}`);
+            const data = await response.json();
+
+            const labels = data.map(x => x.label);
+            const freelancers = data.map(x => x.freelancers);
+            const employers = data.map(x => x.employers);
+
+            if (userGrowthChart) {
+                userGrowthChart.destroy();
+            }
+
+            const ctx = document.getElementById("userGrowthChart");
+
+            userGrowthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Freelancers',
+                            data: freelancers
+                        },
+                        {
+                            label: 'Employers',
+                            data: employers
+                        }
+                    ]
+                }
+            });
+        }
+
+        async function loadJobGrowthChart(range) {
+
+            const response = await fetch(`/api/dashboard/job-growth?range=${range}`);
+            const data = await response.json();
+
+            const labels = data.map(x => x.label);
+            const jobs = data.map(x => x.jobs);
+            const applications = data.map(x => x.applications);
+
+            if (jobGrowthChart) {
+                jobGrowthChart.destroy();
+            }
+
+            const ctx = document.getElementById("jobGrowthChart");
+
+            jobGrowthChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Jobs',
+                            data: jobs
+                        },
+                        {
+                            label: 'Applications',
+                            data: applications
+                        }
+                    ]
+                }
+            });
+        }
+
+        async function loadRecentUsers() {
+
+            const response = await fetch(`/api/dashboard/recent-users`);
+            const data = await response.json();
+
+            let html = '';
+
+            data.forEach(user => {
+
+                html += `
+                    <tr>
+                        <td>${user.fullName}</td>
+                        <td>${user.role}</td>
+                        <td>${formatDate(user.createdAt)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("recentUsersTable").innerHTML = html;
+        }
+
+        async function loadRecentJobs() {
+
+            const response = await fetch(`/api/dashboard/recent-jobs`);
+            const data = await response.json();
+
+            let html = '';
+
+            data.forEach(job => {
+
+                html += `
+                    <tr>
+                        <td>${job.title}</td>
+                        <td>${job.employerName}</td>
+                        <td>${formatDate(job.createdAt)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("recentJobsTable").innerHTML = html;
+        }
+
+        function formatDate(dateString) {
+
+            const date = new Date(dateString);
+
+            return date.toLocaleDateString();
+        }
+
+    </script>
+}

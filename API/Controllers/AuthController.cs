@@ -28,7 +28,7 @@ namespace API.Controllers
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             var exists = await _context.Users
-                .AnyAsync(x => x.Email == dto.Email);
+                .AnyAsync(x => x.Email == dto.Email.Trim().ToLower());
 
             if (exists)
                 return BadRequest("Email already exists");
@@ -36,7 +36,7 @@ namespace API.Controllers
             var account = new User
             {
                 FullName = dto.Name,
-                Email = dto.Email,
+                Email = dto.Email.Trim().ToLower(),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 RoleId = dto.Role ?? (int)RoleEnum.EMPLOYER
             };
@@ -78,7 +78,7 @@ namespace API.Controllers
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(x => x.Email == dto.Email);
+                .FirstOrDefaultAsync(x => x.Email == dto.Email.Trim().ToLower());
 
             if (user == null)
                 return Unauthorized("Invalid email");

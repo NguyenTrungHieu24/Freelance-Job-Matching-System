@@ -21,7 +21,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultFrelancer"),
-        b => b.MigrationsAssembly("BusinessObjects")
+        b => {
+            b.MigrationsAssembly("BusinessObjects");
+            b.UseCompatibilityLevel(120); // For MSSQL 2014 :(
+        }
     ));
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
