@@ -16,7 +16,11 @@ namespace BusinessObjects.Mapping
             // Add Mapping here: 
 
             CreateMap<Skill, SkillDTO>();
-
+            CreateMap<FreelancerProfile, FreelancerDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email))
+                .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Account.FreelancerProfile.Account.FreelancerProfile != null 
+                    ? src.Account.FreelancerProfile.Account.FreelancerProfile.Id : 0));
         }
     }
 }

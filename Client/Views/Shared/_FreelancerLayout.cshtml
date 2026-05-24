@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - TopLancer</title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/layout.css"/>
+</head>
+<body>
+
+<header class="tl-header">
+    <nav class="navbar tl-navbar px-3 px-lg-4">
+
+        <!-- Logo -->
+        <a class="tl-logo navbar-brand" href="/">
+            <img src="~/image/Logo.png" alt="TopLancer" class="tl-logo-img"/>
+        </a>
+        
+        <ul class="tl-nav-links d-none d-lg-flex list-unstyled mb-0 align-items-stretch">
+
+            <li>
+                <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")"
+                   href="/Freelancer/Dashboard">
+                    Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")"
+                   href="#">
+                    Job Search
+                </a>
+            </li>
+            
+            <li class="tl-nav-dropdown-wrap">
+                <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")"
+                   href="#">
+                    Job Management
+                </a>
+                <div class="tl-nav-dropdown">
+                    <a href="#">My Jobs</a>
+                    <a href="#">Applications</a>
+                    <a href="#">Contracts</a>
+                </div>
+            </li>
+            
+            <li class="tl-nav-dropdown-wrap">
+                <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")"
+                   href="#">
+                    Statistical
+                </a>
+                <div class="tl-nav-dropdown">
+                    <a href="#">Revenue</a>
+                    <a href="#">Jobs Overview</a>
+                </div>
+            </li>
+
+            <li>
+                <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Message" ? "is-active" : "")"
+                   href="#">
+                    Message
+                </a>
+            </li>
+
+        </ul>
+        
+        <div class="tl-nav-right d-none d-lg-flex align-items-center">
+            
+            <div class="tl-nav-dropdown-wrap">
+                <button class="tl-wallet-btn" type="button">
+                    <img src="~/image/wallet.png" alt="" class="tl-icon-img"/>
+                    <span>10.000.000 đ</span>
+                </button>
+                <div class="tl-nav-dropdown tl-nav-dropdown--right">
+                    <div class="tl-wallet-balance">
+                        <span class="tl-wallet-balance-label">Balance</span>
+                        <span class="tl-wallet-balance-amount">10.000.000 đ</span>
+                    </div>
+                    <div class="tl-dropdown-divider"></div>
+                    <a href="#">Withdraw money</a>
+                </div>
+            </div>
+            
+            <div class="tl-nav-dropdown-wrap ml-3">
+                <button class="tl-icon-btn" type="button" aria-label="Notification">
+                    <img src="~/image/notification.png" alt="Notification" class="tl-icon-img"/>
+                    <span class="tl-bell-dot"></span>
+                </button>
+            </div>
+            
+            <div class="tl-nav-dropdown-wrap ml-3">
+                <button class="tl-avatar-btn" type="button">
+                    <img src="~/image/user.png" alt="Avatar" class="tl-avatar-img"/>
+                </button>
+                <div class="tl-nav-dropdown tl-nav-dropdown--right">
+                    <a href="#">Profile</a>
+                    <a href="#">Member Package</a>
+                </div>
+            </div>
+            
+            <button class="tl-icon-btn tl-logout-btn ml-3" type="button" aria-label="Logout">
+                <img src="~/image/logout.png" alt="Logout" class="tl-icon-img tl-icon-red"/>
+            </button>
+
+        </div>
+        
+        <button class="tl-hamburger d-lg-none ml-auto"
+                type="button"
+                data-toggle="collapse"
+                data-target="#mobileNav"
+                aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+    
+    <div class="collapse tl-mobile-collapse" id="mobileNav">
+        <ul class="tl-mobile-nav list-unstyled mb-0">
+            <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Dashboard"     ? "is-active" : "")" href="#">Dashboard</a></li>
+            <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobSearch"     ? "is-active" : "")" href="#">Job Search</a></li>
+            <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")" href="#">Job Management</a></li>
+            <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Statistical"   ? "is-active" : "")" href="#">Statistical</a></li>
+            <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Message"       ? "is-active" : "")" href="#">Message</a></li>
+        </ul>
+    </div>
+</header>
+
+<main class="tl-main">
+    @RenderBody()
+</main>
+
+<footer class="tl-footer">
+    <div class="container">
+        <div class="tl-footer-grid">
+            
+            <div class="tl-footer-brand">
+                <a href="/" class="tl-logo mb-3 d-inline-flex align-items-center">
+                    <img src="~/image/Logo.png" alt="TopLancer" class="tl-logo-img"/>
+                </a>
+                <div class="tl-socials d-flex mb-3">
+                    <a href="#" class="tl-social-btn">
+                        <img src="~/image/Facebook.png" alt="Facebook" class="tl-icon-img"/>
+                    </a>
+                    <a href="#" class="tl-social-btn">
+                        <img src="~/image/LinkedIn.png" alt="LinkedIn" class="tl-icon-img"/>
+                    </a>
+                    <a href="#" class="tl-social-btn">
+                        <img src="~/image/Twitter.png" alt="Twitter" class="tl-icon-img"/>
+                    </a>
+                </div>
+                <address class="tl-contact">
+                    <p>Phone: +84 (012) 3456789</p>
+                    <p>Email: support@toplancer.vn</p>
+                </address>
+            </div>
+            
+            <div class="tl-footer-col">
+                <h5 class="tl-footer-heading">About TopLancer</h5>
+                <ul class="tl-footer-links list-unstyled">
+                    <li><a href="#">Introduce</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Support Request</a></li>
+                </ul>
+            </div>
+            
+            <div class="tl-footer-col">
+                <h5 class="tl-footer-heading">Employer</h5>
+                <ul class="tl-footer-links list-unstyled">
+                    <li><a href="#">Job Posting</a></li>
+                    <li><a href="#">How it works</a></li>
+                    <li><a href="#">Find candidates</a></li>
+                </ul>
+            </div>
+            
+            <div class="tl-footer-col">
+                <h5 class="tl-footer-heading">Candidates</h5>
+                <ul class="tl-footer-links list-unstyled">
+                    <li><a href="#">Register</a></li>
+                    <li><a href="#">How it works</a></li>
+                    <li><a href="#">Find freelance work</a></li>
+                    <li><a href="#">Find a full-time job</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="tl-footer-bottom">
+        <div class="container">
+            <p class="mb-0">Copyright &copy; 2026 topLancer Co., Ltd. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
