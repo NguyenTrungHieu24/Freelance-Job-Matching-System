@@ -17,6 +17,13 @@ namespace BusinessObjects.Mapping
 
             CreateMap<Skill, SkillDTO>();
 
+            // Mapping for personal info
+            CreateMap<FreelancerProfile, FreelancerPersonalInfoDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Account.Email));
+
+            // Mapping for CV, Portfolio
+            CreateMap<FreelancerProfile, FreelancerCvDto>();
         }
     }
 }

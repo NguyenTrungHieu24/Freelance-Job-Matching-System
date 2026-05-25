@@ -21,7 +21,7 @@ namespace API.Controllers
 
 
         // GET: api/skills
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<PaginateResult<SkillDTO>>> GetSkills([FromQuery] FilterSkillDTO q)
         {

@@ -105,6 +105,12 @@ builder.Services.AddAuthorization(options =>
             nameof(RoleEnum.EMPLOYER)
         ));
 });
+var webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+if (!Directory.Exists(webRootPath))
+{
+    Directory.CreateDirectory(webRootPath);
+}
+builder.Environment.WebRootPath = webRootPath;
 
 var app = builder.Build();
 
@@ -117,7 +123,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 // Run Seeder

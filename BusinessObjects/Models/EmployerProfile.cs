@@ -20,6 +20,9 @@ namespace BusinessObjects.Models
         public string CompanyName { get; set; }
 
         public string Description { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
 
         [StringLength(255)]
         public string Logo { get; set; }
