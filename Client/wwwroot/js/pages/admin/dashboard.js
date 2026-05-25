@@ -66,7 +66,7 @@ async function loadOverview(range) {
 
     hideSkeleton("revenue");
     $("#totalRevenue").text(`$${data.revenueStats.totalRevenue}`);
-    $("#monthlyRevenue").text(`$${data.revenueStats.monthlyRevenue} this month`);
+    $("#monthlyRevenue").text(`$${data.revenueStats.revenueInRange} this month`);
 }
 
 async function loadUserGrowthChart(range) {
@@ -168,7 +168,7 @@ async function loadRecentUsers() {
         `;
     });
 
-    $("#recentUsersTable").html(html);
+    $("#recentUsersContent").html(html);
 
     hideSkeleton("recentUsers");
 
@@ -193,7 +193,7 @@ async function loadRecentJobs() {
         `;
     });
 
-    $("#recentJobsTable").html(html);
+    $("#recentJobsContent").html(html);
     hideSkeleton("recentJobs");
 }
 

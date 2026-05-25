@@ -20,8 +20,7 @@ namespace API.Controllers
         #region User Stats
 
         [HttpGet("user-stats")]
-        public async Task<IActionResult> UserStats(
-            DashboardRangeType range = DashboardRangeType.ThisMonth)
+        public async Task<IActionResult> UserStats(DashboardRangeType range = DashboardRangeType.ThisMonth)
         {
             var fromDate = GetFromDate(range);
 
@@ -160,25 +159,19 @@ namespace API.Controllers
 
         #region Helpers
 
-        private static DateTime GetFromDate(
-            DashboardRangeType range)
+        private static DateTime GetFromDate(DashboardRangeType range)
         {
             return range switch
             {
-                DashboardRangeType.Today =>
-                    DateTime.UtcNow.Date,
+                DashboardRangeType.Today => DateTime.UtcNow.Date,
 
-                DashboardRangeType.ThisWeek =>
-                    DateTime.UtcNow.AddDays(-7),
+                DashboardRangeType.ThisWeek => DateTime.UtcNow.AddDays(-7),
 
-                DashboardRangeType.ThisMonth =>
-                    DateTime.UtcNow.AddMonths(-1),
+                DashboardRangeType.ThisMonth => DateTime.UtcNow.AddMonths(-1),
 
-                DashboardRangeType.ThisYear =>
-                    DateTime.UtcNow.AddYears(-1),
+                DashboardRangeType.ThisYear => DateTime.UtcNow.AddYears(-1),
 
-                _ =>
-                    DateTime.UtcNow.AddMonths(-1)
+                _ => DateTime.UtcNow.AddMonths(-1)
             };
         }
 
