@@ -70,4 +70,17 @@ namespace BusinessObjects.DTOs
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
     }
+
+    public class ChangePasswordDto
+    {
+        [Required(ErrorMessage = "Enter old password")]
+        public string OldPassword { get; set; } = null!;
+
+        [Required(ErrorMessage = "Enter new password")]
+        public string NewPassword { get; set; } = null!;
+
+        [Required(ErrorMessage = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; } = null!;
+    }
 }

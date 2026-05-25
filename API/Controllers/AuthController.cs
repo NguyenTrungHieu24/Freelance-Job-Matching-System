@@ -1,8 +1,10 @@
 ﻿using API.Services;
+using API.Services.Auth;
 using BusinessObjects;
 using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,11 +16,13 @@ namespace API.Controllers
     {
         private readonly AppDbContext _context;
         private readonly JwtService _jwt;
+        private readonly IUserService _user;
 
-        public AuthController(AppDbContext context, JwtService jwt)
+        public AuthController(AppDbContext context, JwtService jwt, IUserService user)
         {
             _context = context;
             _jwt = jwt;
+            _user = user;
         }
 
         // =========================
@@ -105,6 +109,25 @@ namespace API.Controllers
                     Role = user.Role.Name,
                 }
             });
+        }
+
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            var userId = _user.UserId;
+            var user = await _context.Users.FindAsync(userId);
+            
+            if(user == null)
+                return NotFound("User not found");
+
+            var checkOldPassword = BCrypt.Net.BCrypt.Verify(dto.OldPassword, user.PasswordHash);
+            if (!checkOldPassword)
+                return BadRequest("Old password is incorrect");
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Change password successfully" });
         }
     }
 }
