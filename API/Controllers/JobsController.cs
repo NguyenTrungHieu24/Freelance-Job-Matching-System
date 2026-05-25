@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+//Tao controller xu ly HTTP Request
 namespace API.Controllers
 {
     [Route("api/jobs")]
