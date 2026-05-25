@@ -14,17 +14,13 @@ public class FreelancerPersonalInfoDto
 
 public class UpdateFreelancerPersonalInfoDto
 {
-    [Required(ErrorMessage = "Full name must be provided")]
     [StringLength(100)]
     public string FullName { get; set; } = null!;
-    [Required(ErrorMessage = "Email must be required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
     public string Email { get; set; } = null!;
-    [Required(ErrorMessage = "Phone number must be required")]
     [Phone(ErrorMessage = "Invalid phone number")]
     [StringLength(20)]
     public string? Phone { get; set; }
-    [Required(ErrorMessage = "Address must be required")]
     [StringLength(255)]
     public string? Address { get; set; }
 }

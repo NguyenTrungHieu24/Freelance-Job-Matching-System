@@ -99,7 +99,7 @@ namespace API.Controllers
             if (profile == null) return NotFound("Profile not found");
             var uploadDir = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads", "avatar");
             if (!Directory.Exists(uploadDir)) Directory.CreateDirectory(uploadDir);
-            // Xóa file cũ
+            
             if (!string.IsNullOrEmpty(profile.ProfilePhoto))
             {
                 var oldFilePath = Path.Combine(uploadDir, Path.GetFileName(profile.ProfilePhoto));
@@ -124,7 +124,12 @@ namespace API.Controllers
             var userId = _user.UserId;
             var profile = await _context.FreelancerProfiles
                 .FirstOrDefaultAsync(p => p.AccountId == userId);
-            if (profile == null) return NotFound("Profile not found");
+            if (profile == null)
+            {
+                profile = new FreelancerProfile { AccountId = userId, Title = "", Bio = "" };
+                _context.FreelancerProfiles.Add(profile);
+                await _context.SaveChangesAsync();
+            }
             var dto = new FreelancerCvDto
             {
                 ProfileId = profile.Id,
@@ -156,7 +161,6 @@ namespace API.Controllers
             profile.Bio = dto.Bio;
             profile.PortfolioUrl = dto.PortfolioUrl; 
             profile.PortfolioDescription = dto.PortfolioDescription;
-            profile.CVUrl = dto.CVUrl;
 
             var existingSkills = _context.FreelancerSkills.Where(fs => fs.FreelancerProfileId == profile.Id);
             _context.FreelancerSkills.RemoveRange(existingSkills);
