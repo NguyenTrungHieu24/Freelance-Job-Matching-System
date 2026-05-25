@@ -1,4 +1,4 @@
-﻿using Client.Models.Auth;
+using Client.Models.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -49,6 +49,7 @@ namespace Client.Controllers
                     new Claim(ClaimTypes.Name, result.User.Name),
                     new Claim(ClaimTypes.Email, result.User.Email),
                     new Claim(ClaimTypes.Role, result.Role),
+                    new Claim(ClaimTypes.NameIdentifier, result.User.Id.ToString())
                 };
 
                 var identity = new ClaimsIdentity(claims, "Cookies");
@@ -84,8 +85,11 @@ namespace Client.Controllers
                         // ignore invalid base64
                     }
                 }
-
-                return RedirectToAction("Index", "Home");
+                
+                if (result.Role.Equals("FREELANCER"))
+                    return RedirectToAction("Dashboard", "Freelancer");
+                else
+                    return RedirectToAction("Index", "Home");
             }
             catch (Exception e)
             {
@@ -130,10 +134,10 @@ namespace Client.Controllers
                 // Auto login
                 //SaveAuthSession(result);
 
-                if (result.Role == "Admin")
-                    return RedirectToAction("Index", "Admin");
-
-                return RedirectToAction("Index", "Home");
+                if (result.Role.Equals("FREELANCER"))
+                    return RedirectToAction("Dashboard", "Freelancer");
+                else
+                    return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {

@@ -90,5 +90,20 @@ namespace Client.Controllers
 
             return response.IsSuccessStatusCode;
         }
+        
+        protected async Task<bool> UploadFileAsync(string endpoint, IFormFile file)
+        {
+            var client = CreateClient(); 
+            using var content = new MultipartFormDataContent();
+            using var fileStream = file.OpenReadStream();
+            using var streamContent = new StreamContent(fileStream);
+            
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            
+            content.Add(streamContent, "file", file.FileName);
+            var response = await client.PostAsync(endpoint, content);
+    
+            return response.IsSuccessStatusCode;
+        }
     }
 }

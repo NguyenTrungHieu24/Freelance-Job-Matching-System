@@ -1,0 +1,195 @@
+@model Client.Models.Freelancer.FreelancerCvViewModel
+
+@{
+    ViewBag.Title = "Work Profile";
+    Layout = "_FreelancerLayout";
+}
+
+<div class="container">
+    <div class="fl-settings-wrapper shadow-sm">
+        
+        <!-- Sidebar -->
+        <div class="fl-settings-sidebar">
+            <div class="fl-sidebar-header">Account</div>
+            <ul class="fl-sidebar-nav">
+                <li><a href="/freelancer/personal-info" class="fl-sidebar-link">Contact Information</a></li>
+                <li><a href="/freelancer/cv-portfolio" class="fl-sidebar-link active">Work Profile</a></li>
+                <li><a href="#" class="fl-sidebar-link">Application List</a></li>
+                <li><a href="#" class="fl-sidebar-link">Transaction History</a></li>
+                <li><a href="#" class="fl-sidebar-link">Change Password</a></li>
+            </ul>
+        </div>
+        
+        <div class="fl-settings-content">
+            <div class="fl-content-header">Work Profile</div>
+            
+            <form asp-action="EditCvPortfolio" asp-controller="Freelancer" method="post" enctype="multipart/form-data">
+                <div class="fl-info-grid">
+                    <div class="fl-info-list" style="grid-column: span 2;">
+                        
+                        <div id="DisplayMode">
+                            
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">Title:</div>
+                                <div class="col-sm-8 col-md-9 text-secondary">
+                                    @(string.IsNullOrEmpty(Model.CvPortfolio.Title) ? "Not updated yet" : Model.CvPortfolio.Title)
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">Bio:</div>
+                                <div class="col-sm-8 col-md-9 text-secondary text-break" style="line-height: 1.6;">
+                                    @(string.IsNullOrEmpty(Model.CvPortfolio.Bio) ? "Not updated yet" : Model.CvPortfolio.Bio)
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">Portfolio URL:</div>
+                                <div class="col-sm-8 col-md-9 text-secondary text-break">
+                                    @if (!string.IsNullOrEmpty(Model.CvPortfolio.PortfolioUrl))
+                                    {
+                                        <a href="@Model.CvPortfolio.PortfolioUrl" target="_blank" rel="noopener noreferrer">@Model.CvPortfolio.PortfolioUrl</a>
+                                    }
+                                    else
+                                    {
+                                        <span>Not updated yet</span>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">Portfolio Description:</div>
+                                <div class="col-sm-8 col-md-9 text-secondary text-break" style="line-height: 1.6;">
+                                    @(string.IsNullOrEmpty(Model.CvPortfolio.PortfolioDescription) ? "Not updated yet" : Model.CvPortfolio.PortfolioDescription)
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">Skills:</div>
+                                <div class="col-sm-8 col-md-9">
+                                    @if (Model.CvPortfolio.Skills != null && Model.CvPortfolio.Skills.Any())
+                                    {
+                                        <div class="fl-skills-container">
+                                            @foreach (var skill in Model.CvPortfolio.Skills)
+                                            {
+                                                <span class="fl-skill-badge">@skill.Name</span>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary">Skills not yet updated</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 align-items-start">
+                                <div class="col-sm-4 col-md-3 font-weight-bold text-dark">CV Document:</div>
+                                <div class="col-sm-8 col-md-9">
+                                    @if (!string.IsNullOrEmpty(Model.CvPortfolio.CVUrl))
+                                    {
+                                        <a href="@Model.CvPortfolio.CVUrl" target="_blank" class="btn-tl btn-tl-outline-primary" style="font-size: 14px; padding: 4px 12px;">
+                                            📄 View / Download CV
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary">CV not yet updated</span>
+                                    }
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 pt-3 border-top">
+                                <button type="button" class="btn-tl btn-tl-accent" onclick="toggleEditMode()">Edit Work Profile</button>
+                            </div>
+                        </div>
+                        
+                        <div id="EditMode" class="d-none">
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Title</label>
+                                <input type="text" class="form-control" asp-for="CvPortfolio.Title" placeholder="e.g. Senior Backend Developer" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Bio</label>
+                                <textarea class="form-control" asp-for="CvPortfolio.Bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Portfolio URL</label>
+                                <input type="url" class="form-control" asp-for="CvPortfolio.PortfolioUrl" placeholder="https://github.com/your-profile" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Portfolio Description</label>
+                                <textarea class="form-control" asp-for="CvPortfolio.PortfolioDescription" rows="4" placeholder="Describe your portfolio..."></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold mb-2">Skills</label>
+                                <div class="d-flex flex-wrap" style="gap: 15px;">
+                                    @if (Model.AllSkills != null && Model.AllSkills.Any())
+                                    {
+                                        foreach (var skill in Model.AllSkills)
+                                        {
+                                            var isChecked = Model.SelectedSkill != null && Model.SelectedSkill.Contains(skill.Id);
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="skill_@skill.Id" name="SelectedSkill" value="@skill.Id" @(isChecked ? "checked" : "")>
+                                                <label class="custom-control-label" for="skill_@skill.Id" style="cursor: pointer;">@skill.Name</label>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No skills available.</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">CV Document (PDF only)</label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="CvFileInput" asp-for="CvFile" accept=".pdf" onchange="updateFileName(this)">
+                                    <label class="custom-file-label" for="CvFileInput">Choose PDF file...</label>
+                                </div>
+                                <small class="form-text text-muted">Maximum file size: 5MB</small>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top">
+                                <button type="submit" class="btn-tl btn-tl-primary">Save Changes</button>
+                                <button type="button" class="btn-tl btn-tl-outline-secondary ml-2" onclick="toggleEditMode()" style="padding: 8px 16px; border: 1px solid #6c757d; border-radius: 4px; background: transparent; color: #6c757d;">Cancel</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleEditMode() {
+            var displayDiv = document.getElementById('DisplayMode');
+            var editDiv = document.getElementById('EditMode');
+            
+            if (displayDiv.classList.contains('d-none')) {
+                displayDiv.classList.remove('d-none');
+                editDiv.classList.add('d-none');
+            } else {
+                displayDiv.classList.add('d-none');
+                editDiv.classList.remove('d-none');
+            }
+        }
+        
+        function updateFileName(input) {
+            var fileName = input.files[0] ? input.files[0].name : "Choose PDF file...";
+            var label = input.nextElementSibling;
+            if (label && label.classList.contains('custom-file-label')) {
+                label.innerText = fileName;
+            }
+        }
+    </script>
+}

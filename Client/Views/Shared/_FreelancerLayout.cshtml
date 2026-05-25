@@ -94,14 +94,16 @@
                     <img src="~/image/user.png" alt="Avatar" class="tl-avatar-img"/>
                 </button>
                 <div class="tl-nav-dropdown tl-nav-dropdown--right">
-                    <a href="#">Profile</a>
+                    <a href="/freelancer/personal-info">Profile</a>
                     <a href="#">Member Package</a>
                 </div>
             </div>
             
-            <button class="tl-icon-btn tl-logout-btn ml-3" type="button" aria-label="Logout">
-                <img src="~/image/logout.png" alt="Logout" class="tl-icon-img tl-icon-red"/>
-            </button>
+            <form asp-controller="auth" asp-action="logout" method="post" class="d-inline">
+                <button class="tl-icon-btn tl-logout-btn ml-3" type="submit" aria-label="Logout">
+                    <img src="~/image/logout.png" alt="Logout" class="tl-icon-img tl-icon-red"/>
+                </button>
+            </form>
 
         </div>
         

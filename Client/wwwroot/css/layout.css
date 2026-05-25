@@ -477,3 +477,139 @@ img { max-width: 100%; }
     animation: shimmer 1.4s infinite;
     border-radius: var(--r-sm);
 }
+
+.fl-settings-wrapper {
+    background-color: var(--c-surface);
+    border: 2px solid var(--c-primary); 
+    border-radius: var(--r-md);
+    margin: 40px auto;
+    max-width: 900px;
+    display: flex;
+    overflow: hidden; 
+}
+
+.fl-settings-sidebar {
+    width: 280px;
+    border-right: 1px solid var(--c-border);
+    background-color: var(--c-surface);
+    flex-shrink: 0;
+}
+
+.fl-sidebar-header {
+    padding: 20px 20px 10px;
+    font-weight: 700;
+    color: var(--c-ink);
+    font-size: 16px;
+}
+
+.fl-sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fl-sidebar-link {
+    display: block;
+    padding: 12px 20px;
+    color: var(--c-body);
+    text-decoration: none;
+    font-size: 15px;
+    transition: all var(--t-fast);
+}
+
+.fl-sidebar-link:hover {
+    background-color: var(--c-primary-light);
+    color: var(--c-primary);
+}
+
+.fl-sidebar-link.active {
+    color: var(--c-primary);
+}
+
+.fl-settings-content {
+    flex-grow: 1;
+    padding: 20px 30px 40px;
+}
+
+.fl-content-header {
+    font-weight: 700;
+    color: var(--c-ink);
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+.fl-info-grid {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fl-info-list {
+    flex-grow: 1;
+}
+
+.fl-info-item {
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+.fl-info-item strong {
+    font-weight: 600;
+    color: var(--c-ink);
+    display: inline-block;
+    min-width: 100px;
+}
+
+.fl-avatar-section {
+    width: 250px;
+    padding-left: 30px;
+}
+
+.fl-avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #d9d9d9;
+    object-fit: cover;
+    margin: 10px 0 15px;
+    display: block;
+}
+
+.fl-avatar-hint {
+    font-size: 12px;
+    color: var(--c-subtle);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.fl-skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.fl-skill-badge {
+    background-color: #f1f3f5;
+    color: #495057;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.btn-tl-outline-primary {
+    border: 1px solid #0d6efd; 
+    color: #0d6efd;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-tl-outline-primary:hover {
+    background: #0d6efd;
+    color: #fff;
+    text-decoration: none;
+}

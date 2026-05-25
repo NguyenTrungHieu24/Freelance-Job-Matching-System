@@ -1,6 +1,6 @@
 namespace Client.Models.Freelancer;
 
-public class FreelanceDashboard
+public class FreelancerDashboard
 {
     
 }
