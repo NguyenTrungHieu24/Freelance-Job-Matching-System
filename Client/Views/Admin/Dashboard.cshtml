@@ -29,23 +29,35 @@
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body">
-
+                <div class="card-body row">
                     <div id="usersLoading">
-                        <div class="skeleton skeleton-text skeleton-title"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-sm"></div>
+                        <h6 class="text-muted">Total Users</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="usersContent" class="d-none">
 
                         <h6 class="text-muted">Total Users</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalUsers" class="fw-bold">0</h2>
 
-                        <h2 id="totalUsers" class="fw-bold">0</h2>
-
-                        <small class="text-success" id="newUsers">
-                            +0 new users
-                        </small>
+                                <small class="text-success" id="newUsers">
+                                    +0 new users
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartUsers"></canvas>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -58,17 +70,32 @@
                 <div class="card-body">
 
                     <div id="jobsLoading">
-                        <div class="skeleton skeleton-text skeleton-title"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-sm"></div>
+                        <h6 class="text-muted">Total Jobs</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="jobsContent" class="d-none">
                         <h6 class="text-muted">Total Jobs</h6>
-                        <h2 id="totalJobs" class="fw-bold">--</h2>
-                        <small class="text-primary" id="activeJobs">
-                            0 active jobs
-                        </small>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalJobs" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="activeJobs">
+                                    0 active jobs
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartJobs"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,17 +106,32 @@
                 <div class="card-body">
 
                     <div id="applicationsLoading">
-                        <div class="skeleton skeleton-text skeleton-title"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-sm"></div>
+                        <h6 class="text-muted">Applications</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="applicationsContent" class="d-none">
                         <h6 class="text-muted">Applications</h6>
-                        <h2 id="totalApplications" class="fw-bold">--</h2>
-                        <small class="text-warning" id="matchRate">
-                            0% match rate
-                        </small>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalApplications" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="matchRate">
+                                    0% match rate
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartApplications"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,17 +142,32 @@
                 <div class="card-body">
 
                     <div id="revenueLoading">
-                        <div class="skeleton skeleton-text skeleton-title"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-sm"></div>
+                        <h6 class="text-muted">Revenue</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="revenueContent" class="d-none">
                         <h6 class="text-muted">Revenue</h6>
-                        <h2 id="totalRevenue" class="fw-bold">$0</h2>
-                        <small class="text-success" id="monthlyRevenue">
-                            $0 this month
-                        </small>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalRevenue" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="monthlyRevenue">
+                                    $0 this month
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartRevenue"></canvas>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
