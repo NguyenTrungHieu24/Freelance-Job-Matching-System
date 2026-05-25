@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObjects.DTOs
 {
+
+    //Tao lop dto cho job
     public class JobDto
     {
         public int Id { get; set; }
