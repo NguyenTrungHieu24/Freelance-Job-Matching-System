@@ -1,0 +1,220 @@
+﻿@inject IUserService CurrentUser
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" href="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/css/skeleton.css" />
+    <link rel="stylesheet" href="~/css/layout.css" />
+</head>
+
+<body class="hold-transition sidebar-mini">
+
+    @RenderSection("Styles", required: false)
+
+    <header class="tl-header">
+        <nav class="navbar tl-navbar px-3 px-lg-4">
+
+            <!-- Logo -->
+            <a class="tl-logo navbar-brand" href="/">
+                <img src="~/image/Logo.png" alt="TopLancer" class="tl-logo-img" />
+            </a>
+
+            <ul class="tl-nav-links d-none d-lg-flex list-unstyled mb-0 align-items-stretch">
+
+                @if (CurrentUser.IsAdmin)
+                {
+                    @await Html.PartialAsync("Nav/_Admin")
+                }
+
+                @if (CurrentUser.IsEmployer)
+                {
+                    @await Html.PartialAsync("Nav/_Employer")
+                }
+
+                @if (CurrentUser.IsFreelancer)
+                {
+                    @await Html.PartialAsync("Nav/_Freelancer")
+                }
+
+                @if (CurrentUser.IsGuest)
+                {
+                    @await Html.PartialAsync("Nav/_Guest")
+                }
+
+            </ul>
+
+            <div class="tl-nav-right d-none d-lg-flex align-items-center">
+                @if (CurrentUser.IsFreelancer || CurrentUser.IsEmployer)
+                {
+                    <div class="tl-nav-dropdown-wrap">
+                        <button class="tl-wallet-btn" type="button">
+                            <img src="~/image/wallet.png" alt="" class="tl-icon-img" />
+                            <span>10.000.000 đ</span>
+                        </button>
+                        <div class="tl-nav-dropdown tl-nav-dropdown--right">
+                            <div class="tl-wallet-balance">
+                                <span class="tl-wallet-balance-label">Balance</span>
+                                <span class="tl-wallet-balance-amount">10.000.000 đ</span>
+                            </div>
+                            <div class="tl-dropdown-divider"></div>
+                            <a href="#">Withdraw money</a>
+                        </div>
+                    </div>
+                }
+
+                <div class="tl-nav-dropdown-wrap ml-3">
+                    <button class="tl-icon-btn" type="button" aria-label="Notification">
+                        <img src="~/image/notification.png" alt="Notification" class="tl-icon-img" />
+                        <span class="tl-bell-dot"></span>
+                    </button>
+                </div>
+
+
+                @if (CurrentUser.IsAuthenticated)
+                {
+                    <div class="tl-nav-dropdown-wrap ml-3">
+                        <button class="tl-avatar-btn" type="button">
+                            <img src="~/image/user.png" alt="Avatar" class="tl-avatar-img" />
+                        </button>
+                        <div class="tl-nav-dropdown tl-nav-dropdown--right">
+                            <a href="/freelancer/personal-info">Profile</a>
+                            <a href="#">Member Package</a>
+                        </div>
+                    </div>
+                    <form asp-controller="auth" asp-action="logout" method="post" class="d-inline">
+                        <button class="tl-icon-btn tl-logout-btn ml-3" type="submit" aria-label="Logout">
+                            <img src="~/image/logout.png" alt="Logout" class="tl-icon-img tl-icon-red" />
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn-tl rounded-3" role="button" asp-action="Login" asp-controller="Auth" aria-label="Login">
+                        Login
+                    </a>
+                    <a class="btn-tl rounded-3" role="button" asp-action="Register" asp-controller="Auth" aria-label="Register">
+                        Register
+                    </a>
+                }
+            </div>
+
+            <button class="tl-hamburger d-lg-none ml-auto"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#mobileNav"
+                    aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+
+        <div class="collapse tl-mobile-collapse" id="mobileNav">
+            <ul class="tl-mobile-nav list-unstyled mb-0">
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")" href="#">Dashboard</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")" href="#">Job Search</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")" href="#">Job Management</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")" href="#">Statistical</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Message" ? "is-active" : "")" href="#">Message</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="tl-main">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="tl-footer">
+        <div class="container">
+            <div class="tl-footer-grid">
+
+                <div class="tl-footer-brand">
+                    <a href="/" class="tl-logo mb-3 d-inline-flex align-items-center">
+                        <img src="~/image/Logo.png" alt="TopLancer" class="tl-logo-img" />
+                    </a>
+                    <div class="tl-socials d-flex mb-3">
+                        <a href="#" class="tl-social-btn">
+                            <img src="~/image/Facebook.png" alt="Facebook" class="tl-icon-img" />
+                        </a>
+                        <a href="#" class="tl-social-btn">
+                            <img src="~/image/LinkedIn.png" alt="LinkedIn" class="tl-icon-img" />
+                        </a>
+                        <a href="#" class="tl-social-btn">
+                            <img src="~/image/Twitter.png" alt="Twitter" class="tl-icon-img" />
+                        </a>
+                    </div>
+                    <address class="tl-contact">
+                        <p>Phone: +84 (012) 3456789</p>
+                        <p>Email: support@toplancer.vn</p>
+                    </address>
+                </div>
+
+                <div class="tl-footer-col">
+                    <h5 class="tl-footer-heading">About TopLancer</h5>
+                    <ul class="tl-footer-links list-unstyled">
+                        <li><a href="#">Introduce</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support Request</a></li>
+                    </ul>
+                </div>
+
+                <div class="tl-footer-col">
+                    <h5 class="tl-footer-heading">Employer</h5>
+                    <ul class="tl-footer-links list-unstyled">
+                        <li><a href="#">Job Posting</a></li>
+                        <li><a href="#">How it works</a></li>
+                        <li><a href="#">Find candidates</a></li>
+                    </ul>
+                </div>
+
+                <div class="tl-footer-col">
+                    <h5 class="tl-footer-heading">Candidates</h5>
+                    <ul class="tl-footer-links list-unstyled">
+                        <li><a href="#">Register</a></li>
+                        <li><a href="#">How it works</a></li>
+                        <li><a href="#">Find freelance work</a></li>
+                        <li><a href="#">Find a full-time job</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="tl-footer-bottom">
+            <div class="container">
+                <p class="mb-0">Copyright &copy; 2026 topLancer Co., Ltd. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="~/js/ui.js"></script>
+    <script src="~/js/modal.js"></script>
+    <script src="~/js/app.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

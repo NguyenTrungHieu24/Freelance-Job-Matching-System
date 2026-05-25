@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Dashboard</h2>
+            <p class="text-muted mb-0">
+                Overview of system statistics and activities
+            </p>
+        </div>
+
+        <div>
+            <select id="dashboardRange" class="form-select">
+                <option value="Today">Today</option>
+                <option value="ThisWeek">This Week</option>
+                <option value="ThisMonth" selected>This Month</option>
+                <option value="ThisYear">This Year</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- OVERVIEW CARDS -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body row">
+                    <div id="usersLoading">
+                        <h6 class="text-muted">Total Users</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="usersContent" class="d-none">
+
+                        <h6 class="text-muted">Total Users</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalUsers" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="newUsers">
+                                    +0 new users
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartUsers"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+
+                    <div id="jobsLoading">
+                        <h6 class="text-muted">Total Jobs</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="jobsContent" class="d-none">
+                        <h6 class="text-muted">Total Jobs</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalJobs" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="activeJobs">
+                                    0 active jobs
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartJobs"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+
+                    <div id="applicationsLoading">
+                        <h6 class="text-muted">Applications</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="applicationsContent" class="d-none">
+                        <h6 class="text-muted">Applications</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalApplications" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="matchRate">
+                                    0% match rate
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartApplications"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+
+                    <div id="revenueLoading">
+                        <h6 class="text-muted">Revenue</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-text"></div>
+                                <div class="skeleton skeleton-sm"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="skeleton skeleton-chart h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="revenueContent" class="d-none">
+                        <h6 class="text-muted">Revenue</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 id="totalRevenue" class="fw-bold">0</h2>
+
+                                <small class="text-success" id="monthlyRevenue">
+                                    $0 this month
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="miniChartRevenue"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="row g-4 mb-4">
+
+        <!-- USER GROWTH -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">User Growth</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div id="userGrowthLoading"
+                         class="skeleton skeleton-chart">
+                    </div>
+
+                    <canvas id="userGrowthContent"
+                            height="120"
+                            class="d-none">
+                    </canvas>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- JOB GROWTH -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Job Statistics</h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div id="jobGrowthLoading"
+                         class="skeleton skeleton-chart">
+                    </div>
+
+                    <canvas id="jobGrowthContent"
+                            height="120"
+                            class="d-none">
+                    </canvas>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLES -->
+    <div class="row g-4">
+
+        <!-- RECENT USERS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Recent Users</h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentUsersLoading">
+
+                            <tr>
+                                <td colspan="3">
+
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                        <tbody id="recentUsersContent" class="d-none">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT JOBS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Recent Jobs</h5>
+                </div>
+
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Employer</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="recentJobsLoading">
+
+                            <tr>
+                                <td colspan="3">
+
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+                                    <div class="skeleton skeleton-row"></div>
+
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                        <tbody id="recentJobsContent" class="d-none">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/pages/admin/dashboard.js" asp-append-version="true"></script>
+}

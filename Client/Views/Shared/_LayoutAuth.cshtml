@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+
+    <title>@ViewData["Title"]</title>
+    <link rel="icon" href="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body class="hold-transition login-page">
+
+    @RenderSection("Styles", required: false)
+
+
+    <!-- Content -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success d-flex justify-content-between" role="button">
+            @TempData["Success"]
+            <i class="bi bi-x" onclick="$(this).parent().remove();"></i>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger d-flex justify-content-between" role="button">
+            @TempData["Error"]
+            <i class="bi bi-x" onclick="$(this).parent().remove();"></i>
+        </div>
+    }
+    @RenderBody()
+
+    @await Html.PartialAsync("Components/_LoadingOverlay")
+
+    <div class="js-modal-list">
+        @RenderSection("Modals", required: false)
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

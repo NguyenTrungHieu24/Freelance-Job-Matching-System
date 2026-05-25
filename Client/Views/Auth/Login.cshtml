@@ -1,0 +1,73 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_LayoutAuth";
+}
+
+
+<div class="login-box">
+
+    <div class="login-logo">
+        <a href="/" class="d-flex align-items-center justify-content-center gap-2">
+            <img class="img-fluid rounded-circle" width="80" height="80" src="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg" />
+            <div class="text-left">
+                <b>TalentBridge</b>
+                <div class="text-muted fs-6">Freelancer Job Matching System</div>
+            </div>
+        </a>
+    </div>
+
+    <div class="card">
+
+        <div class="card-body login-card-body">
+
+            <p class="login-box-msg">Sign in to start your session</p>
+
+            <form asp-action="Login" method="post">
+                <input asp-for="Path" type="hidden" class="form-control" placeholder="Path" value="@(ViewData["Path"])">
+
+                <div class="input-group mb-3">
+                    <input asp-for="Email" class="form-control" placeholder="Email" type="email" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group mb-3">
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="bi bi-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="text-danger mb-2">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Login
+                </button>
+
+                <div class="mt-3 text-center">
+                    <a asp-action="Register" class="text-primary">
+                        Create new account
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

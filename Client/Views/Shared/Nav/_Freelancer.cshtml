@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<li>
+    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")"
+       href="/Freelancer/Dashboard">
+        Dashboard
+    </a>
+</li>
+
+<li>
+    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")"
+       href="#">
+        Job Search
+    </a>
+</li>
+
+<li class="tl-nav-dropdown-wrap">
+    <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")"
+       href="#">
+        Job Management
+    </a>
+    <div class="tl-nav-dropdown">
+        <a href="#">My Jobs</a>
+        <a href="#">Applications</a>
+        <a href="#">Contracts</a>
+    </div>
+</li>
+
+<li class="tl-nav-dropdown-wrap">
+    <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")"
+       href="#">
+        Statistical
+    </a>
+    <div class="tl-nav-dropdown">
+        <a href="#">Revenue</a>
+        <a href="#">Jobs Overview</a>
+    </div>
+</li>
+
+<li>
+    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Message" ? "is-active" : "")"
+       href="#">
+        Message
+    </a>
+</li>
