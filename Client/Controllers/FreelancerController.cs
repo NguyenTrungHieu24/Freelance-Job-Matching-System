@@ -124,7 +124,7 @@ namespace Client.Controllers;
                 {
                     CvPortfolio = data,
                     AllSkills = allSkills,
-                    SelectedSkill = data.Skills.Select(s => s.Id).ToList()
+                    SelectedSkill = data.Skills?.Select(s => s.Id).ToList() ?? new List<int>()
                 };
                 return View(model);
             }
@@ -162,12 +162,11 @@ namespace Client.Controllers;
 
                 var updateDto = new UpdateFreelancerCvDto
                 {
-                    Title = model.CvPortfolio.Title,
-                    Bio = model.CvPortfolio.Bio,
-                    CVUrl = model.CvPortfolio.CVUrl,
-                    PortfolioUrl = model.CvPortfolio.PortfolioUrl,
-                    PortfolioDescription = model.CvPortfolio.PortfolioDescription,
-                    Skills = model.SelectedSkill
+                    Title = model.CvPortfolio?.Title,
+                    Bio = model.CvPortfolio?.Bio,
+                    PortfolioUrl = model.CvPortfolio?.PortfolioUrl,
+                    PortfolioDescription = model.CvPortfolio?.PortfolioDescription,
+                    Skills = model.SelectedSkill ?? new List<int>()
                 };
                 var success = await PutAsync("api/freelancer/cv-portfolio", updateDto);
                 if (success)
