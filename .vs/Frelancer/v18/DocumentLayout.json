@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\",
   "Documents": [
     {
+<<<<<<< HEAD
       "AbsoluteMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|c:\\users\\administrator\\downloads\\new folder\\freelance-job-matching-system\\client\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|solutionrelative:client\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+=======
+>>>>>>> 000240d (update layout home)
       "AbsoluteMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|c:\\users\\administrator\\downloads\\new folder\\freelance-job-matching-system\\client\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|solutionrelative:client\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
+<<<<<<< HEAD
       "AbsoluteMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|c:\\users\\administrator\\downloads\\new folder\\freelance-job-matching-system\\client\\views\\auth\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|solutionrelative:client\\views\\auth\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|c:\\users\\administrator\\downloads\\new folder\\freelance-job-matching-system\\client\\views\\auth\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|solutionrelative:client\\views\\auth\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+=======
+      "AbsoluteMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|c:\\users\\administrator\\downloads\\new folder\\freelance-job-matching-system\\client\\client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{61B9FD5C-FD67-4B7F-86D0-23CF648221AD}|Client\\Client.csproj|solutionrelative:client\\client.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+>>>>>>> 000240d (update layout home)
     }
   ],
   "DocumentGroupContainers": [
@@ -31,6 +39,7 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+<<<<<<< HEAD
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Client\\Controllers\\AuthController.cs",
@@ -39,11 +48,22 @@
               "ViewState": "AgIAAH0AAAAAAAAAAAAowJUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-25T15:04:52.513Z",
+=======
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Client\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Client\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAACoFAAAAAAAAAAAiwD4FAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-26T21:07:31.482Z",
+>>>>>>> 000240d (update layout home)
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+<<<<<<< HEAD
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "Client\\Views\\Home\\Index.cshtml",
@@ -78,6 +98,17 @@
               "ViewState": "AgIAADgAAAAAAAAAAAAwwHYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-05-25T14:35:28.038Z"
+=======
+              "Title": "Client",
+              "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Client.csproj",
+              "RelativeDocumentMoniker": "Client\\Client.csproj",
+              "ToolTip": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Client.csproj",
+              "RelativeToolTip": "Client\\Client.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-26T21:04:45.485Z",
+              "EditorCaption": ""
+>>>>>>> 000240d (update layout home)
             }
           ]
         }
