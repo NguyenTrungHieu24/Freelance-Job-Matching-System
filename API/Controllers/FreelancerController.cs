@@ -5,6 +5,7 @@ using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,14 @@ namespace API.Controllers
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly IUserService _user;
+        private readonly IWebHostEnvironment _env;
         
-        public FreelancerController(AppDbContext context, IMapper mapper, IUserService user)
+        public FreelancerController(AppDbContext context, IMapper mapper, IUserService user,  IWebHostEnvironment env)
         {
             _context = context;
             _mapper = mapper;
             _user = user;
+            _env = env;
         }
 
         [HttpGet("profile")]
@@ -106,6 +109,59 @@ namespace API.Controllers
             
             await _context.SaveChangesAsync();
             return Ok(new { message = "Update profile successfully"});
+        }
+        
+        [HttpPost("profile/upload")]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest();
+            
+            long maxFileSize = 5 * 1024 * 1024; //5MB
+            if(file.Length > maxFileSize)
+                return BadRequest();
+            
+            var extension = Path.GetExtension(file.FileName).ToLower();
+            if(extension != ".pdf" || extension != ".doc" || extension != ".docx" || extension != ".jpg" || extension != ".png")
+                return BadRequest();
+
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            
+            if(profile == null)
+                return NotFound();
+
+            var uploadDir = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads");
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            if (!string.IsNullOrEmpty(profile.CVUrl))
+            {
+                var oldFileName = Path.GetFileName(profile.CVUrl);
+                var oldFilePath = Path.Combine(uploadDir, oldFileName);
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+            }
+
+            var uniqueName = $"CV_{userId}_{Guid.NewGuid()}{extension}";
+            var filePath = Path.Combine(uploadDir, uniqueName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var request = HttpContext.Request;
+            var fileUrl = $"{request.Scheme}://{request.Host}/uploads/{uniqueName}";
+            profile.CVUrl = fileUrl;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { cvUrl = fileUrl, message = "Upload CV successfully" });
         }
     }
 }
