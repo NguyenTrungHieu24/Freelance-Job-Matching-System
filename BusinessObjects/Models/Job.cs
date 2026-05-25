@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -35,5 +35,7 @@ namespace BusinessObjects.Models
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+
+        public ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
     }
 }
