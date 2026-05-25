@@ -146,6 +146,11 @@ namespace Client.Controllers
             }
         }
 
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
