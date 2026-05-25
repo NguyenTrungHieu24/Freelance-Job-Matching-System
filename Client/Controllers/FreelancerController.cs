@@ -1,5 +1,6 @@
 using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using Client.Models.Auth;
 using Client.Models.Freelancer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -181,6 +182,42 @@ namespace Client.Controllers;
             {
                 TempData["Error"] = ex.Message;
                 return RedirectToAction("WorkProfile");
+            }
+        }
+
+        [HttpGet("change-password")]
+        public IActionResult ChangePassword()
+        {
+            return View(new ChangePasswordViewModel());
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            try
+            {
+                var success = await PutAsync("api/auth/change-password", new
+                {
+                    OldPassword = model.OldPassword,
+                    NewPassword = model.NewPassword,
+                    ConfirmPassword = model.ConfirmPassword
+                });
+
+                if (success)
+                {
+                    TempData["Success"] = "Password changed successfully!";
+                    return RedirectToAction("ChangePassword");
+                }
+
+                TempData["Error"] = "Failed to change password";
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = e.Message;
+                return View(model);
             }
         }
     }
