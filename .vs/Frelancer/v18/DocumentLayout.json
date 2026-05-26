@@ -64,6 +64,7 @@
               "$type": "Document",
               "DocumentIndex": 1,
 <<<<<<< HEAD
+<<<<<<< HEAD
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "Client\\Views\\Home\\Index.cshtml",
@@ -100,15 +101,22 @@
               "WhenOpened": "2026-05-25T14:35:28.038Z"
 =======
               "Title": "Client",
+=======
+              "Title": "Client.csproj",
+>>>>>>> 3819bf7 (update layout home)
               "DocumentMoniker": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Client.csproj",
               "RelativeDocumentMoniker": "Client\\Client.csproj",
               "ToolTip": "C:\\Users\\Administrator\\Downloads\\New folder\\Freelance-Job-Matching-System\\Client\\Client.csproj",
               "RelativeToolTip": "Client\\Client.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+<<<<<<< HEAD
               "WhenOpened": "2026-05-26T21:04:45.485Z",
               "EditorCaption": ""
 >>>>>>> 000240d (update layout home)
+=======
+              "WhenOpened": "2026-05-26T21:04:45.485Z"
+>>>>>>> 3819bf7 (update layout home)
             }
           ]
         }
