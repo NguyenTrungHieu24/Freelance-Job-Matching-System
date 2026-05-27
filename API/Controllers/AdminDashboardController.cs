@@ -1,9 +1,8 @@
 ﻿using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
+using BusinessObjects.Common.Admin;
 using BusinessObjects.Enums;
-using BusinessObjects.Models;
-using Client.Models.Admin;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

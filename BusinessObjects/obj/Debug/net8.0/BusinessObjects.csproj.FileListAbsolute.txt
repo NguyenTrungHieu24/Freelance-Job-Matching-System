@@ -1,15 +1,15 @@
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\bin\Debug\net8.0\BusinessObjects.deps.json
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\bin\Debug\net8.0\BusinessObjects.runtimeconfig.json
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\bin\Debug\net8.0\BusinessObjects.dll
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\bin\Debug\net8.0\BusinessObjects.pdb
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.csproj.AssemblyReference.cache
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.AssemblyInfoInputs.cache
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.AssemblyInfo.cs
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.csproj.CoreCompileInputs.cache
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.sourcelink.json
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.dll
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\refint\BusinessObjects.dll
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.pdb
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.genruntimeconfig.cache
-C:\Users\Administrator\Downloads\New folder\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\ref\BusinessObjects.dll
+D:\VisualStudio\Frelancer\BusinessObjects\bin\Debug\net8.0\BusinessObjects.deps.json
+D:\VisualStudio\Frelancer\BusinessObjects\bin\Debug\net8.0\BusinessObjects.runtimeconfig.json
+D:\VisualStudio\Frelancer\BusinessObjects\bin\Debug\net8.0\BusinessObjects.dll
+D:\VisualStudio\Frelancer\BusinessObjects\bin\Debug\net8.0\BusinessObjects.pdb
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.csproj.AssemblyReference.cache
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.GeneratedMSBuildEditorConfig.editorconfig
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.AssemblyInfoInputs.cache
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.AssemblyInfo.cs
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.csproj.CoreCompileInputs.cache
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.sourcelink.json
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.dll
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\refint\BusinessObjects.dll
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.pdb
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\BusinessObjects.genruntimeconfig.cache
+D:\VisualStudio\Frelancer\BusinessObjects\obj\Debug\net8.0\ref\BusinessObjects.dll
