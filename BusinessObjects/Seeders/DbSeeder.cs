@@ -12,15 +12,28 @@ namespace BusinessObjects.Seeders
             AppDbContext context
         )
         {
-            await context.Database.EnsureCreatedAsync();
+            try
+            {
+                await context.Database.EnsureCreatedAsync();
 
-            await RoleSeeder.SeedAsync(context);
+                await RoleSeeder.SeedAsync(context);
 
-            await UserSeeder.SeedAsync(context);
+                await UserSeeder.SeedAsync(context);
 
-            await SkillSeeder.SeedAsync(context);
+                await EmployerProfileSeeder.SeedAsync(context);
 
-            await CategorySeeder.SeedAsync(context);
+                await FreelancerProfileSeeder.SeedAsync(context);
+
+                await SkillSeeder.SeedAsync(context);
+
+                await CategorySeeder.SeedAsync(context);
+
+                await JobSeeder.SeedAsync(context);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

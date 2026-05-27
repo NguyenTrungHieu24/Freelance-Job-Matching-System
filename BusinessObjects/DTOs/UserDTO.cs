@@ -27,12 +27,12 @@ namespace BusinessObjects.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [EmailAddress(ErrorMessage = "Invalid Email format")]
         [StringLength(150)]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Role is required")]
-        [RegularExpression("", ErrorMessage = "Invalid role")]
+        [RegularExpression("", ErrorMessage = "Invalid Role")]
         public string Role { get; set; }
     }
 
@@ -43,7 +43,7 @@ namespace BusinessObjects.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [EmailAddress(ErrorMessage = "Invalid Email format")]
         [StringLength(150)]
         public string Email { get; set; }
 
@@ -57,14 +57,14 @@ namespace BusinessObjects.DTOs
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
-        [RegularExpression("", ErrorMessage = "Invalid role")]
+        [RegularExpression("", ErrorMessage = "Invalid Role")]
         public int? Role { get; set; }
     }
 
     public class LoginDto
     {
         [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [EmailAddress(ErrorMessage = "Invalid Email format")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
