@@ -73,11 +73,9 @@ namespace API.Controllers
             var totalJobs = await _context.Jobs
                 .CountAsync();
 
-            var activeJobs = await _context.Jobs
-                .CountAsync(x => x.Status == JobStatus.ACTIVE.ToString());
+            var activeJobs = await _context.Jobs.CountAsync(x => x.Status == JobStatus.ACTIVE);
 
-            var closedJobs = await _context.Jobs
-                .CountAsync(x => x.Status == JobStatus.CLOSED.ToString());
+            var closedJobs = await _context.Jobs.CountAsync(x => x.Status == JobStatus.CLOSED);
 
             var newJobs = await _context.Jobs
                 .CountAsync(x =>
@@ -105,8 +103,7 @@ namespace API.Controllers
             var totalApplications = await _context.Applications
                 .CountAsync();
 
-            var totalMatches = await _context.Applications
-                .CountAsync(x => x.Status == ApplicationStatus.ACCEPTED.ToString());
+            var totalMatches = await _context.Applications.CountAsync(x => x.Status == ApplicationStatus.ACCEPTED);
 
             var newApplications = await _context.Applications
                 .CountAsync(x => x.AppliedAt >= fromDate);
@@ -227,9 +224,9 @@ namespace API.Controllers
 
                     TotalJobs = x.Count(),
 
-                    ActiveJobs = x.Count(y => y.Status == JobStatus.ACTIVE.ToString()),
+                    ActiveJobs = x.Count(y => y.Status == JobStatus.ACTIVE),
 
-                    ClosedJobs = x.Count(y => y.Status == JobStatus.CLOSED.ToString())
+                    ClosedJobs = x.Count(y => y.Status == JobStatus.CLOSED)
                 })
                 .OrderBy(x => x.Label)
                 .ToList();
