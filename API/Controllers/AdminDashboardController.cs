@@ -3,13 +3,15 @@ using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common.Admin;
 using BusinessObjects.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [Route("api/admin/dashboard")]
     [ApiController]
+    [Route("api/admin/dashboard")]
+    [Authorize(Policy = "AdminOnly")]
     public class AdminDashboardController : BaseController
     {
         public AdminDashboardController(AppDbContext context, IMapper mapper, IUserService user) : base(context, mapper, user)

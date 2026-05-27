@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PayOS;
+using System;
 using System.Security.Claims;
 using System.Text;
 
@@ -110,16 +111,21 @@ builder.Services.AddAuthorization(options =>
         ));
 });
 
-builder.Services.Configure<PayOSSettings>(
-    builder.Configuration.GetSection("PayOS"));
+builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
 
 builder.Services.AddSingleton<PayOSClient>(x =>
 {
-    var settings = x
-        .GetRequiredService<IOptions<PayOSSettings>>()
-        .Value;
+    var settings = x.GetRequiredService<IOptions<PayOSSettings>>().Value;
 
-    return new PayOSClient(settings);
+    Console.WriteLine($"ClientId: {settings.ClientId}");
+    Console.WriteLine($"ApiKey: {settings.ApiKey}");
+    Console.WriteLine($"ChecksumKey: {settings.ChecksumKey}");
+
+    return new PayOSClient(
+        settings.ClientId,
+        settings.ApiKey,
+        settings.ChecksumKey
+    );
 });
 
 builder.Services.AddScoped<IPayOSService, PayOSService>();

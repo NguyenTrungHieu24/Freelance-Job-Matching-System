@@ -25,13 +25,11 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreatePaymentRequest request)
         {
-            long orderCode = DateTimeOffset
-                .Now
-                .ToUnixTimeMilliseconds();
+            long orderCode = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             var result = await _payOSService
                 .CreatePaymentLink(
-                    orderCode,
+                    request.OrderCode,
                     request.Amount,
                     request.Description
                 );
