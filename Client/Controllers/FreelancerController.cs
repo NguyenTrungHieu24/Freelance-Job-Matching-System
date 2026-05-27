@@ -1,5 +1,6 @@
 using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using Client.Models.Auth;
 using Client.Models.Freelancer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace Client.Controllers;
                     if (!successUpload)
                     {
                         TempData["Error"] = "Error uploading avatar";
-                        return View(model);
+                        return RedirectToAction("PersonalInfo");
                     }
                 }
 
@@ -77,12 +78,12 @@ namespace Client.Controllers;
                 }
                 
                 TempData["Error"] = "Error updating settings";
-                return View(model);
+                return RedirectToAction("PersonalInfo");
             }
             catch (Exception ex)
             {
                 TempData["Error"] = ex.Message;
-                return View(model);
+                return RedirectToAction("PersonalInfo");
             }
         }
 
@@ -126,7 +127,7 @@ namespace Client.Controllers;
                     AllSkills = allSkills,
                     SelectedSkill = data.Skills?.Select(s => s.Id).ToList() ?? new List<int>()
                 };
-                return View(model);
+                return RedirectToAction("WorkProfile");
             }
             catch (Exception ex)
             {
@@ -147,9 +148,11 @@ namespace Client.Controllers;
                         TempData["Error"] = "CV file size is too large (max 5MB)";
                         return RedirectToAction("WorkProfile");
                     }
-                    if (Path.GetExtension(model.CvFile.FileName).ToLower() != ".pdf")
+                    var extension = Path.GetExtension(model.CvFile.FileName).ToLower();
+                    var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
+                    if (!allowedExtensions.Contains(extension)) 
                     {
-                        TempData["Error"] = "Only PDF files are supported";
+                        TempData["Error"] = "PDF, doc, docx files are supported";
                         return RedirectToAction("WorkProfile");
                     }
                     var successUpload = await UploadFileAsync("api/freelancer/cv-portfolio/cv-upload", model.CvFile);
@@ -181,6 +184,42 @@ namespace Client.Controllers;
             {
                 TempData["Error"] = ex.Message;
                 return RedirectToAction("WorkProfile");
+            }
+        }
+
+        [HttpGet("change-password")]
+        public IActionResult ChangePassword()
+        {
+            return View(new ChangePasswordViewModel());
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            try
+            {
+                var success = await PutAsync("api/auth/change-password", new
+                {
+                    OldPassword = model.OldPassword,
+                    NewPassword = model.NewPassword,
+                    ConfirmPassword = model.ConfirmPassword
+                });
+
+                if (success)
+                {
+                    TempData["Success"] = "Password changed successfully!";
+                    return RedirectToAction("ChangePassword");
+                }
+
+                TempData["Error"] = "Failed to change password";
+                return RedirectToAction("ChangePassword");
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = e.Message;
+                return RedirectToAction("ChangePassword");
             }
         }
     }

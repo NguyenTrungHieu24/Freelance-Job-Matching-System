@@ -1,3 +1,4 @@
+using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
@@ -28,7 +29,7 @@ namespace API.Controllers
             _user = user;
             _env = env;
         }
-        
+
         [HttpGet("personal-info")]
         public async Task<IActionResult> GetPersonalInfo()
         {
@@ -37,13 +38,14 @@ namespace API.Controllers
                 .Include(u => u.FreelancerProfile)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return NotFound("User not found");
-            
+
             if (user.FreelancerProfile == null)
             {
                 var newProfile = new FreelancerProfile { AccountId = userId, Title = "", Bio = "" };
                 _context.FreelancerProfiles.Add(newProfile);
                 await _context.SaveChangesAsync();
             }
+
             var dto = new FreelancerPersonalInfoDto
             {
                 AccountId = user.Id,
@@ -64,60 +66,57 @@ namespace API.Controllers
                 .Include(u => u.FreelancerProfile)
                 .FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return NotFound("User not found");
-            
+
             var emailExists = await _context.Users.AnyAsync(u => u.Email == dto.Email && u.Id != userId);
             if (emailExists) return BadRequest("Email already exists");
-            
+
             if (!string.IsNullOrEmpty(dto.Phone))
             {
-                var phoneExists = await _context.FreelancerProfiles.AnyAsync(f => f.Phone == dto.Phone && f.AccountId != userId);
+                var phoneExists =
+                    await _context.FreelancerProfiles.AnyAsync(f => f.Phone == dto.Phone && f.AccountId != userId);
                 if (phoneExists) return BadRequest("Phone number already exists");
             }
-            
+
             user.FullName = dto.FullName;
             user.Email = dto.Email;
-            
+
             if (user.FreelancerProfile != null)
             {
                 user.FreelancerProfile.Phone = dto.Phone;
                 user.FreelancerProfile.Address = dto.Address;
             }
+
             await _context.SaveChangesAsync();
             return Ok(new { message = "Update personal information successfully" });
         }
-        
+
         [HttpPost("personal-info/avatar-upload")]
         public async Task<IActionResult> UploadAvatar(IFormFile file)
         {
-            if (file == null || file.Length == 0) return BadRequest("Invalid file");
-            var extension = Path.GetExtension(file.FileName).ToLower();
-            var allowedExtensions = new[] { ".jpg", ".png", ".jpeg" };
-            if (!allowedExtensions.Contains(extension)) return BadRequest("Invalid extension");
-            if (file.Length > 2 * 1024 * 1024) return BadRequest("File is too large (max 2MB)");
-            var userId = _user.UserId;
-            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(f => f.AccountId == userId);
-            if (profile == null) return NotFound("Profile not found");
-            var uploadDir = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads", "avatar");
-            if (!Directory.Exists(uploadDir)) Directory.CreateDirectory(uploadDir);
-            
-            if (!string.IsNullOrEmpty(profile.ProfilePhoto))
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == _user.UserId);
+            if (profile == null) return NotFound();
+            if (!FileValidateHelper.IsAvatarValid(file))
+                return BadRequest();
+            if (file.Length > 0)
             {
-                var oldFilePath = Path.Combine(uploadDir, Path.GetFileName(profile.ProfilePhoto));
-                if (System.IO.File.Exists(oldFilePath)) System.IO.File.Delete(oldFilePath);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatar", file.FileName);
+                using (var stream = System.IO.File.Create(path))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var request = HttpContext.Request;
+                profile.ProfilePhoto = $"{request.Scheme}://{request.Host}/uploads/avatar/" + file.FileName;
             }
-            var uniqueFileName = $"Avatar_{userId}_{Guid.NewGuid()}{extension}";
-            var filePath = Path.Combine(uploadDir, uniqueFileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            else
             {
-                await file.CopyToAsync(stream);
+                profile.ProfilePhoto = "";
             }
-            var request = HttpContext.Request;
-            var fileUrl = $"{request.Scheme}://{request.Host}/uploads/avatar/{uniqueFileName}";
-            profile.ProfilePhoto = fileUrl;
+
             await _context.SaveChangesAsync();
-            return Ok(new { avatarUrl = fileUrl, message = "Upload avatar successfully" });
+            return Ok(new { avatarUrl = profile.ProfilePhoto, message = "Upload avatar successfully" });
         }
-        
+
         [HttpGet("cv-portfolio")]
         public async Task<IActionResult> GetCvPortfolio()
         {
@@ -130,6 +129,7 @@ namespace API.Controllers
                 _context.FreelancerProfiles.Add(profile);
                 await _context.SaveChangesAsync();
             }
+
             var dto = new FreelancerCvDto
             {
                 ProfileId = profile.Id,
@@ -139,7 +139,7 @@ namespace API.Controllers
                 PortfolioUrl = profile.PortfolioUrl,
                 PortfolioDescription = profile.PortfolioDescription
             };
-         
+
             var skillIds = await _context.FreelancerSkills
                 .Where(fs => fs.FreelancerProfileId == profile.Id)
                 .Select(fs => fs.SkillId)
@@ -150,7 +150,7 @@ namespace API.Controllers
             dto.Skills = _mapper.Map<List<SkillDTO>>(skills);
             return Ok(dto);
         }
-        
+
         [HttpPut("cv-portfolio")]
         public async Task<IActionResult> UpdateCvPortfolio([FromBody] UpdateFreelancerCvDto dto)
         {
@@ -159,7 +159,7 @@ namespace API.Controllers
             if (profile == null) return NotFound("Profile not found");
             profile.Title = dto.Title;
             profile.Bio = dto.Bio;
-            profile.PortfolioUrl = dto.PortfolioUrl; 
+            profile.PortfolioUrl = dto.PortfolioUrl;
             profile.PortfolioDescription = dto.PortfolioDescription;
 
             var existingSkills = _context.FreelancerSkills.Where(fs => fs.FreelancerProfileId == profile.Id);
@@ -175,39 +175,36 @@ namespace API.Controllers
                     });
                 }
             }
+
             await _context.SaveChangesAsync();
             return Ok(new { message = "Update CV & Portfolio successfully" });
         }
-        
+
         [HttpPost("cv-portfolio/cv-upload")]
         public async Task<IActionResult> UploadCvFile(IFormFile file)
         {
-            if (file == null || file.Length == 0) return BadRequest("Invalid file");
-            if (file.Length > 5 * 1024 * 1024) return BadRequest("File too large (max 5MB)");
-            var extension = Path.GetExtension(file.FileName).ToLower();
-            if (extension != ".pdf") return BadRequest("Only PDF files are allowed");
-            var userId = _user.UserId;
-            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
-            if (profile == null) return NotFound("Profile not found");
-            var uploadDir = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads", "cv");
-            if (!Directory.Exists(uploadDir)) Directory.CreateDirectory(uploadDir);
-            // Xóa file CV cũ
-            if (!string.IsNullOrEmpty(profile.CVUrl))
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == _user.UserId);
+            if (profile == null) return NotFound();
+            if (!FileValidateHelper.IsCvFileValid(file))
+                return BadRequest();
+            if (file.Length > 0)
             {
-                var oldFilePath = Path.Combine(uploadDir, Path.GetFileName(profile.CVUrl));
-                if (System.IO.File.Exists(oldFilePath)) System.IO.File.Delete(oldFilePath);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cv", file.FileName);
+                using (var stream = System.IO.File.Create(path))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                var request = HttpContext.Request;
+                profile.CVUrl = $"{request.Scheme}://{request.Host}/uploads/cv/" + file.FileName;
             }
-            var uniqueName = $"CV_{userId}_{Guid.NewGuid()}{extension}";
-            var filePath = Path.Combine(uploadDir, uniqueName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            else
             {
-                await file.CopyToAsync(stream);
+                profile.CVUrl = "";
             }
-            var request = HttpContext.Request;
-            var fileUrl = $"{request.Scheme}://{request.Host}/uploads/cv/{uniqueName}";
-            profile.CVUrl = fileUrl;
+
             await _context.SaveChangesAsync();
-            return Ok(new { cvUrl = fileUrl, message = "Upload CV successfully" });
+            return Ok(new { cvUrl = profile.CVUrl, message = "Upload CV successfully" });
         }
     }
 }

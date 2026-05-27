@@ -5,65 +5,2101 @@
     Layout = "_Layout";
 }
 
+
 <section class="content">
-    <div class="container-fluid">
+    <div class="container-fluid p-0">
 
-        <div class="card">
-            <div class="card-body text-center">
+        <style>
+            /* ===== RESET & BASE ===== */
+            *, *::before, *::after {
+                box-sizing: border-box;
+            }
 
-                <div class="p-5 mb-4 rounded-4 text-white text-center"
-                     style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+            :root {
+                --brand: #f05a1a;
+                --brand-dark: #d4440c;
+                --brand-light: #fff1ec;
+                --navy: #1a2e4a;
+                --navy-mid: #253b5e;
+                --bg: #f5f7fa;
+                --surface: #ffffff;
+                --border: #e4e9f0;
+                --text: #1e2d3d;
+                --muted: #6b7a8f;
+                --green: #18a84c;
+                --radius-sm: 8px;
+                --radius-md: 14px;
+                --radius-lg: 22px;
+                --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
+                --shadow-md: 0 8px 24px rgba(0,0,0,.09);
+                --shadow-lg: 0 20px 48px rgba(0,0,0,.12);
+            }
 
-                    <h1 class="fw-bold display-5">
-                        👋 Xin chào
-                        @if (CurrentUser.IsAuthenticated)
-                        {
-                            <strong>@(CurrentUser.Name)</strong>
-                        }
-                        else
-                        {
+            body {
+                background: var(--bg);
+                color: var(--text);
+                scroll-behavior: smooth;
+            }
 
-                        }
-                    </h1>
+            .fv-wrap {
+                max-width: 1220px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
 
-                    <p class="mt-3 fs-5">
-                        Are you ready to conquer new jobs?
-                    </p>
-                </div>
+            /* ===== TOPBAR ===== */
+            .fv-topbar {
+                position: fixed;
+                inset: 0 0 auto 0;
+                z-index: 900;
+                background: var(--navy);
+                box-shadow: 0 4px 20px rgba(0,0,0,.18);
+            }
 
-                @if (!CurrentUser.IsAuthenticated)
-                {
-                    <a href="/auth/login" class="btn btn-lg btn-primary">
-                        Get started
-                    </a>
+            .fv-topbar-inner {
+                height: 68px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 24px;
+            }
+
+            .fv-brand {
+                font-size: 1.35rem;
+                font-weight: 800;
+                color: #fff;
+                text-decoration: none;
+                white-space: nowrap;
+                letter-spacing: -.01em;
+            }
+
+                .fv-brand span {
+                    color: var(--brand);
                 }
 
+            .fv-nav {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+                .fv-nav a {
+                    color: rgba(255,255,255,.82);
+                    text-decoration: none;
+                    font-weight: 600;
+                    padding: 7px 14px;
+                    border-radius: var(--radius-sm);
+                    font-size: .93rem;
+                    transition: .2s;
+                }
+
+                    .fv-nav a:hover {
+                        color: #fff;
+                        background: rgba(255,255,255,.1);
+                    }
+
+            .fv-nav-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .btn-login {
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                font-size: .9rem;
+                padding: 8px 18px;
+                border-radius: var(--radius-sm);
+                border: 1.5px solid rgba(255,255,255,.35);
+                transition: .2s;
+            }
+
+                .btn-login:hover {
+                    background: rgba(255,255,255,.1);
+                    color: #fff;
+                }
+
+            .btn-register {
+                background: var(--brand);
+                color: #fff;
+                text-decoration: none;
+                font-weight: 700;
+                font-size: .9rem;
+                padding: 8px 18px;
+                border-radius: var(--radius-sm);
+                border: none;
+                transition: .2s;
+            }
+
+                .btn-register:hover {
+                    background: var(--brand-dark);
+                    color: #fff;
+                    transform: translateY(-1px);
+                }
+
+            /* ===== HERO ===== */
+            .fv-hero {
+                margin-top: 68px;
+                background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e3a5f 100%);
+                padding: 72px 0 80px;
+                position: relative;
+                overflow: hidden;
+            }
+
+                .fv-hero::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                    pointer-events: none;
+                }
+
+            .fv-hero-inner {
+                position: relative;
+                text-align: center;
+            }
+
+            .fv-hero-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: rgba(240,90,26,.18);
+                color: #ffa07a;
+                padding: 7px 16px;
+                border-radius: 999px;
+                font-size: .78rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: .1em;
+                margin-bottom: 20px;
+            }
+
+            .fv-hero h1 {
+                font-size: clamp(1.9rem, 4vw, 3.4rem);
+                font-weight: 800;
+                color: #fff;
+                line-height: 1.15;
+                letter-spacing: -.02em;
+                margin: 0 0 14px;
+            }
+
+                .fv-hero h1 span {
+                    color: var(--brand);
+                }
+
+            .fv-hero-sub {
+                color: rgba(255,255,255,.68);
+                font-size: 1.05rem;
+                max-width: 580px;
+                margin: 0 auto 36px;
+                line-height: 1.7;
+            }
+
+            /* Search bar */
+            .fv-search-wrap {
+                max-width: 720px;
+                margin: 0 auto 28px;
+                background: #fff;
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                box-shadow: 0 16px 40px rgba(0,0,0,.22);
+                overflow: hidden;
+            }
+
+            .fv-search-select {
+                border: none;
+                outline: none;
+                background: var(--bg);
+                color: var(--text);
+                font-weight: 600;
+                font-size: .9rem;
+                padding: 0 14px;
+                height: 58px;
+                min-width: 140px;
+                border-right: 1px solid var(--border);
+                cursor: pointer;
+                appearance: auto;
+            }
+
+            .fv-search-input {
+                flex: 1;
+                border: none;
+                outline: none;
+                padding: 0 18px;
+                font-size: 1rem;
+                color: var(--text);
+                height: 58px;
+                background: transparent;
+            }
+
+                .fv-search-input::placeholder {
+                    color: var(--muted);
+                }
+
+            .fv-search-btn {
+                background: var(--brand);
+                color: #fff;
+                border: none;
+                height: 58px;
+                padding: 0 28px;
+                font-weight: 700;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: .2s;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .fv-search-btn:hover {
+                    background: var(--brand-dark);
+                }
+
+            /* Popular tags */
+            .fv-tags {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                max-width: 640px;
+                margin: 0 auto;
+            }
+
+            .fv-tag {
+                background: rgba(255,255,255,.12);
+                color: rgba(255,255,255,.82);
+                padding: 5px 14px;
+                border-radius: 999px;
+                font-size: .82rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition: .2s;
+            }
+
+                .fv-tag:hover {
+                    background: var(--brand);
+                    color: #fff;
+                }
+
+            /* ===== STATS BAR ===== */
+            .fv-stats {
+                background: var(--surface);
+                border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow-sm);
+            }
+
+            .fv-stats-inner {
+                display: flex;
+                align-items: stretch;
+            }
+
+            .fv-stat {
+                flex: 1;
+                text-align: center;
+                padding: 22px 16px;
+                border-right: 1px solid var(--border);
+            }
+
+                .fv-stat:last-child {
+                    border-right: none;
+                }
+
+            .fv-stat-num {
+                font-size: 1.75rem;
+                font-weight: 800;
+                color: var(--brand);
+                line-height: 1;
+            }
+
+            .fv-stat-label {
+                font-size: .8rem;
+                color: var(--muted);
+                font-weight: 600;
+                margin-top: 4px;
+            }
+
+            /* ===== CATEGORIES ===== */
+            .fv-cats {
+                padding: 64px 0 50px;
+            }
+
+            .fv-section-head {
+                margin-bottom: 36px;
+            }
+
+                .fv-section-head h2 {
+                    font-size: clamp(1.4rem, 2.5vw, 2rem);
+                    font-weight: 800;
+                    color: var(--text);
+                    margin: 0 0 8px;
+                    letter-spacing: -.02em;
+                }
+
+                .fv-section-head p {
+                    color: var(--muted);
+                    font-size: .95rem;
+                    margin: 0;
+                }
+
+                .fv-section-head .fv-see-all {
+                    color: var(--brand);
+                    text-decoration: none;
+                    font-weight: 700;
+                    font-size: .9rem;
+                }
+
+                    .fv-section-head .fv-see-all:hover {
+                        text-decoration: underline;
+                    }
+
+            .fv-cat-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 14px;
+            }
+
+            .fv-cat-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 22px 14px;
+                text-align: center;
+                text-decoration: none;
+                color: var(--text);
+                transition: .22s;
+                cursor: pointer;
+            }
+
+                .fv-cat-card:hover {
+                    border-color: var(--brand);
+                    color: var(--brand);
+                    box-shadow: var(--shadow-md);
+                    transform: translateY(-4px);
+                }
+
+            .fv-cat-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 14px;
+                background: var(--brand-light);
+                color: var(--brand);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                margin: 0 auto 12px;
+                transition: .22s;
+            }
+
+            .fv-cat-card:hover .fv-cat-icon {
+                background: var(--brand);
+                color: #fff;
+            }
+
+            .fv-cat-name {
+                font-size: .85rem;
+                font-weight: 700;
+                line-height: 1.3;
+            }
+
+            .fv-cat-count {
+                font-size: .75rem;
+                color: var(--muted);
+                margin-top: 4px;
+            }
+
+            /* ===== JOBS SECTION ===== */
+            .fv-jobs {
+                padding: 56px 0;
+                background: var(--bg);
+            }
+
+            .fv-job-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+                gap: 18px;
+            }
+
+            .fv-job-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 22px;
+                transition: .22s;
+                text-decoration: none;
+                color: var(--text);
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+                .fv-job-card:hover {
+                    box-shadow: var(--shadow-md);
+                    transform: translateY(-4px);
+                    border-color: #c8d6e5;
+                    color: var(--text);
+                }
+
+            .fv-job-header {
+                display: flex;
+                align-items: flex-start;
+                gap: 14px;
+            }
+
+            .fv-job-logo {
+                width: 52px;
+                height: 52px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                object-fit: cover;
+                flex-shrink: 0;
+                background: var(--bg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                color: var(--muted);
+            }
+
+            .fv-job-title {
+                font-size: 1rem;
+                font-weight: 700;
+                margin: 0 0 4px;
+                line-height: 1.3;
+            }
+
+            .fv-job-company {
+                font-size: .83rem;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .fv-job-desc {
+                font-size: .88rem;
+                color: var(--muted);
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            .fv-job-footer {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .fv-job-tags {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .fv-job-tag {
+                background: var(--bg);
+                color: var(--muted);
+                border: 1px solid var(--border);
+                padding: 3px 10px;
+                border-radius: 999px;
+                font-size: .75rem;
+                font-weight: 600;
+            }
+
+            .fv-job-budget {
+                font-size: .92rem;
+                font-weight: 800;
+                color: var(--green);
+                white-space: nowrap;
+            }
+
+            .fv-job-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: .78rem;
+                color: var(--muted);
+                border-top: 1px solid var(--border);
+                padding-top: 12px;
+                margin-top: 2px;
+            }
+
+            .fv-bid-badge {
+                background: var(--brand-light);
+                color: var(--brand);
+                padding: 3px 10px;
+                border-radius: 999px;
+                font-size: .75rem;
+                font-weight: 700;
+            }
+
+            /* ===== HOW IT WORKS ===== */
+            .fv-how {
+                padding: 72px 0;
+                background: var(--surface);
+            }
+
+            .fv-how-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 32px;
+                margin-top: 48px;
+            }
+
+            .fv-step {
+                text-align: center;
+            }
+
+            .fv-step-num {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: var(--brand);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                font-weight: 800;
+                margin: 0 auto 18px;
+                box-shadow: 0 8px 20px rgba(240,90,26,.3);
+            }
+
+            .fv-step h3 {
+                font-size: 1.05rem;
+                font-weight: 800;
+                margin: 0 0 10px;
+            }
+
+            .fv-step p {
+                color: var(--muted);
+                font-size: .9rem;
+                line-height: 1.7;
+                margin: 0;
+            }
+
+            .fv-step-connector {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--border);
+                font-size: 1.5rem;
+                padding-top: 30px;
+            }
+
+            /* ===== FREELANCERS ===== */
+            .fv-freelancers {
+                padding: 60px 0;
+                background: var(--bg);
+            }
+
+            .fv-fl-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 18px;
+            }
+
+            .fv-fl-card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                padding: 24px 18px;
+                text-align: center;
+                transition: .22s;
+                text-decoration: none;
+                color: var(--text);
+            }
+
+                .fv-fl-card:hover {
+                    box-shadow: var(--shadow-md);
+                    transform: translateY(-4px);
+                    color: var(--text);
+                }
+
+            .fv-fl-avatar {
+                width: 72px;
+                height: 72px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid var(--brand-light);
+                margin: 0 auto 12px;
+                display: block;
+                background: var(--bg);
+                font-size: 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .fv-fl-name {
+                font-size: .95rem;
+                font-weight: 700;
+                margin: 0 0 4px;
+            }
+
+            .fv-fl-title {
+                font-size: .8rem;
+                color: var(--muted);
+                margin: 0 0 10px;
+            }
+
+            .fv-fl-stars {
+                color: #f59e0b;
+                font-size: .85rem;
+            }
+
+            .fv-fl-rate {
+                font-size: .82rem;
+                color: var(--green);
+                font-weight: 700;
+                margin-top: 6px;
+            }
+
+            .fv-fl-tag {
+                display: inline-block;
+                margin-top: 8px;
+                background: var(--brand-light);
+                color: var(--brand);
+                padding: 3px 10px;
+                border-radius: 999px;
+                font-size: .73rem;
+                font-weight: 700;
+            }
+
+            /* ===== CTA BANNER ===== */
+            .fv-cta {
+                background: linear-gradient(135deg, var(--brand) 0%, #ff7e40 100%);
+                padding: 70px 0;
+            }
+
+            .fv-cta-inner {
+                text-align: center;
+            }
+
+            .fv-cta h2 {
+                font-size: clamp(1.6rem, 3vw, 2.4rem);
+                font-weight: 800;
+                color: #fff;
+                margin: 0 0 14px;
+            }
+
+            .fv-cta p {
+                color: rgba(255,255,255,.85);
+                font-size: 1rem;
+                margin: 0 0 32px;
+            }
+
+            .fv-cta-actions {
+                display: flex;
+                justify-content: center;
+                gap: 14px;
+                flex-wrap: wrap;
+            }
+
+            .btn-cta-white {
+                background: #fff;
+                color: var(--brand);
+                font-weight: 800;
+                padding: 14px 30px;
+                border-radius: var(--radius-sm);
+                border: none;
+                text-decoration: none;
+                font-size: 1rem;
+                transition: .2s;
+            }
+
+                .btn-cta-white:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 24px rgba(0,0,0,.2);
+                    color: var(--brand-dark);
+                }
+
+            .btn-cta-outline {
+                background: transparent;
+                color: #fff;
+                font-weight: 800;
+                padding: 14px 30px;
+                border-radius: var(--radius-sm);
+                border: 2px solid rgba(255,255,255,.6);
+                text-decoration: none;
+                font-size: 1rem;
+                transition: .2s;
+            }
+
+                .btn-cta-outline:hover {
+                    background: rgba(255,255,255,.15);
+                    color: #fff;
+                }
+
+            /* ===== FOOTER ===== */
+            .fv-footer {
+                background: var(--navy);
+                color: rgba(255,255,255,.82);
+                padding: 60px 0 24px;
+            }
+
+            .fv-footer-logo {
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: #fff;
+                margin-bottom: 12px;
+            }
+
+                .fv-footer-logo span {
+                    color: var(--brand);
+                }
+
+            .fv-footer-desc {
+                font-size: .88rem;
+                line-height: 1.7;
+                max-width: 300px;
+                margin-bottom: 20px;
+            }
+
+            .fv-footer h5 {
+                color: #fff;
+                font-weight: 700;
+                font-size: .95rem;
+                margin-bottom: 18px;
+            }
+
+            .fv-footer-links {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+                .fv-footer-links li {
+                    margin-bottom: 10px;
+                }
+
+                .fv-footer-links a {
+                    color: rgba(255,255,255,.7);
+                    text-decoration: none;
+                    font-size: .88rem;
+                    transition: .2s;
+                }
+
+                    .fv-footer-links a:hover {
+                        color: var(--brand);
+                    }
+
+            .fv-footer-socials {
+                display: flex;
+                gap: 10px;
+            }
+
+            .fv-social {
+                width: 38px;
+                height: 38px;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,.25);
+                color: rgba(255,255,255,.75);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                font-size: .95rem;
+                transition: .2s;
+            }
+
+                .fv-social:hover {
+                    background: var(--brand);
+                    border-color: var(--brand);
+                    color: #fff;
+                }
+
+            .fv-footer-bottom {
+                margin-top: 40px;
+                padding-top: 20px;
+                border-top: 1px solid rgba(255,255,255,.12);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+                font-size: .82rem;
+                color: rgba(255,255,255,.5);
+            }
+
+                .fv-footer-bottom a {
+                    color: rgba(255,255,255,.5);
+                    text-decoration: none;
+                }
+
+                    .fv-footer-bottom a:hover {
+                        color: var(--brand);
+                    }
+
+            /* ===== RESPONSIVE ===== */
+            @@media (max-width: 768px) {
+                .fv-nav {
+                    display: none;
+                }
+
+                .fv-job-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .fv-stats-inner {
+                    flex-wrap: wrap;
+                }
+
+                .fv-stat {
+                    flex: 1 1 50%;
+                    border-bottom: 1px solid var(--border);
+                }
+
+                .fv-search-select {
+                    display: none;
+                }
+            }
+        </style>
+
+
+        <!-- ========== TOPBAR ========== -->
+        <nav class="fv-topbar">
+            <div class="fv-wrap fv-topbar-inner">
+                <a href="/" class="fv-brand">Talent<span>Bridge</span></a>
+
+                <div class="fv-nav">
+                    <a href="#categories">Danh mục</a>
+                    <a href="#projects">Dự án</a>
+                    <a href="#freelancers">Freelancers</a>
+                    <a href="#how">Cách thức</a>
+                </div>
+
+                <div class="fv-nav-actions">
+                    @if (CurrentUser.IsAuthenticated)
+                    {
+                        <span style="color:rgba(255,255,255,.8);font-size:.9rem;font-weight:600">
+                            Xin chào, <strong style="color:#fff">@CurrentUser.Name</strong>
+                        </span>
+                    }
+                    else
+                    {
+                        <a href="/auth/login" class="btn-login">Đăng nhập</a>
+                        <a href="/auth/register" class="btn-register">Đăng ký</a>
+                    }
+                </div>
+            </div>
+        </nav>
+
+        <!-- ========== HERO ========== -->
+        <section class="fv-hero">
+            <div class="fv-wrap fv-hero-inner">
+                <div class="fv-hero-badge">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    Nền tảng Freelance #1 Việt Nam
+                </div>
+
+                <h1>
+                    Tìm Dự Án Phù Hợp —<br>
+                    <span>Kết Nối Nhanh, Thanh Toán An Toàn</span>
+                </h1>
+
+                <p class="fv-hero-sub">
+                    Hàng nghìn dự án mới mỗi ngày. Kết nối Employer và Freelancer
+                    chuyên nghiệp chỉ trong vài phút.
+                </p>
+
+                <!-- Search bar -->
+                <div class="fv-search-wrap">
+                    <select class="fv-search-select">
+                        <option>Tất cả</option>
+                        <option>Lập trình</option>
+                        <option>Thiết kế</option>
+                        <option>Marketing</option>
+                        <option>Nội dung</option>
+                    </select>
+                    <input class="fv-search-input" type="text"
+                           placeholder="VD: Thiết kế logo, Website React, Viết content..." />
+                    <button class="fv-search-btn">
+                        <i class="bi bi-search"></i> Tìm kiếm
+                    </button>
+                </div>
+
+                <!-- Popular tags -->
+                <div class="fv-tags">
+                    <span style="color:rgba(255,255,255,.5);font-size:.82rem;font-weight:600">Phổ biến:</span>
+                    <a href="#" class="fv-tag">React</a>
+                    <a href="#" class="fv-tag">Figma UI/UX</a>
+                    <a href="#" class="fv-tag">SEO</a>
+                    <a href="#" class="fv-tag">ASP.NET</a>
+                    <a href="#" class="fv-tag">Viết bài</a>
+                    <a href="#" class="fv-tag">Logo Design</a>
+                    <a href="#" class="fv-tag">Mobile App</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== STATS BAR ========== -->
+        <div class="fv-stats">
+            <div class="fv-wrap">
+                <div class="fv-stats-inner">
+                    <div class="fv-stat">
+                        <div class="fv-stat-num">18,400+</div>
+                        <div class="fv-stat-label">Freelancer đã đăng ký</div>
+                    </div>
+                    <div class="fv-stat">
+                        <div class="fv-stat-num">9,200+</div>
+                        <div class="fv-stat-label">Dự án hoàn thành</div>
+                    </div>
+                    <div class="fv-stat">
+                        <div class="fv-stat-num">3,500+</div>
+                        <div class="fv-stat-label">Nhà tuyển dụng</div>
+                    </div>
+                    <div class="fv-stat">
+                        <div class="fv-stat-num">98%</div>
+                        <div class="fv-stat-label">Tỷ lệ hài lòng</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-body">
+        <!-- ========== CATEGORIES ========== -->
+        <section class="fv-cats" id="categories">
+            <div class="fv-wrap">
+                <div class="fv-section-head d-flex justify-content-between align-items-end flex-wrap gap-3">
+                    <div>
+                        <h2>Khám Phá Theo Danh Mục</h2>
+                        <p>Tìm freelancer hoặc dự án theo lĩnh vực chuyên môn</p>
+                    </div>
+                    <a href="#" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+                </div>
 
-                <div class="d-flex justify-content-between">
-                    <div class="flex-fill">
-                        <form method="get" class="card p-3 mb-4 shadow-sm">
-                        </form>
+                <div class="fv-cat-grid">
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-code-slash"></i></div>
+                        <div class="fv-cat-name">Lập trình Web</div>
+                        <div class="fv-cat-count">1,240 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-phone"></i></div>
+                        <div class="fv-cat-name">Mobile App</div>
+                        <div class="fv-cat-count">580 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-palette2"></i></div>
+                        <div class="fv-cat-name">UI/UX Design</div>
+                        <div class="fv-cat-count">960 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-vector-pen"></i></div>
+                        <div class="fv-cat-name">Thiết kế đồ họa</div>
+                        <div class="fv-cat-count">720 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-megaphone"></i></div>
+                        <div class="fv-cat-name">Marketing</div>
+                        <div class="fv-cat-count">440 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-pencil-square"></i></div>
+                        <div class="fv-cat-name">Viết nội dung</div>
+                        <div class="fv-cat-count">810 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-camera-video"></i></div>
+                        <div class="fv-cat-name">Video & Motion</div>
+                        <div class="fv-cat-count">310 dự án</div>
+                    </a>
+                    <a href="#" class="fv-cat-card">
+                        <div class="fv-cat-icon"><i class="bi bi-bar-chart-line"></i></div>
+                        <div class="fv-cat-name">Phân tích dữ liệu</div>
+                        <div class="fv-cat-count">270 dự án</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PROJECTS ========== -->
+        <section class="fv-jobs" id="projects">
+            <div class="fv-wrap">
+                <div class="fv-section-head d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+                    <div>
+                        <h2>Dự Án Mới Nhất</h2>
+                        <p>Cập nhật liên tục — hàng trăm dự án mới mỗi ngày</p>
+                    </div>
+                    <a href="#" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+                </div>
+
+                <div class="fv-job-grid">
+
+                    <!-- Card 1 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-globe"></i></div>
+                            <div>
+                                <div class="fv-job-title">Thiết kế & lập trình website bán hàng Shopify</div>
+                                <div class="fv-job-company">Công ty Thời Trang VOGUE VN</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">Cần freelancer có kinh nghiệm Shopify, tích hợp thanh toán VNPAY, thiết kế responsive hiện đại cho ngành thời trang.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">Shopify</span>
+                                <span class="fv-job-tag">Liquid</span>
+                                <span class="fv-job-tag">UI/UX</span>
+                            </div>
+                            <span class="fv-job-budget">5–10 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>2 giờ trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>8 bids</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 2 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-phone"></i></div>
+                            <div>
+                                <div class="fv-job-title">Xây dựng app quản lý đặt lịch React Native</div>
+                                <div class="fv-job-company">BeautyBook Startup</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">App đặt lịch spa/salon, tích hợp calendar, push notification, thanh toán online. Backend Node.js đã có sẵn.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">React Native</span>
+                                <span class="fv-job-tag">Firebase</span>
+                                <span class="fv-job-tag">REST API</span>
+                            </div>
+                            <span class="fv-job-budget">12–18 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>5 giờ trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>14 bids</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 3 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-palette2"></i></div>
+                            <div>
+                                <div class="fv-job-title">Thiết kế bộ nhận diện thương hiệu startup F&B</div>
+                                <div class="fv-job-company">The Coffee Collective</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">Cần logo, brand guideline, menu design, bao bì sản phẩm cho chuỗi cà phê mới. Phong cách minimalist, màu đất.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">Branding</span>
+                                <span class="fv-job-tag">Illustrator</span>
+                                <span class="fv-job-tag">Packaging</span>
+                            </div>
+                            <span class="fv-job-budget">8–15 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>1 ngày trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>22 bids</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 4 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-pencil-square"></i></div>
+                            <div>
+                                <div class="fv-job-title">Viết 20 bài blog chuẩn SEO về tài chính cá nhân</div>
+                                <div class="fv-job-company">FinSmart Media</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">Cần writer am hiểu tài chính, đầu tư. Mỗi bài 1200–1500 từ, keyword research có sẵn, deadline 30 ngày.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">SEO Writing</span>
+                                <span class="fv-job-tag">Tài chính</span>
+                            </div>
+                            <span class="fv-job-budget">3–6 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>1 ngày trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>7 bids</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 5 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-bar-chart-line"></i></div>
+                            <div>
+                                <div class="fv-job-title">Phân tích dữ liệu bán hàng & dashboard Power BI</div>
+                                <div class="fv-job-company">RetailMax Corp</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">Xây dựng dashboard Power BI từ dữ liệu SQL Server, báo cáo doanh thu theo vùng, sản phẩm và kênh phân phối.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">Power BI</span>
+                                <span class="fv-job-tag">SQL</span>
+                                <span class="fv-job-tag">DAX</span>
+                            </div>
+                            <span class="fv-job-budget">4–8 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>2 ngày trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>11 bids</span>
+                        </div>
+                    </a>
+
+                    <!-- Card 6 -->
+                    <a href="#" class="fv-job-card">
+                        <div class="fv-job-header">
+                            <div class="fv-job-logo"><i class="bi bi-camera-video"></i></div>
+                            <div>
+                                <div class="fv-job-title">Dựng video quảng cáo TikTok & Reels 15s</div>
+                                <div class="fv-job-company">GreenLife Products</div>
+                            </div>
+                        </div>
+                        <p class="fv-job-desc">Cần 5 video quảng cáo sản phẩm FMCG, phong cách trendy, có hook mạnh trong 3 giây đầu. Có sẵn footage thô.</p>
+                        <div class="fv-job-footer">
+                            <div class="fv-job-tags">
+                                <span class="fv-job-tag">Video Edit</span>
+                                <span class="fv-job-tag">After Effects</span>
+                                <span class="fv-job-tag">TikTok</span>
+                            </div>
+                            <span class="fv-job-budget">2–4 triệu</span>
+                        </div>
+                        <div class="fv-job-meta">
+                            <span><i class="bi bi-clock me-1"></i>3 ngày trước</span>
+                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>18 bids</span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== HOW IT WORKS ========== -->
+        <section class="fv-how" id="how">
+            <div class="fv-wrap">
+                <div class="fv-section-head text-center" style="max-width:600px;margin:0 auto">
+                    <h2>Cách Thức Hoạt Động</h2>
+                    <p>Chỉ 4 bước đơn giản để bắt đầu dự án của bạn</p>
+                </div>
+
+                <div class="fv-how-grid">
+                    <div class="fv-step">
+                        <div class="fv-step-num">1</div>
+                        <h3>Đăng ký tài khoản</h3>
+                        <p>Tạo hồ sơ miễn phí trong 2 phút. Xác minh danh tính để tăng độ tin cậy với khách hàng.</p>
+                    </div>
+                    <div class="fv-step">
+                        <div class="fv-step-num">2</div>
+                        <h3>Tìm & Đặt giá thầu</h3>
+                        <p>Browse hàng nghìn dự án phù hợp kỹ năng. Đặt giá thầu cạnh tranh với proposal hấp dẫn.</p>
+                    </div>
+                    <div class="fv-step">
+                        <div class="fv-step-num">3</div>
+                        <h3>Thực hiện dự án</h3>
+                        <p>Chat trực tiếp với employer, quản lý milestone, cập nhật tiến độ qua hệ thống.</p>
+                    </div>
+                    <div class="fv-step">
+                        <div class="fv-step-num">4</div>
+                        <h3>Nhận thanh toán</h3>
+                        <p>Tiền được giữ cọc an toàn. Giải ngân ngay sau khi employer xác nhận hoàn thành.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TOP FREELANCERS ========== -->
+        <section class="fv-freelancers" id="freelancers">
+            <div class="fv-wrap">
+                <div class="fv-section-head d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+                    <div>
+                        <h2>Freelancer Nổi Bật</h2>
+                        <p>Những chuyên gia được đánh giá cao nhất trên nền tảng</p>
+                    </div>
+                    <a href="#" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+                </div>
+
+                <div class="fv-fl-grid">
+                    <a href="#" class="fv-fl-card">
+                        <div class="fv-fl-avatar" style="background:#e8f4fd;color:#1a6fb3;font-size:1.6rem">👨‍💻</div>
+                        <div class="fv-fl-name">Nguyễn Minh Khoa</div>
+                        <div class="fv-fl-title">Full-stack Developer</div>
+                        <div class="fv-fl-stars">★★★★★ <span style="color:var(--muted)">(48)</span></div>
+                        <div class="fv-fl-rate">từ 800k/ngày</div>
+                        <span class="fv-fl-tag">React · Node.js</span>
+                    </a>
+                    <a href="#" class="fv-fl-card">
+                        <div class="fv-fl-avatar" style="background:#fef3e8;color:#c2660a;font-size:1.6rem">👩‍🎨</div>
+                        <div class="fv-fl-name">Trần Lê Phương</div>
+                        <div class="fv-fl-title">UI/UX Designer</div>
+                        <div class="fv-fl-stars">★★★★★ <span style="color:var(--muted)">(73)</span></div>
+                        <div class="fv-fl-rate">từ 600k/ngày</div>
+                        <span class="fv-fl-tag">Figma · Framer</span>
+                    </a>
+                    <a href="#" class="fv-fl-card">
+                        <div class="fv-fl-avatar" style="background:#edfaf4;color:#14803a;font-size:1.6rem">📊</div>
+                        <div class="fv-fl-name">Lê Đức Thịnh</div>
+                        <div class="fv-fl-title">Data Analyst</div>
+                        <div class="fv-fl-stars">★★★★☆ <span style="color:var(--muted)">(31)</span></div>
+                        <div class="fv-fl-rate">từ 700k/ngày</div>
+                        <span class="fv-fl-tag">Python · Power BI</span>
+                    </a>
+                    <a href="#" class="fv-fl-card">
+                        <div class="fv-fl-avatar" style="background:#fce8f6;color:#a020a0;font-size:1.6rem">✍️</div>
+                        <div class="fv-fl-name">Phạm Thị Thu Hà</div>
+                        <div class="fv-fl-title">Content Strategist</div>
+                        <div class="fv-fl-stars">★★★★★ <span style="color:var(--muted)">(59)</span></div>
+                        <div class="fv-fl-rate">từ 400k/ngày</div>
+                        <span class="fv-fl-tag">SEO · Copywriting</span>
+                    </a>
+                    <a href="#" class="fv-fl-card">
+                        <div class="fv-fl-avatar" style="background:#fff3e8;color:#e05c00;font-size:1.6rem">📱</div>
+                        <div class="fv-fl-name">Võ Hoàng Nam</div>
+                        <div class="fv-fl-title">Mobile Developer</div>
+                        <div class="fv-fl-stars">★★★★★ <span style="color:var(--muted)">(40)</span></div>
+                        <div class="fv-fl-rate">từ 900k/ngày</div>
+                        <span class="fv-fl-tag">Flutter · Swift</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CTA BANNER ========== -->
+        <section class="fv-cta">
+            <div class="fv-wrap fv-cta-inner">
+                @if (!CurrentUser.IsAuthenticated)
+                {
+                    <h2>Sẵn Sàng Bắt Đầu Hành Trình Freelance?</h2>
+                    <p>Đăng ký miễn phí — Tìm dự án đầu tiên trong hôm nay</p>
+                    <div class="fv-cta-actions">
+                        <a href="/auth/register" class="btn-cta-white">Tạo tài khoản miễn phí</a>
+                        <a href="/auth/login" class="btn-cta-outline">Đăng nhập</a>
+                    </div>
+                }
+                else
+                {
+                    <h2>Chào mừng trở lại, <strong>@CurrentUser.Name</strong>! 👋</h2>
+                    <p>Có hàng trăm dự án mới đang chờ bạn — bắt đầu tìm kiếm ngay</p>
+                    <div class="fv-cta-actions">
+                        <a href="#projects" class="btn-cta-white">Xem dự án mới nhất</a>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- ========== FOOTER ========== -->
+        <footer class="fv-footer">
+            <div class="fv-wrap">
+                <div class="row gy-4">
+                    <div class="col-lg-4">
+                        <div class="fv-footer-logo">Talent<span>Bridge</span></div>
+                        <p class="fv-footer-desc">
+                            Sàn giao dịch việc làm tự do hàng đầu Việt Nam. Kết nối Freelancer
+                            tài năng với Employer uy tín — nhanh chóng, minh bạch, an toàn.
+                        </p>
+                        <div class="fv-footer-socials">
+                            <a href="#" class="fv-social"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="fv-social"><i class="bi bi-linkedin"></i></a>
+                            <a href="#" class="fv-social"><i class="bi bi-youtube"></i></a>
+                            <a href="#" class="fv-social"><i class="bi bi-tiktok"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-6 col-lg-2">
+                        <h5>Về chúng tôi</h5>
+                        <ul class="fv-footer-links">
+                            <li><a href="#">Giới thiệu</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Tuyển dụng</a></li>
+                            <li><a href="#">Liên hệ</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-lg-3">
+                        <h5>Nhà tuyển dụng</h5>
+                        <ul class="fv-footer-links">
+                            <li><a href="#">Đăng dự án</a></li>
+                            <li><a href="#">Tìm Freelancer</a></li>
+                            <li><a href="#">Gói doanh nghiệp</a></li>
+                            <li><a href="#">Cách thức hoạt động</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-lg-3">
+                        <h5>Freelancer</h5>
+                        <ul class="fv-footer-links">
+                            <li><a href="#">Tìm dự án</a></li>
+                            <li><a href="#">Tạo hồ sơ</a></li>
+                            <li><a href="#">Hướng dẫn đặt giá thầu</a></li>
+                            <li><a href="#">Chính sách bảo vệ</a></li>
+                        </ul>
                     </div>
                 </div>
 
+                <<<<<<< HEAD
                 <div class="mt-4">
-                </div>
-            </div>
-        </div>
 
-    </div>
+                    <style>
+                        :root {
+                            --primary: #143f63;
+                            --primary-dark: #0f3350;
+                            --primary-light: #1d4f7c;
+                            --bg: #f4f8fc;
+                            --surface: #ffffff;
+                            --surface-soft: #eef4f9;
+                            --text: #1e293b;
+                            --muted: #64748b;
+                            --border: #d7e2ed;
+                            --white: #ffffff;
+                        }
+
+                        body {
+                            background: var(--bg);
+                            color: var(--text);
+                            overflow-x: hidden;
+                            scroll-behavior: smooth;
+                        }
+
+                        .page-shell {
+                            max-width: 1220px;
+                            margin: 0 auto;
+                            padding: 0 20px;
+                        }
+
+                        .section-space {
+                            padding: 90px 0;
+                        }
+
+                        /* ===== NAVBAR ===== */
+                        .topbar {
+                            position: fixed;
+                            inset: 0 0 auto 0;
+                            z-index: 999;
+                            background: var(--primary);
+                            border-bottom: 1px solid rgba(255,255,255,.08);
+                            box-shadow: 0 10px 30px rgba(0,0,0,.14);
+                        }
+
+                        .topbar-inner {
+                            height: 76px;
+                        }
+
+                        .brand-wrap {
+                            text-decoration: none;
+                        }
+
+                        .brand-logo {
+                            width: 54px;
+                            height: 54px;
+                            border-radius: 50%;
+                            object-fit: cover;
+                            background: #fff;
+                            padding: 4px;
+                            box-shadow: 0 6px 18px rgba(0,0,0,.18);
+                        }
+
+                        .brand-title {
+                            font-size: 1.4rem;
+                            font-weight: 800;
+                            color: #fff;
+                            margin: 0;
+                            line-height: 1;
+                        }
+
+                        .brand-sub {
+                            font-size: 13px;
+                            color: rgba(255,255,255,.72);
+                            margin-top: 6px;
+                        }
+
+                        .nav-link-soft {
+                            color: rgba(255,255,255,.82);
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: .2s;
+                        }
+
+                            .nav-link-soft:hover {
+                                color: #fff;
+                            }
+
+                        /* ===== BUTTONS ===== */
+                        .btn-primary-soft {
+                            background: linear-gradient(135deg, #1d4f7c 0%, #245f95 100%);
+                            color: #fff;
+                            border: 1px solid rgba(255,255,255,.08);
+                            border-radius: 14px;
+                            padding: 13px 22px;
+                            font-weight: 700;
+                            text-decoration: none;
+                            transition: .25s;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                            .btn-primary-soft:hover {
+                                transform: translateY(-2px);
+                                color: #fff;
+                                box-shadow: 0 14px 30px rgba(20,63,99,.28);
+                            }
+
+                        .btn-outline-soft {
+                            border: 1.5px solid rgba(20,63,99,.25);
+                            color: var(--primary);
+                            background: rgba(255,255,255,.7);
+                            border-radius: 14px;
+                            padding: 13px 22px;
+                            text-decoration: none;
+                            font-weight: 700;
+                            transition: .25s;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+
+                            .btn-outline-soft:hover {
+                                background: #eaf2fb;
+                                transform: translateY(-2px);
+                                color: var(--primary);
+                            }
+
+                        /* ===== HERO ===== */
+                        .hero {
+                            padding-top: 140px;
+                            padding-bottom: 90px;
+                        }
+
+                        .hero-grid {
+                            display: grid;
+                            grid-template-columns: 1.1fr .9fr;
+                            gap: 60px;
+                            align-items: center;
+                        }
+
+                        .hero-badge {
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 8px;
+                            background: rgba(20,63,99,.10);
+                            color: var(--primary);
+                            padding: 10px 16px;
+                            border-radius: 999px;
+                            font-size: 12px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                            letter-spacing: .08em;
+                        }
+
+                        .hero-title {
+                            font-size: clamp(2.5rem, 5vw, 4.5rem);
+                            font-weight: 800;
+                            line-height: 1.08;
+                            margin: 24px 0;
+                            letter-spacing: -.03em;
+                            color: var(--text);
+                        }
+
+                            .hero-title .accent {
+                                color: var(--primary);
+                            }
+
+                        .hero-desc {
+                            color: var(--muted);
+                            font-size: 1.08rem;
+                            line-height: 1.8;
+                            max-width: 650px;
+                        }
+
+                        .hero-actions {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 16px;
+                            margin-top: 32px;
+                        }
+
+                        .hero-image-wrap {
+                            position: relative;
+                        }
+
+                        .hero-image {
+                            width: 100%;
+                            aspect-ratio: 1 / 1;
+                            object-fit: cover;
+                            border-radius: 36px;
+                            box-shadow: 0 30px 60px rgba(0,0,0,.12);
+                        }
+
+                        .floating-card {
+                            position: absolute;
+                            left: -20px;
+                            bottom: -20px;
+                            display: flex;
+                            align-items: center;
+                            gap: 14px;
+                            background: rgba(255,255,255,.95);
+                            backdrop-filter: blur(14px);
+                            padding: 18px 22px;
+                            border-radius: 20px;
+                            box-shadow: 0 16px 30px rgba(0,0,0,.12);
+                            border: 1px solid rgba(20,63,99,.12);
+                        }
+
+                        .floating-icon {
+                            width: 52px;
+                            height: 52px;
+                            border-radius: 14px;
+                            background: rgba(20,63,99,.10);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: var(--primary);
+                            font-size: 1.4rem;
+                        }
+
+                        /* ===== COMMON SECTIONS ===== */
+                        .section-title {
+                            font-size: clamp(1.7rem, 3vw, 2.5rem);
+                            font-weight: 800;
+                            margin-bottom: 14px;
+                            letter-spacing: -.02em;
+                            color: var(--text);
+                        }
+
+                        .section-desc {
+                            color: var(--muted);
+                            max-width: 720px;
+                        }
+
+                        .bento-card {
+                            background: var(--surface);
+                            border-radius: 24px;
+                            padding: 32px;
+                            border: 1px solid rgba(215,226,237,.9);
+                            box-shadow: 0 10px 24px rgba(15,23,42,.05);
+                            transition: .25s;
+                            height: 100%;
+                        }
+
+                            .bento-card:hover {
+                                transform: translateY(-6px);
+                                box-shadow: 0 20px 40px rgba(15,23,42,.08);
+                            }
+
+                        .service-icon {
+                            width: 58px;
+                            height: 58px;
+                            border-radius: 18px;
+                            background: rgba(20,63,99,.10);
+                            color: var(--primary);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1.4rem;
+                            margin-bottom: 20px;
+                        }
+
+                        .chip {
+                            padding: 10px 16px;
+                            border-radius: 999px;
+                            background: rgba(20,63,99,.10);
+                            color: var(--primary);
+                            font-size: 12px;
+                            font-weight: 800;
+                            letter-spacing: .08em;
+                            text-transform: uppercase;
+                        }
+
+                        /* ===== PROJECT ===== */
+                        .project-image {
+                            width: 100%;
+                            aspect-ratio: 16/9;
+                            object-fit: cover;
+                            border-radius: 18px;
+                            transition: .35s;
+                        }
+
+                        .project-card:hover .project-image {
+                            transform: scale(1.04);
+                        }
+
+                        /* ===== FOOTER ===== */
+                        .footer-main {
+                            background: var(--primary);
+                            color: #fff;
+                            padding: 80px 0 30px;
+                        }
+
+                        .footer-title {
+                            font-size: 26px;
+                            font-weight: 700;
+                            margin-bottom: 26px;
+                        }
+
+                        .footer-links {
+                            list-style: none;
+                            padding: 0;
+                            margin: 0;
+                        }
+
+                            .footer-links li {
+                                margin-bottom: 14px;
+                            }
+
+                            .footer-links a {
+                                color: rgba(255,255,255,.9);
+                                text-decoration: none;
+                                transition: .2s;
+                            }
+
+                                .footer-links a:hover {
+                                    color: #8ec5ff;
+                                }
+
+                        .social-box {
+                            width: 48px;
+                            height: 48px;
+                            border: 1px solid rgba(255,255,255,.45);
+                            color: #fff;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            text-decoration: none;
+                            border-radius: 10px;
+                            transition: .2s;
+                            font-size: 20px;
+                        }
+
+                            .social-box:hover {
+                                background: rgba(255,255,255,.1);
+                                transform: translateY(-2px);
+                                color: #fff;
+                            }
+
+                        .footer-divider {
+                            height: 1px;
+                            background: rgba(255,255,255,.22);
+                            margin-top: 40px;
+                        }
+
+                        .footer-bottom {
+                            padding-top: 24px;
+                            display: flex;
+                            justify-content: space-between;
+                            flex-wrap: wrap;
+                            gap: 18px;
+                        }
+
+                        .footer-policy {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 14px;
+                            align-items: center;
+                        }
+
+                            .footer-policy a {
+                                color: #fff;
+                                text-decoration: none;
+                            }
+
+                                .footer-policy a:hover {
+                                    color: #8ec5ff;
+                                }
+
+                        /* ===== FLOATING CHAT ===== */
+                        .fab-chat {
+                            position: fixed;
+                            right: 24px;
+                            bottom: 24px;
+                            width: 58px;
+                            height: 58px;
+                            border-radius: 50%;
+                            background: var(--primary-dark);
+                            border: none;
+                            color: #fff;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 0 20px 40px rgba(20,63,99,.28);
+                            z-index: 100;
+                            transition: .25s;
+                        }
+
+                            .fab-chat:hover {
+                                transform: scale(1.08);
+                                color: #fff;
+                            }
+
+                        /* ===== RESPONSIVE ===== */
+                        @@media(max-width:991px) {
+                            .hero-grid {
+                                grid-template-columns: 1fr;
+                            }
+
+                            .floating-card {
+                                left: 12px;
+                                bottom: 12px;
+                            }
+
+                            .footer-bottom {
+                                flex-direction: column;
+                            }
+                        }
+                    </style>
+
+                    <!-- ===== Top bar ===== -->
+                    <nav class="topbar">
+                        <div class="page-shell topbar-inner d-flex align-items-center justify-content-between">
+                            <a class="brand" href="/">Freelancer Job Matching System</a>
+
+                            <div class="d-none d-md-flex align-items-center gap-4">
+                                <a class="nav-link-soft" href="#portfolio">Portfolio</a>
+                                <a class="nav-link-soft" href="#services">Services</a>
+                                <a class="nav-link-soft" href="#contact">Contact</a>
+                            </div>
+
+                            <div class="d-none d-md-block">
+                                @if (CurrentUser.IsAuthenticated)
+                                {
+                                    <span class="me-2 text-muted">Xin chào, <strong>@CurrentUser.Name</strong></span>
+                                }
+                                else
+                                {
+                                    <a href="/auth/login" class="btn-primary-soft">Get started</a>
+                                }
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main>
+                        <!-- ===== Hero section ===== -->
+                        <section class="hero">
+                            <div class="page-shell">
+                                <div class="hero-grid">
+                                    <div>
+                                        <span class="hero-badge">Sẵn sàng nhận dự án mới</span>
+
+                                        <h1 class="hero-title">
+                                            Biến Ý Tưởng Thành
+                                            <span class="accent">Trải Nghiệm</span>
+                                            Kỹ Thuật Số Xuất Sắc
+                                        </h1>
+
+                                        <p class="hero-desc">
+                                            Nền tảng kết nối Freelancer và Employer hiện đại, giúp bạn tìm dự án phù hợp,
+                                            xây dựng đội ngũ nhanh hơn và quản lý công việc hiệu quả hơn.
+                                        </p>
+
+                                        <div class="hero-actions">
+                                            <a href="/auth/login" class="btn-primary-soft">Liên hệ ngay</a>
+                                            <a href="#portfolio" class="btn-outline-soft">Xem dự án</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="hero-image-wrap">
+                                        <img class="hero-image"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ5-RwkoCbpCWOXHRidumGI8SBAKA07H3GFVZCe_WPVmfarBtHw5_ekbgFs4XJsOXmSOrqYO0QIp15Fyk5tMche93tmtGT4siT9LGsRhY05eqkYi4IPAu_vWXAstZNQrSKrD7gSULP6c7H4Q_Md9joq2wHcHu1F5Q43ShC_581YNf54FPJiLk-vw7uy6Qtkssv80uCvkGWWxzD7bvxpemb4i6gntxHjdAmY9WcGLlTfvgoRQ5k3k-ozmL0kRBbpA4CjEhHFkhTDOg"
+                                             alt="Creative workspace" />
+
+                                        <div class="floating-card">
+                                            <div class="service-icon mb-0">
+                                                <i class="bi bi-patch-check"></i>
+                                            </div>
+                                            <div>
+                                                <div class="number">50+</div>
+                                                <div class="label">Dự án hoàn thành</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ===== About section ===== -->
+                        <section class="section-soft alt">
+                            <div class="page-shell">
+                                <div class="row align-items-center g-4">
+                                    <div class="col-lg-5">
+                                        <h2 class="section-title">Về bản thân tôi</h2>
+                                        <p class="section-subtitle">
+                                            Với hơn 5 năm kinh nghiệm trong ngành thiết kế và phát triển web,
+                                            tôi đã đồng hành cùng nhiều startup và doanh nghiệp để tối ưu sự hiện diện trực tuyến.
+                                        </p>
+
+                                        <div class="d-flex flex-wrap gap-2 mt-4">
+                                            <span class="chip">Figma</span>
+                                            <span class="chip">React</span>
+                                            <span class="chip">Tailwind</span>
+                                            <span class="chip">Strategy</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-7">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="bento-card h-100">
+                                                    <div class="service-icon"><i class="bi bi-palette"></i></div>
+                                                    <h3 class="h5 fw-bold">Sáng tạo</h3>
+                                                    <p class="mb-0 text-muted">
+                                                        Luôn tìm giải pháp thiết kế độc bản, hiện đại và dễ triển khai.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6 mt-md-4">
+                                                <div class="bento-card h-100">
+                                                    <div class="service-icon"><i class="bi bi-lightning-charge"></i></div>
+                                                    <h3 class="h5 fw-bold">Tốc độ</h3>
+                                                    <p class="mb-0 text-muted">
+                                                        Quy trình làm việc tối ưu, đảm bảo tiến độ bàn giao rõ ràng.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ===== Services section ===== -->
+                        <section class="section-soft" id="services">
+                            <div class="page-shell">
+                                <div class="text-center mb-5">
+                                    <h2 class="section-title">Dịch vụ chuyên nghiệp</h2>
+                                    <p class="section-subtitle mx-auto">
+                                        Cung cấp giải pháp toàn diện từ khâu lên ý tưởng đến khi sản phẩm vận hành thực tế.
+                                    </p>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-lg-4">
+                                        <div class="bento-card h-100">
+                                            <div class="service-icon"><i class="bi bi-easel2"></i></div>
+                                            <h3 class="h5 fw-bold">Thiết kế UI/UX</h3>
+                                            <ul class="text-muted mb-0">
+                                                <li>Nghiên cứu người dùng</li>
+                                                <li>Wireframing &amp; Prototyping</li>
+                                                <li>High-fidelity UI Design</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="bento-card h-100">
+                                            <div class="service-icon"><i class="bi bi-code-slash"></i></div>
+                                            <h3 class="h5 fw-bold">Phát triển Web</h3>
+                                            <ul class="text-muted mb-0">
+                                                <li>React &amp; ASP.NET Core</li>
+                                                <li>Responsive Layouts</li>
+                                                <li>API Integration</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="bento-card h-100">
+                                            <div class="service-icon"><i class="bi bi-megaphone"></i></div>
+                                            <h3 class="h5 fw-bold">Marketing</h3>
+                                            <ul class="text-muted mb-0">
+                                                <li>SEO Optimization</li>
+                                                <li>Content Strategy</li>
+                                                <li>Social Media Design</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ===== Portfolio section ===== -->
+                        <section class="section-soft alt" id="portfolio">
+                            <div class="page-shell">
+                                <div class="d-flex justify-content-between align-items-end mb-4 gap-3 flex-wrap">
+                                    <div>
+                                        <h2 class="section-title mb-1">Dự án tiêu biểu</h2>
+                                        <p class="section-subtitle mb-0">Nơi những ý tưởng lớn được thực thi.</p>
+                                    </div>
+
+                                    <a href="#" class="nav-link-soft fw-bold text-primary">
+                                        Xem tất cả dự án <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="project-card bento-card h-100">
+                                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7uDuvLGpZUVd1un-MhVOPi8hpuvkn-gzu1MgsZsknbU7gYR-JBjgFWG9jcHxOp9GcV7TY3NAwDX0J8SV8uAv956AheXgDsg5mJvmGVbQ6Z1J2c_4nppdFT6Fh4faz1J1WD8lhmsh0mbzbeUMk7URVjW9KkNe9EDog5EP2GWUJ2Uth1_h1dkOsAU8yzffxiqASSF-KxsEJrp-xhvggQN_EHJSSMd0F_QXrg6uEnXGAq7VzmkuNMPVz_qEmS4oUfMxdTKx5nfjhh6M"
+                                                 alt="Project 1" />
+                                            <div class="d-flex justify-content-between align-items-start mt-3">
+                                                <div>
+                                                    <h3 class="h5 fw-bold mb-1">FinTech Dashboard 2.0</h3>
+                                                    <p class="text-muted mb-0">UX/UI Design &amp; Frontend Development</p>
+                                                </div>
+                                                <i class="bi bi-arrow-up-right text-muted fs-5"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="project-card bento-card h-100">
+                                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1-FtOdsgqWXnBhND7n6vdgPp5Hz6p-3ek2EMCjnslCmKvLbqhpdscxgTxxrojvGIJs5_OvSEsFkhVU64YIP9uklIcJVedSlQ5vf-uIXaxmi9sR8y66mg0HRw5FwMcJ6UHDToJEtzsedB2n-5jHupaEmVKQWR-8-mIPlD_G7rs2JdDbj4SrhXuuQ54vQlG-OxNiZNOwesld-FhkBkBaBIt3HzoDsuoOX45lNf7PEGxQLNUTnJ-4TBLH5pKMjxbYFNeU6p-mi8ltzE"
+                                                 alt="Project 2" />
+                                            <div class="d-flex justify-content-between align-items-start mt-3">
+                                                <div>
+                                                    <h3 class="h5 fw-bold mb-1">E-Commerce Luxury</h3>
+                                                    <p class="text-muted mb-0">Web Development &amp; SEO</p>
+                                                </div>
+                                                <i class="bi bi-arrow-up-right text-muted fs-5"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ===== Contact CTA section ===== -->
+                        <section class="section-soft" id="contact">
+                            <div class="page-shell">
+                                <div class="bento-card text-center">
+                                    <span class="chip mb-3">Contact</span>
+                                    <h2 class="section-title">Bạn đã sẵn sàng bắt đầu dự án?</h2>
+                                    <p class="section-subtitle mx-auto">
+                                        Hãy tạo tài khoản hoặc đăng nhập để bắt đầu kết nối với Freelancer hoặc Employer phù hợp.
+                                    </p>
+
+                                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                                        <a href="/auth/login" class="btn-primary-soft">Đăng nhập</a>
+                                        <a href="/auth/register" class="btn-outline-soft">Tạo tài khoản</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+                    <!-- ===== Footer ===== -->
+                    <footer class="footer-main">
+                        <div class="container">
+                            <div class="row gy-5">
+
+                                <!-- Logo + social + contact -->
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <img src="~/image/Logo.png" alt="TalentBridge" style="max-width:220px;">
+                                    </div>
+
+                                    <div class="d-flex gap-3 mb-4">
+                                        <a href="#" class="social-box"><i class="bi bi-facebook"></i></a>
+                                        <a href="#" class="social-box"><i class="bi bi-linkedin"></i></a>
+                                        <a href="#" class="social-box"><i class="bi bi-twitter"></i></a>
+                                    </div>
+
+                                    <div class="footer-contact">
+                                        <p>Điện thoại: +84 (036) 3012852</p>
+                                        <p>Email: support@talentjob.vn</p>
+                                    </div>
+                                </div>
+
+                                <!-- About -->
+                                <div class="col-lg-2">
+                                    <h5 class="footer-title">Về TalentBridge</h5>
+                                    <ul class="footer-links">
+                                        <li><a href="#">Giới thiệu</a></li>
+                                        <li><a href="#">Góc báo chí</a></li>
+                                        <li><a href="#">Blog</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Employer links -->
+                                <div class="col-lg-3">
+                                    <h5 class="footer-title">Nhà tuyển dụng</h5>
+                                    <ul class="footer-links">
+                                        <li><a href="#">Đăng tuyển</a></li>
+                                        <li><a href="#">Cách thức hoạt động</a></li>
+                                        <li><a href="#">Tìm ứng viên</a></li>
+                                        <li><a href="#">Tìm ứng viên theo kỹ năng</a></li>
+                                        <li><a href="#">Tìm ứng viên theo lĩnh vực</a></li>
+                                        <li><a href="#">Tìm ứng viên theo địa điểm</a></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Candidate links -->
+                                <div class="col-lg-3">
+                                    <h5 class="footer-title">Ứng viên</h5>
+                                    <ul class="footer-links mb-4">
+                                        <li><a href="#">Đăng ký</a></li>
+                                        <li><a href="#">Cách thức hoạt động</a></li>
+                                        <li><a href="#">Tìm việc freelance</a></li>
+                                        <li><a href="#">Tìm việc fulltime</a></li>
+                                    </ul>
+
+                                    <div class="d-flex flex-column gap-3">
+                                        <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" style="width:140px;">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" style="width:140px;">
+                                        >>>>>>> c4929df (update layout)
+                                        =======
+                                        <div class="fv-footer-bottom">
+                                            <span>© 2026 TalentBridge. All rights reserved.</span>
+                                            <div style="display:flex;gap:16px;flex-wrap:wrap">
+                                                <a href="#">Điều khoản sử dụng</a>
+                                                <a href="#">Chính sách bảo mật</a>
+                                                <a href="#">Giải quyết tranh chấp</a>
+                                            </div>
+                                            >>>>>>> 000240d (update layout home)
+                                        </div>
+                                    </div>
+                    </footer>
+
+                    <<<<<<< HEAD
+                </div>
 </section>
 
+<!-- Footer bottom -->
+<div class="footer-divider"></div>
+
+<div class="footer-bottom">
+    <div class="footer-policy">
+        <a href="#">Thoả thuận sử dụng</a>
+        <span>|</span>
+        <a href="#">Quy định bảo mật</a>
+        <span>|</span>
+        <a href="#">Quy Chế Hoạt Động Sàn Giao Dịch Thương Mại Điện Tử TalentBridge</a>
+    </div>
+
+    <div class="footer-language">
+        <i class="bi bi-globe"></i>
+        Tiếng Việt
+        <i class="bi bi-caret-down-fill small"></i>
+    </div>
+</div>
+
+<div class="footer-divider mt-3"></div>
+
+<div class="footer-copyright">
+    Copyright © 2026 TalentJob. All Rights Reserved.
+</div>
+</div>
+</footer>
+
+<!-- ===== Floating chat button ===== -->
+<button class="fab-chat">
+    <i class="bi bi-chat-dots fs-5"></i>
+    <span class="chat-tooltip">Chat với tôi!</span>
+</button>
 
 @section Scripts {
     <script>
-        $(document).ready(() => {
-            
+        // Smooth scroll cho các anchor link
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = this.getAttribute('href');
+                if (!target || target === '#') return;
+
+                const element = document.querySelector(target);
+                if (!element) return;
+
+                e.preventDefault();
+                element.scrollIntoView({ behavior: 'smooth' });
+            });
         });
     </script>
 }

@@ -5,69 +5,353 @@
     Layout = "_LayoutAuth";
 }
 
+<style>
+    :root {
+        --primary: #143f63;
+        --primary-dark: #0f3350;
+        --primary-light: #1d4f7c;
+        --bg: #f4f8fc;
+        --surface: #ffffff;
+        --surface-soft: #eef4f9;
+        --text: #1e293b;
+        --muted: #64748b;
+        --border: #d7e2ed;
+    }
 
-<div class="login-box">
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+    }
 
-    <div class="login-logo">
-        <a href="/" class="d-flex align-items-center justify-content-center gap-2">
-            <img class="img-fluid rounded-circle" width="80" height="80" src="https://i.pinimg.com/736x/e5/39/bb/e539bbb9298e6a20ce0c61a221f21cb0.jpg" />
-            <div class="text-left">
-                <b>TalentBridge</b>
-                <div class="text-muted fs-6">Freelancer Job Matching System</div>
+    .login-wrapper {
+        min-height: 100vh;
+    }
+
+    .login-card {
+        border: none;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(20, 63, 99, 0.14);
+    }
+
+    .left-panel {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: 60px 45px;
+        position: relative;
+    }
+
+        .left-panel::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            top: -80px;
+            right: -80px;
+        }
+
+    .brand-logo {
+        width: 75px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.2);
+        background: #fff;
+    }
+
+    .right-panel {
+        background: white;
+        padding: 55px 45px;
+    }
+
+    .form-control {
+        height: 52px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        padding-left: 16px;
+    }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: var(--primary);
+        }
+
+    .role-card {
+        border: 2px solid #e9eef5;
+        border-radius: 16px;
+        padding: 18px;
+        cursor: pointer;
+        transition: .25s;
+        background: #fff;
+    }
+
+        .role-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+    .btn-check:checked + .role-card {
+        border-color: var(--primary);
+        background: #eef5ff;
+    }
+
+    .login-btn {
+        height: 52px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border: none;
+        font-weight: 600;
+        transition: .25s;
+    }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(20,63,99,.22);
+        }
+
+    .welcome-text {
+        opacity: .9;
+        line-height: 1.7;
+    }
+</style>
+
+<div class="container-fluid login-wrapper d-flex align-items-center justify-content-center p-4">
+
+    <div class="card login-card w-100" style="max-width:1100px;">
+
+        <div class="row g-0">
+
+            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between left-panel">
+
+                <div>
+                    <div class="d-flex align-items-center gap-3 mb-5">
+                        <img src="~/image/Logo.png"
+                             class="brand-logo" />
+
+                        <div>
+                            <h3 class="fw-bold mb-1">TalentBridge</h3>
+                            <div class="small opacity-75">
+                                Freelancer Job Matching System
+                            </div>
+                        </div>
+                    </div>
+
+                    <h1 class="fw-bold mb-4" style="font-size: 42px;">
+                        Connect Talent<br />
+                        With Opportunity
+                    </h1>
+
+                    <p class="welcome-text">
+                        Nền tảng kết nối Freelancer và Employer hiện đại,
+                        giúp tìm kiếm dự án, tuyển dụng và cộng tác hiệu quả hơn.
+                    </p>
+                </div>
+
+                <div class="mt-5">
+                    <div class="d-flex gap-4">
+
+                        <div>
+                            <h3 class="fw-bold">10K+</h3>
+                            <small>Freelancers</small>
+                        </div>
+
+                        <div>
+                            <h3 class="fw-bold">2K+</h3>
+                            <small>Projects</small>
+                        </div>
+
+                        <div>
+                            <h3 class="fw-bold">98%</h3>
+                            <small>Success Rate</small>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
-        </a>
-    </div>
 
-    <div class="card">
+            <div class="col-lg-7 right-panel">
 
-        <div class="card-body login-card-body">
+                <div class="mb-4">
+                    <h2 class="fw-bold mb-2">Welcome Back 👋</h2>
+                    <p class="text-muted">
+                        Please login to continue
+                    </p>
+                </div>
 
-            <p class="login-box-msg">Sign in to start your session</p>
+                <form asp-action="Login" method="post">
 
-            <form asp-action="Login" method="post">
-                <input asp-for="Path" type="hidden" class="form-control" placeholder="Path" value="@(ViewData["Path"])">
+                    @Html.AntiForgeryToken()
 
-                <div class="input-group mb-3">
-                    <input asp-for="Email" class="form-control" placeholder="Email" type="email" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <i class="fas fa-envelope"></i>
+                    <input asp-for="Path" type="hidden" value="@(ViewData["Path"])" />
+
+                    <div class="mb-4">
+
+                        <label class="fw-semibold mb-3 d-block">
+                            Select Role
+                        </label>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <input type="radio"
+                                       class="btn-check"
+                                       name="Role"
+                                       id="freelancer"
+                                       value="Freelancer"
+                                       checked>
+
+                                <label class="role-card w-100" for="freelancer">
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width:55px;height:55px;">
+
+                                            <i class="bi bi-person-workspace text-primary fs-4"></i>
+
+                                        </div>
+
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">
+                                                Freelancer
+                                            </h6>
+
+                                            <small class="text-muted">
+                                                Find jobs & projects
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </label>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <input type="radio"
+                                       class="btn-check"
+                                       name="Role"
+                                       id="employer"
+                                       value="Employer">
+
+                                <label class="role-card w-100" for="employer">
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width:55px;height:55px;">
+
+                                            <i class="bi bi-building text-primary fs-4"></i>
+
+                                        </div>
+
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">
+                                                Employer
+                                            </h6>
+
+                                            <small class="text-muted">
+                                                Hire top freelancers
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </label>
+
+                            </div>
+
                         </div>
-                    </div>
-                </div>
 
-                <div class="input-group mb-3">
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" required>
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <i class="bi bi-lock"></i>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="fw-semibold mb-2">
+                            Email Address
+                        </label>
+
+                        <input asp-for="Email"
+                               type="email"
+                               class="form-control"
+                               placeholder="Enter your email" />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="fw-semibold mb-2">
+                            Password
+                        </label>
+
+                        <input asp-for="Password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Enter your password" />
+                    </div>
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">
+                            @ViewBag.Error
                         </div>
+                    }
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="rememberMe">
+
+                            <label class="form-check-label text-muted"
+                                   for="rememberMe">
+
+                                Remember me
+
+                            </label>
+                        </div>
+
+                        <a asp-action="ForgotPassword"
+                           class="text-decoration-none fw-semibold"
+                           style="color:#0057d9;">
+
+                            Forgot password?
+
+                        </a>
+
                     </div>
-                </div>
 
-                <div asp-validation-summary="All" class="text-danger"></div>
+                    <button type="submit"
+                            class="btn btn-primary login-btn w-100">
 
-                @if (ViewBag.Error != null)
-                {
-                    <div class="text-danger mb-2">
-                        @ViewBag.Error
+                        Login
+
+                    </button>
+
+                    <div class="text-center mt-4">
+
+                        <span class="text-muted">
+                            Don't have an account?
+                        </span>
+
+                        <a asp-action="Register"
+                           class="fw-semibold text-decoration-none ms-1">
+
+                            Create Account
+
+                        </a>
+
                     </div>
-                }
 
-                <button type="submit" class="btn btn-primary btn-block">
-                    Login
-                </button>
+                </form>
 
-                <div class="mt-3 text-center">
-                    <a asp-action="Register" class="text-primary">
-                        Create new account
-                    </a>
-                </div>
-
-            </form>
-
+            </div>
         </div>
-
     </div>
-
 </div>

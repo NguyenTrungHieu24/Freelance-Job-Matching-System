@@ -23,6 +23,8 @@ wwwroot/lib/
 # Visual Studio cache/options
 .vs/
 .vscode/
+*.user
+*.suo
 
 # Rider
 .idea/
@@ -92,3 +94,7 @@ secrets.json
 
 #File local
 API/wwwroot/uploads
+
+# Build folders
+**/bin/
+**/obj/

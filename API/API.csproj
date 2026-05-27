@@ -22,11 +22,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinessObjects\BusinessObjects.csproj" />
-    <ProjectReference Include="..\Client\Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\uploads\cv\" />
   </ItemGroup>
 
 </Project>
