@@ -5,137 +5,6 @@
     Layout = "_LayoutAuth";
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<style>
-    :root{--primary:#143f63;--primary-light:#1d4f7c;--bg:#f4f8fc;--border:#d7e2ed}
-    body{background:var(--bg)}
-    .login-wrapper{min-height:100vh}
-    .login-card{border-radius:20px;overflow:hidden;box-shadow:0 20px 50px rgba(20,63,99,.14)}
-    .left-panel{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff;padding:48px}
-    .brand-logo{width:72px;height:72px;border-radius:50%;object-fit:cover}
-    .right-panel{background:#fff;padding:40px}
-    .form-control{height:48px;border-radius:12px;border:1px solid var(--border);padding-left:12px}
-    .login-btn{height:48px;border-radius:12px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);border:none}
-    .role-card{border:1px solid #e9eef5;border-radius:12px;padding:14px;cursor:pointer}
-    .role-card:hover{border-color:var(--primary)}
-</style>
->>>>>>> 000240d (update layout home)
-
-<div class="container-fluid login-wrapper d-flex align-items-center justify-content-center p-4">
-    <div class="card login-card w-100" style="max-width:1100px;">
-        <div class="row g-0">
-            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between left-panel">
-                <div>
-                    <div class="d-flex align-items-center gap-3 mb-4">
-                        <img src="~/image/Logo.png" class="brand-logo" alt="Logo" />
-                        <div>
-                            <h3 class="fw-bold mb-1">TalentBridge</h3>
-                            <div class="small opacity-75">Freelancer Job Matching System</div>
-                        </div>
-                    </div>
-
-                    <h2 class="fw-bold" style="font-size:34px;">Connect Talent<br/>With Opportunity</h2>
-                    <p class="opacity-85">Nền tảng kết nối Freelancer và Employer hiện đại, giúp tìm kiếm dự án, tuyển dụng và cộng tác hiệu quả hơn.</p>
-                </div>
-
-                <div class="mt-3 text-white small">
-                    <div><strong>10K+</strong> Freelancers</div>
-                    <div><strong>2K+</strong> Projects</div>
-                </div>
-            </div>
-
-            <div class="col-lg-7 right-panel">
-                <div class="mb-4">
-                    <h2 class="fw-bold mb-2">Welcome Back 👋</h2>
-                    <p class="text-muted">Please login to continue</p>
-                </div>
-
-                <form asp-action="Login" method="post">
-                    @Html.AntiForgeryToken()
-
-                    <input asp-for="Path" type="hidden" value="@(ViewData["Path"])" />
-
-                    <div class="mb-4">
-                        <label class="fw-semibold mb-2 d-block">Select Role</label>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <input type="radio" class="btn-check" name="Role" id="freelancer" value="Freelancer" checked />
-                                <label class="role-card w-100" for="freelancer">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px">👩‍💻</div>
-                                        <div>
-                                            <div class="fw-bold">Freelancer</div>
-                                            <div class="small text-muted">Find jobs & projects</div>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="radio" class="btn-check" name="Role" id="employer" value="Employer" />
-                                <label class="role-card w-100" for="employer">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px">🏢</div>
-                                        <div>
-                                            <div class="fw-bold">Employer</div>
-                                            <div class="small text-muted">Hire top freelancers</div>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="fw-semibold mb-2">Email Address</label>
-                        <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="fw-semibold mb-2">Password</label>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-
-                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
-
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger">@ViewBag.Error</div>
-                    }
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberMe" />
-                            <label class="form-check-label text-muted" for="rememberMe">Remember me</label>
-                        </div>
-
-                        <a asp-action="ForgotPassword" class="text-decoration-none fw-semibold" style="color:#0057d9;">Forgot password?</a>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary login-btn w-100">Login</button>
-
-                    <div class="text-center mt-4">
-                        <span class="text-muted">Don't have an account?</span>
-                        <a asp-action="Register" class="fw-semibold ms-1">Create Account</a>
-                    </div>
-<<<<<<< HEAD
-                }
-
-                <button type="submit" class="btn btn-primary btn-block">
-                    Login
-                </button>
-
-                <div class="mt-3 text-center">
-                    <a asp-action="Register" class="text-primary">
-                        Create new account
-                    </a>
-                </div>
-
-            </form>
-=======
 <style>
     :root {
         --primary: #143f63;
@@ -255,7 +124,6 @@
 
         <div class="row g-0">
 
-            <!-- LEFT -->
             <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between left-panel">
 
                 <div>
@@ -305,7 +173,6 @@
 
             </div>
 
-            <!-- RIGHT -->
             <div class="col-lg-7 right-panel">
 
                 <div class="mb-4">
@@ -321,7 +188,6 @@
 
                     <input asp-for="Path" type="hidden" value="@(ViewData["Path"])" />
 
-                    <!-- ROLE -->
                     <div class="mb-4">
 
                         <label class="fw-semibold mb-3 d-block">
@@ -405,7 +271,6 @@
 
                     </div>
 
-                    <!-- EMAIL -->
                     <div class="mb-3">
                         <label class="fw-semibold mb-2">
                             Email Address
@@ -417,7 +282,6 @@
                                placeholder="Enter your email" />
                     </div>
 
-                    <!-- PASSWORD -->
                     <div class="mb-4">
                         <label class="fw-semibold mb-2">
                             Password
@@ -437,7 +301,7 @@
                             @ViewBag.Error
                         </div>
                     }
-                    <!-- REMEMBER + FORGOT -->
+
                     <div class="d-flex justify-content-between align-items-center mb-4">
 
                         <div class="form-check">
@@ -462,7 +326,7 @@
                         </a>
 
                     </div>
-                    <!-- LOGIN -->
+
                     <button type="submit"
                             class="btn btn-primary login-btn w-100">
 
@@ -470,7 +334,6 @@
 
                     </button>
 
-                    <!-- REGISTER -->
                     <div class="text-center mt-4">
 
                         <span class="text-muted">
@@ -489,20 +352,6 @@
                 </form>
 
             </div>
->>>>>>> c4929df (update layout)
-
-=======
-                </form>
-            </div>
->>>>>>> 000240d (update layout home)
         </div>
     </div>
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-=======
->>>>>>> 000240d (update layout home)
 </div>
-=======
-</div>
->>>>>>> c4929df (update layout)
