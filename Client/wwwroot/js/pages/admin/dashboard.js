@@ -140,7 +140,7 @@ async function loadJobGrowthChart(range) {
 
     const labels = data.map(x => x.label);
 
-    const jobs = data.map(x => x.jobs);
+    const jobs = data.map(x => x.totalJobs);
 
     const applications = data.map(x => x.applications);
 

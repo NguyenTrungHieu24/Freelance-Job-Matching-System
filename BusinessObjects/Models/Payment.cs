@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,13 +18,22 @@ namespace BusinessObjects.Models
 
         public decimal Amount { get; set; }
 
-        public string PaymentMethod { get; set; }
+        [StringLength(50)]
+        public string PaymentMethod { get; set; } // PayOS
 
+        [StringLength(100)]
         public string TransactionCode { get; set; }
 
-        public string Status { get; set; }
+        [StringLength(50)]
+        public PaymentStatus Status { get; set; } 
 
-        public DateTime PaidAt { get; set; } = DateTime.Now;
+        public long? OrderCode { get; set; } // PayOS orderCode
+
+        public string CheckoutUrl { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public DateTime? PaidAt { get; set; }
 
         [ForeignKey("ApplicationId")]
         public Application Application { get; set; }
