@@ -530,3 +530,4 @@ C:\Users\Administrator\Downloads\swp\Freelance-Job-Matching-System\API\obj\Debug
 C:\Users\Administrator\Downloads\swp\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.pdb
 C:\Users\Administrator\Downloads\swp\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 C:\Users\Administrator\Downloads\swp\Freelance-Job-Matching-System\API\obj\Debug\net8.0\ref\API.dll
+C:\Users\Administrator\Downloads\swp\Freelance-Job-Matching-System\API\bin\Debug\net8.0\API.staticwebassets.runtime.json

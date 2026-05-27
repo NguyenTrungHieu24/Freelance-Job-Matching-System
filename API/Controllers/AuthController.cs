@@ -111,6 +111,7 @@ namespace API.Controllers
             });
         }
 
+
         [HttpPut("change-password")]
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
@@ -129,5 +130,72 @@ namespace API.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Change password successfully" });
         }
+
+        // =========================
+        // FORGOT PASSWORD (Yêu cầu khôi phục)
+        // =========================
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            var email = dto.Email.Trim().ToLower();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            // Vì lý do bảo mật, nếu không tìm thấy email, chúng ta vẫn trả về Ok 
+            // để tránh kẻ xấu dò tìm email có tồn tại trong hệ thống hay không.
+            if (user == null)
+                return Ok(new { message = "Nếu email tồn tại trên hệ thống, mã khôi phục đã được gửi." });
+
+            // 1. Tạo một Token ngẫu nhiên (hoặc mã OTP số tùy bạn chọn)
+            // Ở đây dùng GUID để làm token trên URL cho an toàn
+            var resetToken = Guid.NewGuid().ToString();
+
+            // 2. Lưu Token và thời gian hết hạn trực tiếp vào bảng User
+            // Lưu ý: Để chạy được 3 dòng dưới, bạn cần tạo thêm 2 cột: PasswordResetToken (string?) và ResetTokenExpires (DateTime?) vào class User trong DB.
+            user.PasswordResetToken = resetToken;
+            user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15); // Token có hiệu lực trong 15 phút
+
+            await _context.SaveChangesAsync();
+
+            // 3. GỬI EMAIL CHỨA LINK RESET
+            // Tạm thời bạn có thể trả về Token này trong API để test bằng Postman/Swagger trước.
+            // Khi làm thật, bạn sẽ viết dịch vụ gửi Email chứa link: https://localhost:CLIENT_PORT/Auth/ResetPassword?email={email}&token={resetToken}
+
+            return Ok(new
+            {
+                message = "Mã khôi phục đã được tạo thành công.",
+                debugToken = resetToken // Xóa dòng debugToken này khi deploy thực tế nhé!
+            });
+        }
+
+        // =========================
+        // RESET PASSWORD (Xác nhận đổi mật khẩu mới)
+        // =========================
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            var email = dto.Email.Trim().ToLower();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+
+            if (user == null)
+                return BadRequest("Yêu cầu không hợp lệ.");
+
+            // Kiểm tra Token khớp không và đã hết hạn chưa
+            if (user.PasswordResetToken != dto.Token || user.ResetTokenExpires < DateTime.UtcNow)
+            {
+                return BadRequest("Mã xác thực không chính xác hoặc đã hết hạn.");
+            }
+
+            // Tiến hành đổi mật khẩu mới (Băm mật khẩu bằng BCrypt tương tự như lúc Register)
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+            // Xóa token sau khi đã sử dụng thành công để tránh dùng lại
+            user.PasswordResetToken = null;
+            user.ResetTokenExpires = null;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay bây giờ." });
+        }
+
     }
 }
