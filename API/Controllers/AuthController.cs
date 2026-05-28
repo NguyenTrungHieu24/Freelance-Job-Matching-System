@@ -48,13 +48,26 @@ namespace API.Controllers
             _context.Users.Add(account);
             await _context.SaveChangesAsync();
 
-            var e = new EmployerProfile
-            {
-                AccountId = account.Id
-            };
 
-            _context.EmployerProfiles.Add(e);
-            await _context.SaveChangesAsync();
+            switch (dto.Role)
+            {
+                case 3:
+                    var f = new FreelancerProfile
+                    {
+                        AccountId = account.Id,
+                    };
+                    _context.FreelancerProfiles.Add(f);
+                    await _context.SaveChangesAsync();
+                    break;
+                case 2:
+                    var e = new EmployerProfile
+                    {
+                        AccountId = account.Id
+                    };
+                    _context.EmployerProfiles.Add(e);
+                    await _context.SaveChangesAsync();
+                    break;
+            }
 
             await _context.Entry(account)
                 .Reference(x => x.Role)
@@ -68,7 +81,6 @@ namespace API.Controllers
                 Role = account.Role,
                 User = new
                 {
-                    RunnerId = e.Id,
                     Name = account.FullName,
                     Email = account.Email
                 }
@@ -91,7 +103,7 @@ namespace API.Controllers
 
             if (!check)
                 return Unauthorized("Invalid password");
-            
+
             await _context.Entry(user)
                 .Reference(x => x.Role)
                 .LoadAsync();
@@ -117,8 +129,8 @@ namespace API.Controllers
         {
             var userId = _user.UserId;
             var user = await _context.Users.FindAsync(userId);
-            
-            if(user == null)
+
+            if (user == null)
                 return NotFound("User not found");
 
             var checkOldPassword = BCrypt.Net.BCrypt.Verify(dto.OldPassword, user.PasswordHash);
