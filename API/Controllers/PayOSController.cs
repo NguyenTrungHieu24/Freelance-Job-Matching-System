@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NuGet.Configuration;
+using PayOS.Models.Webhooks;
+using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace API.Controllers
 {
@@ -29,50 +32,83 @@ namespace API.Controllers
         }
 
         [HttpPost("webhook")]
-        public async Task<IActionResult> HandleWebhook()
+        public async Task<IActionResult> Webhook([FromBody] JsonElement body)
         {
-            using var reader = new StreamReader(Request.Body);
-            var rawBody = await reader.ReadToEndAsync();
-
-            var signature = Request.Headers["x-payos-signature"].ToString();
-
-            // 3. verify
-            var isValid = PayOSSignatureHelper.Verify(
-                rawBody,
-                signature,
-                _settings.ChecksumKey
-            );
-
-            if (!isValid)
+            try
             {
-                _logger.LogWarning("Invalid PayOS webhook signature");
-                return Unauthorized();
+                if (!body.TryGetProperty("data", out JsonElement dataElement) ||
+                    !body.TryGetProperty("signature", out JsonElement signatureElement))
+                {
+                    _logger.LogWarning("Invalid webhook payload structure");
+                    return BadRequest("Invalid payload");
+                }
+
+                string signature = signatureElement.GetString() ?? "";
+
+                bool isValid = PayOSSignatureHelper.Verify(dataElement, signature, _settings.ChecksumKey);
+
+                if (!isValid)
+                {
+                    _logger.LogWarning("Invalid PayOS signature received");
+                    return Unauthorized();
+                }
+
+                var webhookData = JsonSerializer.Deserialize<PayOSWebhookData>(
+                    dataElement.GetRawText(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                if (webhookData == null)
+                {
+                    return BadRequest("Cannot parse payment data");
+                }
+
+                var payment = await _context.Payments
+                    .FirstOrDefaultAsync(x => x.TransactionCode == webhookData.orderCode.ToString());
+
+                if (payment == null)
+                {
+                    _logger.LogWarning("Payment not found for OrderCode: {OrderCode}", webhookData.orderCode);
+                    return Ok(); // Return 200 to acknowledge receipt
+                }
+
+                if (payment.Status == PaymentStatus.PAID)
+                {
+                    return Ok();
+                }
+
+                payment.Status = webhookData.code == "00" ? PaymentStatus.PAID : PaymentStatus.FAILED;
+                payment.PaidAt = DateTime.UtcNow;   // Better to use UTC
+
+                if (webhookData.code == "00")
+                {
+                    var application = await _context.Applications
+                        .FindAsync(payment.ApplicationId);
+
+                    if (application != null)
+                    {
+                        application.Status = ApplicationStatus.ACCEPTED;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Payment processed successfully. OrderCode: {OrderCode}, Status: {Status}",
+                    webhookData.orderCode, payment.Status);
+
+                return Ok();
             }
-
-            var webhook = System.Text.Json.JsonSerializer.Deserialize<PayOSWebhook>(rawBody);
-
-            var payment = await _context.Payments
-                .FirstOrDefaultAsync(x => x.TransactionCode == webhook.OrderCode.ToString());
-
-            if (payment == null)
-                return Ok(); // tránh retry spam
-
-            payment.Status = webhook.Status == "SUCCESS" ? PaymentStatus.PAID : PaymentStatus.FAILED; // SUCCESS / FAILED
-            payment.PaidAt = DateTime.Now;
-
-            var application = await _context.Applications
-                .FindAsync(payment.ApplicationId);
-
-            if (application != null && webhook.Status == "PAID")
+            catch (Exception ex)
             {
-                application.Status = ApplicationStatus.ACCEPTED;
+                _logger.LogError(ex, "Error processing PayOS webhook. Body: {Body}", body.GetRawText());
+                return StatusCode(500, "Internal server error");
             }
+        }
 
-            await _context.SaveChangesAsync();
-
-            _logger.LogInformation($"Payment success: {webhook?.OrderCode}");
-
-            return Ok(new { success = true });
+        [HttpGet("webhook")]
+        public string Ping()
+        {
+            return "Oke";
         }
     }
 }
