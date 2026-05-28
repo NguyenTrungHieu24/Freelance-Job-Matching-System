@@ -7556,23 +7556,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Dell\\.nuget\\packages\\": {},
+    "C:\\Users\\Duong\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\VisualStudio\\Frelancer\\API\\API.csproj",
+      "projectUniqueName": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "D:\\VisualStudio\\Frelancer\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-      "outputPath": "D:\\VisualStudio\\Frelancer\\API\\obj\\",
+      "projectPath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\API\\API.csproj",
+      "packagesPath": "C:\\Users\\Duong\\.nuget\\packages\\",
+      "outputPath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Duong\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -7587,8 +7587,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\VisualStudio\\Frelancer\\BusinessObjects\\BusinessObjects.csproj": {
-              "projectPath": "D:\\VisualStudio\\Frelancer\\BusinessObjects\\BusinessObjects.csproj"
+            "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj": {
+              "projectPath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj"
             }
           }
         }
@@ -7663,7 +7663,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.308/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.314/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
