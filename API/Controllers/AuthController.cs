@@ -150,7 +150,7 @@ namespace API.Controllers
             var resetToken = Guid.NewGuid().ToString();
 
             // 2. Lưu Token và thời gian hết hạn trực tiếp vào bảng User
-            // Lưu ý: Để chạy được 3 dòng dưới, bạn cần tạo thêm 2 cột: PasswordResetToken (string?) và ResetTokenExpires (DateTime?) vào class User trong DB.
+           
             user.PasswordResetToken = resetToken;
             user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15); // Token có hiệu lực trong 15 phút
 
@@ -158,12 +158,12 @@ namespace API.Controllers
 
             // 3. GỬI EMAIL CHỨA LINK RESET
             // Tạm thời bạn có thể trả về Token này trong API để test bằng Postman/Swagger trước.
-            // Khi làm thật, bạn sẽ viết dịch vụ gửi Email chứa link: https://localhost:CLIENT_PORT/Auth/ResetPassword?email={email}&token={resetToken}
+         
 
             return Ok(new
             {
                 message = "Mã khôi phục đã được tạo thành công.",
-                debugToken = resetToken // Xóa dòng debugToken này khi deploy thực tế nhé!
+                
             });
         }
 
