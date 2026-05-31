@@ -50,7 +50,10 @@ namespace API.Controllers
 
             var e = new EmployerProfile
             {
-                AccountId = account.Id
+                AccountId = account.Id,
+                CompanyName = account.FullName,
+                Description = "",
+                Logo = "default-logo.png"
             };
 
             _context.EmployerProfiles.Add(e);
@@ -62,10 +65,12 @@ namespace API.Controllers
 
             var token = _jwt.GenerateToken(account);
 
+
+
             return Ok(new
             {
                 Token = token,
-                Role = account.Role,
+                Role = account.Role.Name,
                 User = new
                 {
                     RunnerId = e.Id,
@@ -73,6 +78,8 @@ namespace API.Controllers
                     Email = account.Email
                 }
             });
+
+
         }
 
         // =========================

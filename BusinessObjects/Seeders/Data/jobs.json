@@ -1,0 +1,1352 @@
+[
+  {
+    "Title": "Sweet Corn Fritters",
+    "Description": "Golden-brown fritters made with sweet corn.",
+    "Budget": 69,
+    "Status": 1,
+    "CreatedAt": "2024-11-20 14:46:47",
+    "CategoryId": 7,
+    "EmployerProfileId": 26
+  },
+  {
+    "Title": "Buffalo Sauce",
+    "Description": "Spicy buffalo sauce ideal for wings or dipping.",
+    "Budget": 762,
+    "Status": 2,
+    "CreatedAt": "2024-11-21 11:38:00",
+    "CategoryId": 2,
+    "EmployerProfileId": 29
+  },
+  {
+    "Title": "Digital Wireless Meat Thermometer",
+    "Description": "Bluetooth thermometer that alerts you when your meat is done.",
+    "Budget": 700,
+    "Status": 2,
+    "CreatedAt": "2025-03-10 21:06:43",
+    "CategoryId": 1,
+    "EmployerProfileId": 38
+  },
+  {
+    "Title": "Dark Chocolate Raisins",
+    "Description": "Juicy raisins coated in rich dark chocolate.",
+    "Budget": 547,
+    "Status": 1,
+    "CreatedAt": "2025-05-02 01:46:20",
+    "CategoryId": 7,
+    "EmployerProfileId": 46
+  },
+  {
+    "Title": "Pita Bread",
+    "Description": "Soft pita bread, perfect for sandwiches or dips.",
+    "Budget": 334,
+    "Status": 1,
+    "CreatedAt": "2026-04-04 11:40:25",
+    "CategoryId": 1,
+    "EmployerProfileId": 29
+  },
+  {
+    "Title": "Frozen Hash Browns",
+    "Description": "Shredded potatoes, perfect for breakfasts.",
+    "Budget": 796,
+    "Status": 1,
+    "CreatedAt": "2025-11-11 07:11:52",
+    "CategoryId": 2,
+    "EmployerProfileId": 33
+  },
+  {
+    "Title": "Honey Roasted Peanuts",
+    "Description": "Crunchy peanuts coated in honey, perfect for snacking.",
+    "Budget": 9,
+    "Status": 1,
+    "CreatedAt": "2025-06-10 17:52:39",
+    "CategoryId": 3,
+    "EmployerProfileId": 55
+  },
+  {
+    "Title": "Almond Joy Snack Bars",
+    "Description": "Chewy snack bars with coconut and almonds coated in chocolate.",
+    "Budget": 164,
+    "Status": 1,
+    "CreatedAt": "2026-01-15 20:46:28",
+    "CategoryId": 6,
+    "EmployerProfileId": 4
+  },
+  {
+    "Title": "Organic Chia Seeds",
+    "Description": "Nutritious chia seeds great for smoothies",
+    "Budget": 201,
+    "Status": 1,
+    "CreatedAt": "2025-08-15 07:12:43",
+    "CategoryId": 1,
+    "EmployerProfileId": 52
+  },
+  {
+    "Title": "Vegetarian Pizza",
+    "Description": "Frozen pizza loaded with vegetables and cheese.",
+    "Budget": 639,
+    "Status": 1,
+    "CreatedAt": "2025-03-22 18:18:29",
+    "CategoryId": 2,
+    "EmployerProfileId": 49
+  },
+  {
+    "Title": "Coconut Chia Pudding",
+    "Description": "Creamy chia pudding made with coconut milk and topped with mango.",
+    "Budget": 459,
+    "Status": 1,
+    "CreatedAt": "2025-10-11 15:51:08",
+    "CategoryId": 1,
+    "EmployerProfileId": 2
+  },
+  {
+    "Title": "Outdoor Folding Table",
+    "Description": "Lightweight and portable folding table for camping or picnics.",
+    "Budget": 907,
+    "Status": 1,
+    "CreatedAt": "2025-03-06 18:48:30",
+    "CategoryId": 2,
+    "EmployerProfileId": 15
+  },
+  {
+    "Title": "Travel Shoe Bags Set",
+    "Description": "Set of breathable bags for organizing shoes while traveling.",
+    "Budget": 159,
+    "Status": 2,
+    "CreatedAt": "2026-04-13 20:12:30",
+    "CategoryId": 3,
+    "EmployerProfileId": 24
+  },
+  {
+    "Title": "Travel Shoe Bags Set",
+    "Description": "Set of breathable bags for organizing shoes while traveling.",
+    "Budget": 65,
+    "Status": 1,
+    "CreatedAt": "2024-11-23 16:57:48",
+    "CategoryId": 7,
+    "EmployerProfileId": 7
+  },
+  {
+    "Title": "Wooden Children's Play Kitchen",
+    "Description": "Interactive kitchen set for imaginative play.",
+    "Budget": 337,
+    "Status": 1,
+    "CreatedAt": "2025-07-26 13:29:03",
+    "CategoryId": 5,
+    "EmployerProfileId": 56
+  },
+  {
+    "Title": "Beef Tacos",
+    "Description": "Pre-seasoned beef mix for delicious tacos, just heat and serve.",
+    "Budget": 711,
+    "Status": 2,
+    "CreatedAt": "2025-09-30 04:01:54",
+    "CategoryId": 6,
+    "EmployerProfileId": 42
+  },
+  {
+    "Title": "High-Speed Blender",
+    "Description": "Powerful blender for smoothies and soups.",
+    "Budget": 770,
+    "Status": 1,
+    "CreatedAt": "2025-02-22 23:57:29",
+    "CategoryId": 4,
+    "EmployerProfileId": 57
+  },
+  {
+    "Title": "Potting Soil",
+    "Description": "Premium potting soil for indoor plants.",
+    "Budget": 563,
+    "Status": 2,
+    "CreatedAt": "2025-12-30 14:21:53",
+    "CategoryId": 6,
+    "EmployerProfileId": 43
+  },
+  {
+    "Title": "Shatterproof Wine Glasses",
+    "Description": "Durable, unbreakable wine glasses for outdoor use.",
+    "Budget": 394,
+    "Status": 1,
+    "CreatedAt": "2025-02-17 01:48:52",
+    "CategoryId": 4,
+    "EmployerProfileId": 26
+  },
+  {
+    "Title": "Energy Bites",
+    "Description": "Healthy energy bites made with oats and natural sweeteners.",
+    "Budget": 877,
+    "Status": 1,
+    "CreatedAt": "2025-08-19 17:03:50",
+    "CategoryId": 1,
+    "EmployerProfileId": 39
+  },
+  {
+    "Title": "Rechargeable Laptop Battery Pack",
+    "Description": "Portable battery pack to charge laptops while on the move.",
+    "Budget": 217,
+    "Status": 1,
+    "CreatedAt": "2025-06-04 05:29:43",
+    "CategoryId": 2,
+    "EmployerProfileId": 25
+  },
+  {
+    "Title": "Classic Minestrone Soup",
+    "Description": "Hearty minestrone soup loaded with vegetables and pasta.",
+    "Budget": 435,
+    "Status": 1,
+    "CreatedAt": "2026-03-17 12:11:57",
+    "CategoryId": 3,
+    "EmployerProfileId": 22
+  },
+  {
+    "Title": "Pet Bed",
+    "Description": "Comfortable pet bed for small to medium-sized dogs.",
+    "Budget": 562,
+    "Status": 1,
+    "CreatedAt": "2025-07-20 10:35:24",
+    "CategoryId": 1,
+    "EmployerProfileId": 23
+  },
+  {
+    "Title": "Himalayan Pink Salt",
+    "Description": "Natural mineral salt with a subtle flavor, ideal for cooking and seasoning.",
+    "Budget": 360,
+    "Status": 1,
+    "CreatedAt": "2025-01-23 18:53:03",
+    "CategoryId": 7,
+    "EmployerProfileId": 41
+  },
+  {
+    "Title": "Animal Paw Print Soap Dispenser",
+    "Description": "Cute dispenser for bathrooms or kitchens featuring paw prints.",
+    "Budget": 165,
+    "Status": 1,
+    "CreatedAt": "2026-05-11 18:54:45",
+    "CategoryId": 3,
+    "EmployerProfileId": 34
+  },
+  {
+    "Title": "Body Pillow Case",
+    "Description": "Soft and breathable pillowcase for body pillows.",
+    "Budget": 835,
+    "Status": 1,
+    "CreatedAt": "2025-02-09 16:25:39",
+    "CategoryId": 5,
+    "EmployerProfileId": 11
+  },
+  {
+    "Title": "Portable Electric Fan",
+    "Description": "Compact fan for personal cooling at work or home.",
+    "Budget": 45,
+    "Status": 1,
+    "CreatedAt": "2026-02-18 12:07:39",
+    "CategoryId": 1,
+    "EmployerProfileId": 54
+  },
+  {
+    "Title": "Wrist Support Brace",
+    "Description": "Comfortable support brace to relieve wrist pain.",
+    "Budget": 744,
+    "Status": 1,
+    "CreatedAt": "2026-05-10 12:37:29",
+    "CategoryId": 3,
+    "EmployerProfileId": 17
+  },
+  {
+    "Title": "Children's Educational Workbook",
+    "Description": "Activity workbook for early learning and fun.",
+    "Budget": 482,
+    "Status": 1,
+    "CreatedAt": "2026-02-23 05:11:27",
+    "CategoryId": 3,
+    "EmployerProfileId": 67
+  },
+  {
+    "Title": "Pet Food Storage Container",
+    "Description": "Airtight container to keep pet food fresh.",
+    "Budget": 116,
+    "Status": 2,
+    "CreatedAt": "2025-10-06 18:52:58",
+    "CategoryId": 1,
+    "EmployerProfileId": 12
+  },
+  {
+    "Title": "Classic Black Trousers",
+    "Description": "Timeless black trousers for a smart and sophisticated look.",
+    "Budget": 792,
+    "Status": 2,
+    "CreatedAt": "2025-08-10 08:03:54",
+    "CategoryId": 6,
+    "EmployerProfileId": 5
+  },
+  {
+    "Title": "Pet Hair Remover",
+    "Description": "Effective roller for removing pet hair from furniture.",
+    "Budget": 387,
+    "Status": 2,
+    "CreatedAt": "2025-10-07 13:34:56",
+    "CategoryId": 4,
+    "EmployerProfileId": 7
+  },
+  {
+    "Title": "Frozen Berry Medley",
+    "Description": "A mix of strawberries, blueberries, and raspberries, great for smoothies or desserts.",
+    "Budget": 959,
+    "Status": 2,
+    "CreatedAt": "2025-09-07 03:53:59",
+    "CategoryId": 2,
+    "EmployerProfileId": 34
+  },
+  {
+    "Title": "Electric Heating Pad",
+    "Description": "Microwaveable heating pad for muscle pain relief and relaxation.",
+    "Budget": 727,
+    "Status": 1,
+    "CreatedAt": "2025-02-13 07:06:18",
+    "CategoryId": 3,
+    "EmployerProfileId": 31
+  },
+  {
+    "Title": "Multi-Purpose Plant Care Tool",
+    "Description": "All-in-one tool for measuring soil moisture, light, and pH.",
+    "Budget": 735,
+    "Status": 1,
+    "CreatedAt": "2025-07-21 08:51:12",
+    "CategoryId": 6,
+    "EmployerProfileId": 36
+  },
+  {
+    "Title": "Picnic Blanket",
+    "Description": "Waterproof picnic blanket for outdoor fun.",
+    "Budget": 229,
+    "Status": 2,
+    "CreatedAt": "2025-08-15 00:22:59",
+    "CategoryId": 5,
+    "EmployerProfileId": 3
+  },
+  {
+    "Title": "Biodegradable Trash Bags",
+    "Description": "Eco-friendly trash bags that break down naturally.",
+    "Budget": 452,
+    "Status": 1,
+    "CreatedAt": "2025-04-03 18:27:13",
+    "CategoryId": 3,
+    "EmployerProfileId": 1
+  },
+  {
+    "Title": "Vegetable Fried Rice",
+    "Description": "Quick and easy fried rice mixed with vegetables and soy sauce.",
+    "Budget": 812,
+    "Status": 1,
+    "CreatedAt": "2025-07-24 01:45:43",
+    "CategoryId": 2,
+    "EmployerProfileId": 51
+  },
+  {
+    "Title": "Foam Muscle Roller",
+    "Description": "Relieve muscle tension and soreness with this foam roller.",
+    "Budget": 453,
+    "Status": 1,
+    "CreatedAt": "2025-02-05 16:21:19",
+    "CategoryId": 2,
+    "EmployerProfileId": 41
+  },
+  {
+    "Title": "DIY Candle Making Kit",
+    "Description": "Everything you need to make your own candles.",
+    "Budget": 660,
+    "Status": 1,
+    "CreatedAt": "2025-04-03 06:49:41",
+    "CategoryId": 1,
+    "EmployerProfileId": 41
+  },
+  {
+    "Title": "Portable Solar Charger",
+    "Description": "Solar-powered charger for smartphones and tablets.",
+    "Budget": 292,
+    "Status": 1,
+    "CreatedAt": "2025-11-09 13:09:30",
+    "CategoryId": 6,
+    "EmployerProfileId": 4
+  },
+  {
+    "Title": "High-Low Hem Tee",
+    "Description": "Trendy high-low tee with a relaxed fit, ideal for weekends.",
+    "Budget": 281,
+    "Status": 1,
+    "CreatedAt": "2025-09-21 04:34:43",
+    "CategoryId": 2,
+    "EmployerProfileId": 23
+  },
+  {
+    "Title": "Oven Mitts with Pocket",
+    "Description": "Silicone oven mitts designed for safe cooking and baking.",
+    "Budget": 359,
+    "Status": 1,
+    "CreatedAt": "2025-11-02 19:00:24",
+    "CategoryId": 6,
+    "EmployerProfileId": 15
+  },
+  {
+    "Title": "Compressed Towel Tablets",
+    "Description": "Compact towels that expand when wet, ideal for travel.",
+    "Budget": 844,
+    "Status": 1,
+    "CreatedAt": "2025-03-05 19:08:53",
+    "CategoryId": 5,
+    "EmployerProfileId": 46
+  },
+  {
+    "Title": "Fridge Magnet Set",
+    "Description": "Fun fridge magnets to decorate your kitchen.",
+    "Budget": 465,
+    "Status": 1,
+    "CreatedAt": "2026-04-22 17:49:16",
+    "CategoryId": 6,
+    "EmployerProfileId": 50
+  },
+  {
+    "Title": "Coconut Water",
+    "Description": "Refreshing coconut water, perfect for hydration.",
+    "Budget": 316,
+    "Status": 1,
+    "CreatedAt": "2025-03-29 10:20:36",
+    "CategoryId": 4,
+    "EmployerProfileId": 57
+  },
+  {
+    "Title": "Stuffed Bell Peppers",
+    "Description": "Bell peppers stuffed with rice and vegetables",
+    "Budget": 734,
+    "Status": 1,
+    "CreatedAt": "2025-10-09 23:21:33",
+    "CategoryId": 5,
+    "EmployerProfileId": 12
+  },
+  {
+    "Title": "Spicy BBQ Sauce",
+    "Description": "A tangy and spicy BBQ sauce that's perfect for grilling.",
+    "Budget": 426,
+    "Status": 1,
+    "CreatedAt": "2025-05-13 05:19:56",
+    "CategoryId": 5,
+    "EmployerProfileId": 38
+  },
+  {
+    "Title": "Italian Sausage and Peppers",
+    "Description": "A flavorful blend of Italian sausage with sautéed peppers and onions.",
+    "Budget": 511,
+    "Status": 1,
+    "CreatedAt": "2024-12-25 03:11:29",
+    "CategoryId": 1,
+    "EmployerProfileId": 48
+  },
+  {
+    "Title": "Vegetable Broth",
+    "Description": "Rich vegetable broth for soups and stews.",
+    "Budget": 524,
+    "Status": 1,
+    "CreatedAt": "2026-02-27 03:29:33",
+    "CategoryId": 5,
+    "EmployerProfileId": 36
+  },
+  {
+    "Title": "Garden Tool Set with Carrying Bag",
+    "Description": "Complete set for garden care with a handy carrying bag.",
+    "Budget": 877,
+    "Status": 1,
+    "CreatedAt": "2025-06-05 09:12:10",
+    "CategoryId": 2,
+    "EmployerProfileId": 12
+  },
+  {
+    "Title": "Mesh Sports Leggings",
+    "Description": "Breathable mesh sports leggings for ultimate comfort.",
+    "Budget": 669,
+    "Status": 2,
+    "CreatedAt": "2026-05-12 11:54:47",
+    "CategoryId": 1,
+    "EmployerProfileId": 33
+  },
+  {
+    "Title": "Electric Fondue Pot",
+    "Description": "Set for making fondue at home.",
+    "Budget": 671,
+    "Status": 2,
+    "CreatedAt": "2026-04-06 14:52:36",
+    "CategoryId": 6,
+    "EmployerProfileId": 21
+  },
+  {
+    "Title": "Garden Tool Set with Carrying Bag",
+    "Description": "Complete set for garden care with a handy carrying bag.",
+    "Budget": 392,
+    "Status": 2,
+    "CreatedAt": "2025-01-25 17:49:06",
+    "CategoryId": 5,
+    "EmployerProfileId": 55
+  },
+  {
+    "Title": "BBQ Jackfruit",
+    "Description": "Tender jackfruit cooked in BBQ sauce, a delicious plant-based alternative.",
+    "Budget": 134,
+    "Status": 1,
+    "CreatedAt": "2026-01-08 18:47:53",
+    "CategoryId": 7,
+    "EmployerProfileId": 11
+  },
+  {
+    "Title": "Garden Tool Set with Carrying Bag",
+    "Description": "Complete set for garden care with a handy carrying bag.",
+    "Budget": 862,
+    "Status": 2,
+    "CreatedAt": "2025-04-27 03:56:23",
+    "CategoryId": 7,
+    "EmployerProfileId": 5
+  },
+  {
+    "Title": "Vanilla Almond Granola",
+    "Description": "Crunchy granola with almonds and a hint of vanilla, perfect for breakfast.",
+    "Budget": 523,
+    "Status": 2,
+    "CreatedAt": "2025-03-20 10:41:24",
+    "CategoryId": 5,
+    "EmployerProfileId": 6
+  },
+  {
+    "Title": "Solar Charger",
+    "Description": "Portable solar charger for outdoor adventures.",
+    "Budget": 475,
+    "Status": 1,
+    "CreatedAt": "2026-03-17 09:39:22",
+    "CategoryId": 1,
+    "EmployerProfileId": 31
+  },
+  {
+    "Title": "Classic Beef Chili",
+    "Description": "Hearty chili made with premium ground beef and kidney beans.",
+    "Budget": 653,
+    "Status": 1,
+    "CreatedAt": "2025-06-12 03:28:33",
+    "CategoryId": 2,
+    "EmployerProfileId": 63
+  },
+  {
+    "Title": "Hair Dryer",
+    "Description": "Compact hair dryer with multiple heat settings.",
+    "Budget": 706,
+    "Status": 2,
+    "CreatedAt": "2025-02-24 04:23:10",
+    "CategoryId": 5,
+    "EmployerProfileId": 35
+  },
+  {
+    "Title": "Coconut Chia Pudding",
+    "Description": "Creamy chia pudding made with coconut milk and topped with mango.",
+    "Budget": 128,
+    "Status": 1,
+    "CreatedAt": "2025-11-19 14:49:54",
+    "CategoryId": 2,
+    "EmployerProfileId": 8
+  },
+  {
+    "Title": "Quinoa",
+    "Description": "Protein-rich quinoa, a great alternative to rice.",
+    "Budget": 37,
+    "Status": 1,
+    "CreatedAt": "2026-01-11 11:37:38",
+    "CategoryId": 1,
+    "EmployerProfileId": 11
+  },
+  {
+    "Title": "Collapsible Folding Chair",
+    "Description": "Lightweight and portable chair for camping or events.",
+    "Budget": 141,
+    "Status": 1,
+    "CreatedAt": "2025-07-22 05:10:34",
+    "CategoryId": 5,
+    "EmployerProfileId": 60
+  },
+  {
+    "Title": "Electric Rice Cooker with Steamer",
+    "Description": "Cook rice and steam vegetables simultaneously for healthy meals.",
+    "Budget": 820,
+    "Status": 1,
+    "CreatedAt": "2025-10-03 05:51:31",
+    "CategoryId": 4,
+    "EmployerProfileId": 3
+  },
+  {
+    "Title": "Adjustable Pet Feeder",
+    "Description": "Convenient feeder that adjusts to your pet's height.",
+    "Budget": 259,
+    "Status": 1,
+    "CreatedAt": "2025-07-03 04:56:48",
+    "CategoryId": 2,
+    "EmployerProfileId": 47
+  },
+  {
+    "Title": "Egg Noodles",
+    "Description": "Wide egg noodles, perfect for casseroles and soups.",
+    "Budget": 931,
+    "Status": 1,
+    "CreatedAt": "2026-02-22 18:50:52",
+    "CategoryId": 6,
+    "EmployerProfileId": 33
+  },
+  {
+    "Title": "Walnut Halves",
+    "Description": "Fresh walnut halves for baking or snacking.",
+    "Budget": 602,
+    "Status": 2,
+    "CreatedAt": "2025-03-04 19:43:30",
+    "CategoryId": 3,
+    "EmployerProfileId": 53
+  },
+  {
+    "Title": "Compact Electric Kettle",
+    "Description": "Quick-boiling kettle for home and office use.",
+    "Budget": 308,
+    "Status": 2,
+    "CreatedAt": "2026-05-06 17:42:18",
+    "CategoryId": 2,
+    "EmployerProfileId": 18
+  },
+  {
+    "Title": "Compact Folding Table",
+    "Description": "Versatile folding table great for events or outdoor activities.",
+    "Budget": 274,
+    "Status": 1,
+    "CreatedAt": "2025-12-08 03:08:49",
+    "CategoryId": 7,
+    "EmployerProfileId": 60
+  },
+  {
+    "Title": "Homestyle Chicken Noodle Soup",
+    "Description": "Classic chicken noodle soup with tender chicken and vegetables.",
+    "Budget": 962,
+    "Status": 1,
+    "CreatedAt": "2026-03-21 16:00:49",
+    "CategoryId": 6,
+    "EmployerProfileId": 27
+  },
+  {
+    "Title": "Carrot Sticks",
+    "Description": "Freshly cut carrot sticks, perfect for snacking.",
+    "Budget": 458,
+    "Status": 1,
+    "CreatedAt": "2026-02-14 21:02:05",
+    "CategoryId": 3,
+    "EmployerProfileId": 32
+  },
+  {
+    "Title": "Peach Mango Smoothie",
+    "Description": "A refreshing blend of peaches and mangoes for a delicious smoothie.",
+    "Budget": 766,
+    "Status": 1,
+    "CreatedAt": "2025-11-02 04:01:33",
+    "CategoryId": 5,
+    "EmployerProfileId": 4
+  },
+  {
+    "Title": "Chocolate Hazelnut Granola",
+    "Description": "Crunchy granola with chocolate and hazelnuts for breakfast.",
+    "Budget": 765,
+    "Status": 1,
+    "CreatedAt": "2024-12-09 09:57:37",
+    "CategoryId": 5,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Coconut Flakes",
+    "Description": "Unsweetened coconut flakes for baking and topping.",
+    "Budget": 100,
+    "Status": 1,
+    "CreatedAt": "2025-03-22 16:17:58",
+    "CategoryId": 1,
+    "EmployerProfileId": 37
+  },
+  {
+    "Title": "Vegan Tacos",
+    "Description": "Frozen vegan tacos filled with plant-based protein and spices.",
+    "Budget": 500,
+    "Status": 1,
+    "CreatedAt": "2025-07-31 16:23:16",
+    "CategoryId": 4,
+    "EmployerProfileId": 60
+  },
+  {
+    "Title": "Almond Butter Cookies",
+    "Description": "Soft cookies made with almond butter",
+    "Budget": 623,
+    "Status": 1,
+    "CreatedAt": "2026-02-13 05:30:03",
+    "CategoryId": 4,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Sriracha Sauce",
+    "Description": "Spicy chili sauce for an extra kick in your meals.",
+    "Budget": 484,
+    "Status": 1,
+    "CreatedAt": "2026-02-03 01:25:46",
+    "CategoryId": 7,
+    "EmployerProfileId": 45
+  },
+  {
+    "Title": "Apple Cinnamon Granola",
+    "Description": "A wholesome granola with bits of apple and a touch of cinnamon.",
+    "Budget": 283,
+    "Status": 1,
+    "CreatedAt": "2026-05-04 16:17:56",
+    "CategoryId": 2,
+    "EmployerProfileId": 43
+  },
+  {
+    "Title": "Dark Chocolate Covered Raisins",
+    "Description": "Satisfy your sweet tooth with these dark chocolate-covered raisins.",
+    "Budget": 367,
+    "Status": 1,
+    "CreatedAt": "2025-04-10 03:00:18",
+    "CategoryId": 3,
+    "EmployerProfileId": 58
+  },
+  {
+    "Title": "Satin Slip Dress",
+    "Description": "Luxurious satin slip dress for an elegant evening look.",
+    "Budget": 390,
+    "Status": 1,
+    "CreatedAt": "2025-11-24 21:37:36",
+    "CategoryId": 3,
+    "EmployerProfileId": 50
+  },
+  {
+    "Title": "Cocoa Powder",
+    "Description": "Rich cocoa powder for baking and chocolate recipes.",
+    "Budget": 571,
+    "Status": 1,
+    "CreatedAt": "2025-10-19 11:54:09",
+    "CategoryId": 6,
+    "EmployerProfileId": 55
+  },
+  {
+    "Title": "Tailgating Set",
+    "Description": "Complete set for grilling and tailgating fun.",
+    "Budget": 260,
+    "Status": 1,
+    "CreatedAt": "2026-01-08 11:12:59",
+    "CategoryId": 1,
+    "EmployerProfileId": 23
+  },
+  {
+    "Title": "Chocolate Fudge Brownie Mix",
+    "Description": "Just add water for delicious brownies.",
+    "Budget": 545,
+    "Status": 2,
+    "CreatedAt": "2024-11-29 23:33:20",
+    "CategoryId": 1,
+    "EmployerProfileId": 47
+  },
+  {
+    "Title": "Maple Pecan Oatmeal Cookies",
+    "Description": "Soft oatmeal cookies with maple and pecans.",
+    "Budget": 623,
+    "Status": 1,
+    "CreatedAt": "2025-09-07 23:27:08",
+    "CategoryId": 6,
+    "EmployerProfileId": 26
+  },
+  {
+    "Title": "Avocados",
+    "Description": "Fresh, creamy avocados ideal for salads and guacamole.",
+    "Budget": 624,
+    "Status": 1,
+    "CreatedAt": "2025-04-17 23:42:14",
+    "CategoryId": 1,
+    "EmployerProfileId": 24
+  },
+  {
+    "Title": "Infrared Space Heater",
+    "Description": "Energy-efficient infrared heater for home use.",
+    "Budget": 933,
+    "Status": 2,
+    "CreatedAt": "2025-04-08 18:27:29",
+    "CategoryId": 1,
+    "EmployerProfileId": 28
+  },
+  {
+    "Title": "Honey Roasted Almonds",
+    "Description": "Sweet and crunchy roasted almonds.",
+    "Budget": 946,
+    "Status": 2,
+    "CreatedAt": "2024-11-05 17:18:49",
+    "CategoryId": 4,
+    "EmployerProfileId": 24
+  },
+  {
+    "Title": "Roasted Red Pepper Dip",
+    "Description": "A blend of roasted red peppers and spices, perfect for dipping.",
+    "Budget": 931,
+    "Status": 1,
+    "CreatedAt": "2025-12-01 07:07:56",
+    "CategoryId": 7,
+    "EmployerProfileId": 53
+  },
+  {
+    "Title": "DIY Lip Balm Kit",
+    "Description": "Craft your own lip balms with this complete kit.",
+    "Budget": 668,
+    "Status": 1,
+    "CreatedAt": "2025-08-21 14:18:44",
+    "CategoryId": 2,
+    "EmployerProfileId": 66
+  },
+  {
+    "Title": "Repair Tool Set for Home Improvement",
+    "Description": "Small toolkit with essentials for home repairs.",
+    "Budget": 11,
+    "Status": 1,
+    "CreatedAt": "2024-12-03 15:16:29",
+    "CategoryId": 4,
+    "EmployerProfileId": 18
+  },
+  {
+    "Title": "Cheese Stuffed Jalapenos",
+    "Description": "Spicy jalapenos stuffed with cheese, ideal for appetizers.",
+    "Budget": 825,
+    "Status": 2,
+    "CreatedAt": "2025-02-13 03:54:30",
+    "CategoryId": 5,
+    "EmployerProfileId": 43
+  },
+  {
+    "Title": "Kids' Art Easel",
+    "Description": "Double-sided art easel for painting and drawing.",
+    "Budget": 660,
+    "Status": 1,
+    "CreatedAt": "2026-04-24 06:29:58",
+    "CategoryId": 4,
+    "EmployerProfileId": 26
+  },
+  {
+    "Title": "Portable Bluetooth Headphones",
+    "Description": "Wireless headphones with noise-canceling features.",
+    "Budget": 123,
+    "Status": 1,
+    "CreatedAt": "2025-09-17 05:07:43",
+    "CategoryId": 3,
+    "EmployerProfileId": 48
+  },
+  {
+    "Title": "Vegetable Pizza Rolls",
+    "Description": "Frozen pizza rolls filled with vegetables and cheese, perfect for snacks.",
+    "Budget": 599,
+    "Status": 1,
+    "CreatedAt": "2025-11-19 17:54:53",
+    "CategoryId": 3,
+    "EmployerProfileId": 50
+  },
+  {
+    "Title": "Lemon Dill Salmon",
+    "Description": "Salmon fillets seasoned with lemon and dill, perfect for grilling.",
+    "Budget": 351,
+    "Status": 1,
+    "CreatedAt": "2025-09-14 21:41:29",
+    "CategoryId": 1,
+    "EmployerProfileId": 65
+  },
+  {
+    "Title": "Electric Bike",
+    "Description": "Eco-friendly electric bike with a 30-mile range.",
+    "Budget": 825,
+    "Status": 1,
+    "CreatedAt": "2025-11-20 11:28:42",
+    "CategoryId": 4,
+    "EmployerProfileId": 42
+  },
+  {
+    "Title": "Casual Cropped Sweater",
+    "Description": "A trendy cropped sweater perfect for a casual look.",
+    "Budget": 145,
+    "Status": 1,
+    "CreatedAt": "2025-02-05 13:24:38",
+    "CategoryId": 7,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Dog Training Collar",
+    "Description": "Rechargeable training collar for effective behavior training.",
+    "Budget": 191,
+    "Status": 1,
+    "CreatedAt": "2025-07-11 08:51:18",
+    "CategoryId": 2,
+    "EmployerProfileId": 56
+  },
+  {
+    "Title": "Dried Mango Slices",
+    "Description": "Sweet and chewy dried mango slices, perfect for snacking.",
+    "Budget": 65,
+    "Status": 2,
+    "CreatedAt": "2026-01-14 13:50:05",
+    "CategoryId": 1,
+    "EmployerProfileId": 27
+  },
+  {
+    "Title": "Karaoke Microphone",
+    "Description": "Wireless microphone for singing and performances.",
+    "Budget": 75,
+    "Status": 2,
+    "CreatedAt": "2025-03-07 01:33:58",
+    "CategoryId": 4,
+    "EmployerProfileId": 33
+  },
+  {
+    "Title": "Portable Grill Cover",
+    "Description": "Durable cover to protect your grill from the elements.",
+    "Budget": 314,
+    "Status": 1,
+    "CreatedAt": "2025-02-08 08:14:17",
+    "CategoryId": 5,
+    "EmployerProfileId": 13
+  },
+  {
+    "Title": "Fruit Medley Juice",
+    "Description": "Refreshing juice blend made with various fresh fruits.",
+    "Budget": 725,
+    "Status": 1,
+    "CreatedAt": "2025-09-07 03:54:15",
+    "CategoryId": 7,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Athletic Compression Tights",
+    "Description": "High-performance compression tights designed for optimal support and comfort.",
+    "Budget": 679,
+    "Status": 1,
+    "CreatedAt": "2025-04-09 15:26:53",
+    "CategoryId": 4,
+    "EmployerProfileId": 23
+  },
+  {
+    "Title": "Lasagna Noodles",
+    "Description": "Wide pasta sheets for making lasagna.",
+    "Budget": 539,
+    "Status": 1,
+    "CreatedAt": "2026-04-17 04:26:46",
+    "CategoryId": 6,
+    "EmployerProfileId": 63
+  },
+  {
+    "Title": "Luxury Bath Robe",
+    "Description": "Soft and plush robe for comfort after the shower.",
+    "Budget": 40,
+    "Status": 1,
+    "CreatedAt": "2025-04-10 12:39:59",
+    "CategoryId": 5,
+    "EmployerProfileId": 10
+  },
+  {
+    "Title": "Non-Stick Baking Sheets",
+    "Description": "Set of baking sheets for effortless baking.",
+    "Budget": 704,
+    "Status": 1,
+    "CreatedAt": "2025-10-15 04:27:57",
+    "CategoryId": 6,
+    "EmployerProfileId": 42
+  },
+  {
+    "Title": "Herb Seasoned Couscous",
+    "Description": "Fluffy couscous seasoned with a blend of herbs, perfect as a side dish.",
+    "Budget": 610,
+    "Status": 2,
+    "CreatedAt": "2026-05-19 06:12:04",
+    "CategoryId": 2,
+    "EmployerProfileId": 16
+  },
+  {
+    "Title": "Savory Oatmeal Cups",
+    "Description": "Savory oatmeal ready to eat, great for breakfast or a snack.",
+    "Budget": 250,
+    "Status": 1,
+    "CreatedAt": "2025-10-04 04:20:57",
+    "CategoryId": 1,
+    "EmployerProfileId": 29
+  },
+  {
+    "Title": "Pasta Maker Machine",
+    "Description": "Manual pasta maker for creating fresh pasta at home.",
+    "Budget": 989,
+    "Status": 1,
+    "CreatedAt": "2026-05-25 15:26:55",
+    "CategoryId": 7,
+    "EmployerProfileId": 50
+  },
+  {
+    "Title": "Adjustable Bar Stools",
+    "Description": "Stylish bar stools with adjustable height and swivel features.",
+    "Budget": 943,
+    "Status": 1,
+    "CreatedAt": "2026-05-06 00:08:23",
+    "CategoryId": 6,
+    "EmployerProfileId": 46
+  },
+  {
+    "Title": "LED Camping Lantern with USB Charging",
+    "Description": "Rechargeable lantern with multiple brightness settings for outdoors.",
+    "Budget": 955,
+    "Status": 1,
+    "CreatedAt": "2024-11-18 23:05:01",
+    "CategoryId": 5,
+    "EmployerProfileId": 20
+  },
+  {
+    "Title": "Weighted Jump Rope with Counter",
+    "Description": "Jump rope that counts your jumps for tracking workouts.",
+    "Budget": 854,
+    "Status": 1,
+    "CreatedAt": "2026-01-08 09:44:37",
+    "CategoryId": 5,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Silicone Ice Cube Tray",
+    "Description": "Flexible tray for easy-release ice cubes.",
+    "Budget": 505,
+    "Status": 1,
+    "CreatedAt": "2025-03-18 21:31:17",
+    "CategoryId": 5,
+    "EmployerProfileId": 18
+  },
+  {
+    "Title": "Smartphone Projector",
+    "Description": "DIY projector that magnifies your smartphone screen for movie nights.",
+    "Budget": 9,
+    "Status": 1,
+    "CreatedAt": "2025-01-27 04:54:16",
+    "CategoryId": 2,
+    "EmployerProfileId": 39
+  },
+  {
+    "Title": "Portable Massage Gun",
+    "Description": "Personal massager for muscle recovery.",
+    "Budget": 48,
+    "Status": 1,
+    "CreatedAt": "2026-02-16 03:17:49",
+    "CategoryId": 5,
+    "EmployerProfileId": 2
+  },
+  {
+    "Title": "Travel Yoga Mat",
+    "Description": "Lightweight yoga mat for practicing on the go.",
+    "Budget": 911,
+    "Status": 1,
+    "CreatedAt": "2025-12-22 00:02:13",
+    "CategoryId": 1,
+    "EmployerProfileId": 34
+  },
+  {
+    "Title": "Sweet Chili Sauce",
+    "Description": "A sweet and spicy sauce, great for dipping or cooking.",
+    "Budget": 126,
+    "Status": 2,
+    "CreatedAt": "2025-08-14 14:04:00",
+    "CategoryId": 3,
+    "EmployerProfileId": 15
+  },
+  {
+    "Title": "Luminous Night Light",
+    "Description": "Soft glow night light for children's rooms or bedside.",
+    "Budget": 243,
+    "Status": 1,
+    "CreatedAt": "2025-01-03 13:18:28",
+    "CategoryId": 4,
+    "EmployerProfileId": 9
+  },
+  {
+    "Title": "Sun-Dried Tomato Pesto",
+    "Description": "A rich pesto made with sun-dried tomatoes and pine nuts.",
+    "Budget": 49,
+    "Status": 1,
+    "CreatedAt": "2024-12-23 05:04:09",
+    "CategoryId": 3,
+    "EmployerProfileId": 65
+  },
+  {
+    "Title": "Dog Walking Waist Pack",
+    "Description": "Hands-free waist pack for carrying essentials while walking your dog.",
+    "Budget": 414,
+    "Status": 1,
+    "CreatedAt": "2026-04-22 08:03:16",
+    "CategoryId": 4,
+    "EmployerProfileId": 32
+  },
+  {
+    "Title": "Wireless Mouse",
+    "Description": "Ergonomic wireless mouse with adjustable DPI.",
+    "Budget": 156,
+    "Status": 1,
+    "CreatedAt": "2026-04-10 15:05:18",
+    "CategoryId": 2,
+    "EmployerProfileId": 32
+  },
+  {
+    "Title": "Chipotle Seasoning Blend",
+    "Description": "A smoky blend of spices for grilling and roasting.",
+    "Budget": 635,
+    "Status": 1,
+    "CreatedAt": "2026-02-15 16:13:20",
+    "CategoryId": 4,
+    "EmployerProfileId": 36
+  },
+  {
+    "Title": "First Aid Kit",
+    "Description": "Comprehensive first aid kit for emergency situations.",
+    "Budget": 667,
+    "Status": 1,
+    "CreatedAt": "2025-09-08 19:25:55",
+    "CategoryId": 3,
+    "EmployerProfileId": 14
+  },
+  {
+    "Title": "Blueberry Muffin Mix",
+    "Description": "Make delightful blueberry muffins at home with this easy mix.",
+    "Budget": 5,
+    "Status": 2,
+    "CreatedAt": "2024-12-30 14:37:31",
+    "CategoryId": 2,
+    "EmployerProfileId": 47
+  },
+  {
+    "Title": "Tailored Dress Pants",
+    "Description": "Smart tailored dress pants, perfect for work or formal events.",
+    "Budget": 684,
+    "Status": 1,
+    "CreatedAt": "2026-04-19 07:47:16",
+    "CategoryId": 6,
+    "EmployerProfileId": 6
+  },
+  {
+    "Title": "Quinoa and Kale Salad Kit",
+    "Description": "Ready-to-eat salad with quinoa and kale, drizzled with vinaigrette.",
+    "Budget": 70,
+    "Status": 1,
+    "CreatedAt": "2025-01-27 23:36:35",
+    "CategoryId": 1,
+    "EmployerProfileId": 37
+  },
+  {
+    "Title": "Honey Sriracha Chicken Bites",
+    "Description": "Frozen chicken bites coated in a honey sriracha glaze, spicy and sweet.",
+    "Budget": 763,
+    "Status": 1,
+    "CreatedAt": "2025-06-22 04:16:25",
+    "CategoryId": 1,
+    "EmployerProfileId": 67
+  },
+  {
+    "Title": "Scented Candle Set",
+    "Description": "Set of soothing scented candles for relaxation and ambiance.",
+    "Budget": 80,
+    "Status": 1,
+    "CreatedAt": "2025-08-30 19:53:22",
+    "CategoryId": 2,
+    "EmployerProfileId": 11
+  },
+  {
+    "Title": "Glass Tea Pot",
+    "Description": "Elegant glass teapot for brewing loose tea.",
+    "Budget": 534,
+    "Status": 1,
+    "CreatedAt": "2025-10-27 03:36:44",
+    "CategoryId": 3,
+    "EmployerProfileId": 19
+  },
+  {
+    "Title": "Outdoor Inflatable Pool",
+    "Description": "Large inflatable pool for summer fun in your backyard.",
+    "Budget": 346,
+    "Status": 1,
+    "CreatedAt": "2025-05-19 04:34:08",
+    "CategoryId": 1,
+    "EmployerProfileId": 36
+  },
+  {
+    "Title": "Sriracha Sauce",
+    "Description": "Spicy chili sauce for an extra kick in your meals.",
+    "Budget": 331,
+    "Status": 1,
+    "CreatedAt": "2025-07-16 20:14:18",
+    "CategoryId": 6,
+    "EmployerProfileId": 54
+  },
+  {
+    "Title": "Italian Sausage and Peppers",
+    "Description": "A flavorful blend of Italian sausage with sautéed peppers and onions.",
+    "Budget": 440,
+    "Status": 1,
+    "CreatedAt": "2026-02-13 12:08:18",
+    "CategoryId": 6,
+    "EmployerProfileId": 66
+  },
+  {
+    "Title": "Interchangeable Watch Bands",
+    "Description": "Set of stylish watch bands to customize your look.",
+    "Budget": 374,
+    "Status": 1,
+    "CreatedAt": "2025-04-16 19:34:49",
+    "CategoryId": 6,
+    "EmployerProfileId": 25
+  },
+  {
+    "Title": "Cheddar Cheese Crackers",
+    "Description": "Crunchy crackers topped with real cheddar cheese flavor.",
+    "Budget": 654,
+    "Status": 1,
+    "CreatedAt": "2025-10-12 12:22:41",
+    "CategoryId": 1,
+    "EmployerProfileId": 59
+  },
+  {
+    "Title": "Biodegradable Trash Bags",
+    "Description": "Eco-friendly trash bags that break down naturally.",
+    "Budget": 332,
+    "Status": 2,
+    "CreatedAt": "2026-02-26 15:36:34",
+    "CategoryId": 4,
+    "EmployerProfileId": 40
+  },
+  {
+    "Title": "Stick Vacuums Cleaner",
+    "Description": "Cordless vacuum cleaner for quick clean-ups.",
+    "Budget": 650,
+    "Status": 1,
+    "CreatedAt": "2024-11-14 17:52:38",
+    "CategoryId": 5,
+    "EmployerProfileId": 54
+  },
+  {
+    "Title": "Marinated Artichokes",
+    "Description": "Artichoke hearts marinated in herbs and oil.",
+    "Budget": 581,
+    "Status": 1,
+    "CreatedAt": "2026-04-15 16:26:46",
+    "CategoryId": 2,
+    "EmployerProfileId": 5
+  },
+  {
+    "Title": "Compact Electric Kettle",
+    "Description": "Quick-boiling kettle for home and office use.",
+    "Budget": 720,
+    "Status": 1,
+    "CreatedAt": "2025-04-18 14:03:56",
+    "CategoryId": 1,
+    "EmployerProfileId": 15
+  },
+  {
+    "Title": "Creamy Tomato Basil Soup",
+    "Description": "Rich and creamy tomato basil soup, perfect with a grilled cheese.",
+    "Budget": 363,
+    "Status": 1,
+    "CreatedAt": "2025-02-06 06:50:45",
+    "CategoryId": 1,
+    "EmployerProfileId": 11
+  },
+  {
+    "Title": "Insulated Wine Tote",
+    "Description": "Stylish tote to keep wine bottles chilled while traveling.",
+    "Budget": 647,
+    "Status": 1,
+    "CreatedAt": "2024-12-17 00:41:52",
+    "CategoryId": 5,
+    "EmployerProfileId": 1
+  },
+  {
+    "Title": "Paprika",
+    "Description": "Rich and sweet paprika spice for seasoning.",
+    "Budget": 749,
+    "Status": 1,
+    "CreatedAt": "2024-12-22 08:18:58",
+    "CategoryId": 1,
+    "EmployerProfileId": 66
+  },
+  {
+    "Title": "Elegant Lace Dress",
+    "Description": "A stunning lace dress perfect for special occasions.",
+    "Budget": 590,
+    "Status": 1,
+    "CreatedAt": "2025-03-16 04:47:46",
+    "CategoryId": 6,
+    "EmployerProfileId": 46
+  },
+  {
+    "Title": "Camping Lantern",
+    "Description": "Rechargeable LED camping lantern for outdoor use.",
+    "Budget": 465,
+    "Status": 2,
+    "CreatedAt": "2025-05-01 02:56:12",
+    "CategoryId": 4,
+    "EmployerProfileId": 24
+  },
+  {
+    "Title": "Maple Cinnamon Granola Bars",
+    "Description": "Chewy granola bars with maple and cinnamon flavor.",
+    "Budget": 1,
+    "Status": 1,
+    "CreatedAt": "2025-12-22 12:33:09",
+    "CategoryId": 5,
+    "EmployerProfileId": 24
+  },
+  {
+    "Title": "Air Purifier",
+    "Description": "HEPA air purifier for clean indoor air.",
+    "Budget": 192,
+    "Status": 1,
+    "CreatedAt": "2025-09-07 18:53:31",
+    "CategoryId": 1,
+    "EmployerProfileId": 63
+  },
+  {
+    "Title": "Eco-Friendly Stainless Steel Straws",
+    "Description": "Reusable straws that come with a cleaning brush.",
+    "Budget": 73,
+    "Status": 1,
+    "CreatedAt": "2025-08-16 00:57:37",
+    "CategoryId": 1,
+    "EmployerProfileId": 4
+  },
+  {
+    "Title": "Car Vacuum Cleaner",
+    "Description": "Compact vacuum designed specifically for cleaning vehicles.",
+    "Budget": 986,
+    "Status": 1,
+    "CreatedAt": "2025-06-15 02:01:48",
+    "CategoryId": 6,
+    "EmployerProfileId": 29
+  },
+  {
+    "Title": "Avocado Oil Mayo",
+    "Description": "Creamy mayonnaise made with avocado oil for a healthier twist.",
+    "Budget": 555,
+    "Status": 1,
+    "CreatedAt": "2025-04-03 12:14:30",
+    "CategoryId": 3,
+    "EmployerProfileId": 3
+  },
+  {
+    "Title": "Deep Tissue Massage Gun",
+    "Description": "Rechargeable massage gun for relieving muscle soreness.",
+    "Budget": 540,
+    "Status": 1,
+    "CreatedAt": "2024-11-17 20:48:56",
+    "CategoryId": 5,
+    "EmployerProfileId": 20
+  },
+  {
+    "Title": "Smart Wi-Fi Camera",
+    "Description": "Indoor Wi-Fi camera for home security.",
+    "Budget": 59,
+    "Status": 1,
+    "CreatedAt": "2025-01-18 11:08:21",
+    "CategoryId": 7,
+    "EmployerProfileId": 58
+  }
+]

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BusinessObjects.Seeders
 {
-    public static class UserSeeder
+    public class UserSeeder : JsonSeeder
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            var seedUsers = new List<SeedUser>
+            var usersToInsert = await GetInsertableUsers(context, new List<SeedUser>
             {
                 new()
                 {
@@ -33,18 +33,54 @@ namespace BusinessObjects.Seeders
                     Role = RoleEnum.EMPLOYER,
                     Password = "Employer@123"
                 }
-            };
+            });
 
-            var emails = seedUsers
+            if (usersToInsert.Any())
+            {
+                await context.Users.AddRangeAsync(usersToInsert);
+
+                await context.SaveChangesAsync();
+            }
+
+            var json_users = await SeedingFromJson<SeedUserJson>("users");
+
+            if (json_users == null || json_users.Count == 0)
+            {
+                return;
+            }
+
+            var jsonUsersToInsert = await GetInsertableUsers(
+                context,
+                json_users.Select(u => new SeedUser
+                {
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Role = u.Role == "Freelancer" ? RoleEnum.FREELANCER : RoleEnum.EMPLOYER,
+                    Password = "Admin@123",
+                    CreatedAt = DateTime.TryParse(u.CreatedAt, out var dt) ? dt : DateTime.UtcNow,
+                }).ToList()
+            );
+
+            if (jsonUsersToInsert.Any())
+            {
+                await context.Users.AddRangeAsync(jsonUsersToInsert);
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task<List<User>> GetInsertableUsers(AppDbContext context, List<SeedUser> seedUsers)
+        {
+            var Emails = seedUsers
                 .Select(x => x.Email.ToLower())
                 .ToList();
 
             var existingEmails = await context.Users
-                .Where(x => emails.Contains(x.Email))
+                .Where(x => Emails.Contains(x.Email))
                 .Select(x => x.Email)
                 .ToListAsync();
 
-            var usersToInsert = seedUsers
+            return seedUsers
                 .Where(x => !existingEmails.Contains(x.Email))
                 .Select(x => new User
                 {
@@ -53,17 +89,10 @@ namespace BusinessObjects.Seeders
                     RoleId = (int)x.Role,
                     IsActive = true,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(x.Password),
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = x.CreatedAt ?? DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                 })
                 .ToList();
-
-            if (usersToInsert.Any())
-            {
-                await context.Users.AddRangeAsync(usersToInsert);
-
-                await context.SaveChangesAsync();
-            }
         }
     }
 
@@ -76,5 +105,19 @@ namespace BusinessObjects.Seeders
         public RoleEnum Role { get; set; }
 
         public string Password { get; set; } = string.Empty;
+
+        public DateTime? CreatedAt { get; set; }
+    }
+
+    public class SeedUserJson
+    {
+        public string FullName { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string Role { get; set; }
+
+        public string CreatedAt { get; set; } = String.Empty;
+
     }
 }

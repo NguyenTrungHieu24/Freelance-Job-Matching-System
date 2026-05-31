@@ -16,7 +16,7 @@ public class UpdateFreelancerPersonalInfoDto
 {
     [StringLength(100)]
     public string FullName { get; set; } = null!;
-    [EmailAddress(ErrorMessage = "Invalid email address")]
+    [EmailAddress(ErrorMessage = "Invalid Email address")]
     public string Email { get; set; } = null!;
     [Phone(ErrorMessage = "Invalid phone number")]
     [StringLength(20)]

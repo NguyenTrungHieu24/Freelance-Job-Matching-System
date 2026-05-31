@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,7 +22,7 @@ namespace BusinessObjects.Models
 
         public decimal Budget { get; set; }
 
-        public string Status { get; set; }
+        public JobStatus Status { get; set; }
 
         public DateTime? Deadline { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
