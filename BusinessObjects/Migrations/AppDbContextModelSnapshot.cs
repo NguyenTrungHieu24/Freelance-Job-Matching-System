@@ -100,7 +100,6 @@ namespace BusinessObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Logo")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 

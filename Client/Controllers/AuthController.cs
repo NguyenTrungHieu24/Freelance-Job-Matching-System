@@ -88,6 +88,8 @@ namespace Client.Controllers
                 
                 if (result.Role.Equals("FREELANCER"))
                     return RedirectToAction("Dashboard", "Freelancer");
+                else if(result.Role.Equals("EMPLOYER"))
+                    return RedirectToAction("Dashboard", "Employer");
                 else
                     return RedirectToAction("Index", "Home");
             }
