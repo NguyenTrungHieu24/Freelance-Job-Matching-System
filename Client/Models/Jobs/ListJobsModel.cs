@@ -16,6 +16,7 @@ namespace Client.Models.Jobs
                 || Filter.Status.HasValue
                 || Filter.MinBudget.HasValue
                 || Filter.MaxBudget.HasValue
+                || Filter.SkillIds.Count > 0
                 || Filter.CreatedFrom.HasValue
                 || Filter.CreatedTo.HasValue
                 || Filter.Temperature.HasValue;

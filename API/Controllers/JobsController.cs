@@ -21,9 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetJobs(
-            [FromQuery] FilterJobDTO filter)
-        {
+        public async Task<IActionResult> GetJobs([FromQuery] FilterJobDTO filter) {
             var query = _context.Jobs
                 .Include(x => x.Category)
                 .Include(x => x.EmployerProfile)
@@ -107,6 +105,11 @@ namespace API.Controllers
             if (!string.IsNullOrWhiteSpace(filter.EmployerKeyword))
             {
                 query = query.Where(x => x.EmployerProfile.Account.FullName.Contains(filter.EmployerKeyword));
+            }
+
+            if (filter.SkillIds.Count > 0)
+            {
+                query = query.Where(x => x.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
             }
 
             #endregion

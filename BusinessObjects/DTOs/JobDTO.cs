@@ -26,6 +26,8 @@ namespace BusinessObjects.DTOs
 
         public string CategoryName { get; set; } = string.Empty;
         public int ApplicationsCount { get; set; } = 0;
+
+        public List<string> Skills { get; set; } = [];
     }
 
     public class FilterJobDTO
@@ -35,6 +37,8 @@ namespace BusinessObjects.DTOs
         public string? EmployerKeyword { get; set; }
 
         public JobStatus? Status { get; set; }
+
+        public List<int> SkillIds { get; set; } = [];
 
         public int? CategoryId { get; set; }
 

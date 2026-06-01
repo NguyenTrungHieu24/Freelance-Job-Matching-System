@@ -1,9 +1,12 @@
 ﻿using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Models;
 using Client.Models.Jobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Client.Controllers
 {
@@ -27,11 +30,13 @@ namespace Client.Controllers
         {
             try
             {
-                var url = QueryHelpers.AddQueryString(
-                    "api/jobs",
-                    BuildQueryParams(filter));
+                var url = QueryHelpers.AddQueryString("api/jobs", BuildQueryParams(filter));
 
                 var data = await GetAsync<PaginateResult<JobDTO>>(url);
+
+                var skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+
+                ViewBag.Skills = new SelectList(skills, "Id", "Name");
 
                 return View(new ListJobsModel
                 {
@@ -51,52 +56,63 @@ namespace Client.Controllers
             }
         }
 
-        private static Dictionary<string, string?> BuildQueryParams(FilterJobDTO filter)
+        private static List<KeyValuePair<string, string>> BuildQueryParams(FilterJobDTO filter)
         {
-            var queryParams = new Dictionary<string, string?>();
+            var queryParams = new List<KeyValuePair<string, string>>();
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
-                queryParams["keyword"] = filter.Keyword;
+                queryParams.Add(new KeyValuePair<string, string>("keyword", filter.Keyword));
 
             if (!string.IsNullOrWhiteSpace(filter.EmployerKeyword))
-                queryParams["employerKeyword"] = filter.EmployerKeyword;
+                queryParams.Add(new KeyValuePair<string, string>("employerKeyword", filter.EmployerKeyword));
 
             if (filter.Status.HasValue)
-                queryParams["status"] = ((int)filter.Status.Value).ToString();
+                queryParams.Add(new KeyValuePair<string, string>("status", ((int)filter.Status.Value).ToString()));
 
             if (filter.CategoryId.HasValue)
-                queryParams["categoryId"] = filter.CategoryId.ToString();
+                queryParams.Add(new KeyValuePair<string, string>("categoryId", filter.CategoryId.ToString()));
 
             if (filter.EmployerProfileId.HasValue)
-                queryParams["employerProfileId"] = filter.EmployerProfileId.ToString();
+                queryParams.Add(new KeyValuePair<string, string>("employerProfileId", filter.EmployerProfileId.ToString()));
 
             if (filter.MinBudget.HasValue)
-                queryParams["minBudget"] = filter.MinBudget.ToString();
+                queryParams.Add(new KeyValuePair<string, string>("minBudget", filter.MinBudget.ToString()));
 
             if (filter.MaxBudget.HasValue)
-                queryParams["maxBudget"] = filter.MaxBudget.ToString();
+                queryParams.Add(new KeyValuePair<string, string>("maxBudget", filter.MaxBudget.ToString()));
 
             if (filter.CreatedFrom.HasValue)
-                queryParams["createdFrom"] = filter.CreatedFrom.Value.ToString("yyyy-MM-dd");
+                queryParams.Add(new KeyValuePair<string, string>("createdFrom", filter.CreatedFrom.Value.ToString("yyyy-MM-dd")));
 
             if (filter.Temperature.HasValue)
-                queryParams["temperature"] = filter.Temperature.Value.ToString();
+                queryParams.Add(new KeyValuePair<string, string>("temperature", filter.Temperature.Value.ToString()));
 
             if (filter.CreatedTo.HasValue)
-                queryParams["createdTo"] = filter.CreatedTo.Value.ToString("yyyy-MM-dd");
+                queryParams.Add(new KeyValuePair<string, string>("createdTo", filter.CreatedTo.Value.ToString("yyyy-MM-dd")));
 
             if (filter.DeadlineFrom.HasValue)
-                queryParams["deadlineFrom"] = filter.DeadlineFrom.Value.ToString("yyyy-MM-dd");
+                queryParams.Add(new KeyValuePair<string, string>("deadlineFrom", filter.DeadlineFrom.Value.ToString("yyyy-MM-dd")));
 
             if (filter.DeadlineTo.HasValue)
-                queryParams["deadlineTo"] = filter.DeadlineTo.Value.ToString("yyyy-MM-dd");
+                queryParams.Add(new KeyValuePair<string, string>("deadlineTo", filter.DeadlineTo.Value.ToString("yyyy-MM-dd")));
+
+            if (filter.SkillIds.Count > 0)
+            {
+                foreach (var skillId in filter.SkillIds)
+                {
+                    queryParams.Add(new KeyValuePair<string, string>(
+                       "skillIds",
+                       skillId.ToString())
+                    );
+                }
+            }
 
             if (!string.IsNullOrWhiteSpace(filter.SortBy))
-                queryParams["sortBy"] = filter.SortBy;
+                queryParams.Add(new KeyValuePair<string, string>("sortBy", filter.SortBy));
 
-            queryParams["isDescending"] = filter.IsDescending.ToString();
-            queryParams["page"] = filter.Page.ToString();
-            queryParams["pageSize"] = filter.PageSize.ToString();
+            queryParams.Add(new KeyValuePair<string, string>("isDescending", filter.IsDescending.ToString()));
+            queryParams.Add(new KeyValuePair<string, string>("page", filter.Page.ToString()));
+            queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
 
             return queryParams;
         }

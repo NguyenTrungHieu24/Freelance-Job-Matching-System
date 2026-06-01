@@ -40,6 +40,13 @@
                                 }
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <select asp-for="Filter.SkillIds"
+                                    asp-items="ViewBag.Skills"
+                                    class="form-select js-select-skills" multiple="true">
+                                <option value="">All Skills</option>
+                            </select>
+                        </div>
 
                         <div class="col-md-2">
                             <input asp-for="Filter.MinBudget"
@@ -118,6 +125,7 @@
                         <th>Title</th>
                         <th>Employer</th>
                         <th>Category</th>
+                        <th>Skills</th>
                         <th>Budget</th>
                         <th>Applications</th>
                         <th>Status</th>
@@ -141,6 +149,15 @@
 
                             <td>
                                 @item.CategoryName
+                            </td>
+
+                            <td>
+                                @foreach (var skill in item.Skills)
+                                {
+                                    <span class="badge bg-secondary me-1">
+                                        @skill
+                                    </span>
+                                }
                             </td>
 
                             <td>
@@ -213,3 +230,15 @@
 
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        $(document).ready(() => {
+            $(".js-select-skills").select2({
+                placeholder: 'Select skills',
+                multiple: true,
+                theme: "classic"
+            });
+        });
+    </script>
+}

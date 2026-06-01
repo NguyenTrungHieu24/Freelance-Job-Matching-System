@@ -43,7 +43,10 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.EmployerProfile.Account.FullName))
                 .ForMember(
                     d => d.ApplicationsCount,
-                    o => o.MapFrom(s => s.Applications.Count));
+                    o => o.MapFrom(s => s.Applications.Count))
+                .ForMember(
+                    d => d.Skills,
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
         }
     }
 }
