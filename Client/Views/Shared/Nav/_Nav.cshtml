@@ -3,11 +3,23 @@
 
 @foreach (var item in Model)
 {
-    <li class="tl-nav-item">
+    <li class=" @(item.HasChildren ? "tl-nav-dropdown-wrap" : "tl-nav-item")">
         <a asp-controller="@(item.Controller)" asp-action="@(item.Action)" class="tl-nav-link @Html.IsActive(item.Controller, item.Action)">
             <i class="nav-icon fas @(item.Icon)"></i>
             @(item.Title)
         </a>
+        @if (item.HasChildren)
+        {
+            <div class="tl-nav-dropdown">
+                @foreach (var child in item.Children)
+                {
+                    <a asp-controller="@(child.Controller)" asp-action="@(child.Action)" class="tl-nav-link @Html.IsActive(child.Controller, child.Action)">
+                        <i class="nav-icon fas @(child.Icon)"></i>
+                        @(child.Title)
+                    </a>
+                }
+            </div>
+        }
     </li>
 }
 

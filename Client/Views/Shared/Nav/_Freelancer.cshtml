@@ -1,49 +1,20 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-<li>
-    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")"
-       href="/Freelancer/Dashboard">
-        Dashboard
-    </a>
-</li>
-
-<li>
-    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")"
-       href="#">
-        Job Search
-    </a>
-</li>
-
-<li class="tl-nav-dropdown-wrap">
-    <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")"
-       href="#">
-        Job Management
-    </a>
-    <div class="tl-nav-dropdown">
-        <a href="#">My Jobs</a>
-        <a href="#">Applications</a>
-        <a href="#">Contracts</a>
-    </div>
-</li>
-
-<li class="tl-nav-dropdown-wrap">
-    <a class="tl-nav-link tl-nav-link--has-dropdown @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")"
-       href="#">
-        Statistical
-    </a>
-    <div class="tl-nav-dropdown">
-        <a href="#">Revenue</a>
-        <a href="#">Jobs Overview</a>
-    </div>
-</li>
-
-<li>
-    <a class="tl-nav-link @(ViewData["ActivePage"]?.ToString() == "Message" ? "is-active" : "")"
-       href="#">
-        Message
-    </a>
-</li>
+﻿@await Html.PartialAsync("Nav/_Nav",
+    new List<NavViewModel>{
+        new(){Controller = "Freelancer", Action = "Dashboard", Title = "Dashboard"},
+        new(){Controller = "Jobs", Action = "Index", Title = "Job Search"},
+        new(){Title = "Job Management", Icon = "fa-briefcase",
+            Children = new() {
+                new(){ Controller = "Jobs", Action = "MyJobs", Title = "My Jobs"},
+                new(){ Controller = "Applications", Action = "Index", Title = "Applications"},
+                new(){ Controller = "Contracts", Action = "Index", Title = "Contracts"}
+            }
+        },
+        new() { Title = "Statistical", Icon = "fa-chart-bar",
+            Children = new() {
+                new(){ Controller = "Statistics", Action = "Revenue", Title = "Revenue" },
+                new(){ Controller = "Statistics", Action = "JobsOverview", Title = "Jobs Overview" }
+            }
+        },
+        new() { Controller = "Messages", Action = "Index", Title = "Message", Icon = "fa-envelope"}
+    }
+)

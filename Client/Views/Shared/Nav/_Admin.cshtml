@@ -1,12 +1,9 @@
-﻿@using Client.Helpers
-
-@await Html.PartialAsync("Nav/_Nav",
-    new List<NavViewModel>{
-        new NavViewModel { Controller = "Admin", Action = "Dashboard", Title = "Dashboard" },
-        new NavViewModel { Controller = "Jobs", Title = "Jobs" },
-        new NavViewModel { Controller = "Skills", Title = "Skills" },
-        new NavViewModel { Controller = "Users", Title = "Users" },
-        new NavViewModel { Controller = "Payments", Title = "Payments" },
+﻿@await Html.PartialAsync("Nav/_Nav",
+    new (){
+        new () { Controller = "Admin", Action = "Dashboard", Title = "Dashboard" },
+        new () { Controller = "Jobs", Title = "Jobs" },
+        new () { Controller = "Skills", Title = "Skills" },
+        new () { Controller = "Users", Title = "Users" },
+        new () { Controller = "Payments", Title = "Payments" },
     }
 )
-
