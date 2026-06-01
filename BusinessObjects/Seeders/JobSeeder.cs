@@ -1,5 +1,6 @@
-﻿using BusinessObjects.Enums;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessObjects.Seeders
 {
@@ -12,8 +13,21 @@ namespace BusinessObjects.Seeders
 
             var json_jobs = await SeedingFromJson<SeedJob>("jobs");
 
-            if (json_jobs.Any())
+            if (json_jobs != null && json_jobs.Any())
             {
+                var employerProfileIds = await context.EmployerProfiles
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                var categoryIds = await context.Categories
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                if (!employerProfileIds.Any() || !categoryIds.Any())
+                {
+                    return;
+                }
+
                 await context.Jobs.AddRangeAsync(json_jobs.Select(j => new Job
                 {
                     Title = j.Title,
@@ -21,8 +35,8 @@ namespace BusinessObjects.Seeders
                     Budget = j.Budget,
                     Status = j.Status,
                     CreatedAt = DateTime.TryParse(j.CreatedAt, out var dt) ? dt : DateTime.UtcNow,
-                    CategoryId = j.CategoryId,
-                    EmployerProfileId = j.EmployerProfileId,
+                    CategoryId = categoryIds[Math.Abs(j.CategoryId) % categoryIds.Count],
+                    EmployerProfileId = employerProfileIds[Math.Abs(j.EmployerProfileId) % employerProfileIds.Count],
                 }).ToList());
 
                 await context.SaveChangesAsync();

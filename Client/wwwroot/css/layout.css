@@ -483,7 +483,7 @@ img { max-width: 100%; }
     border: 2px solid var(--c-primary); 
     border-radius: var(--r-md);
     margin: 40px auto;
-    max-width: 900px;
+    max-width: 1150px;
     display: flex;
     overflow: hidden; 
 }
@@ -548,6 +548,10 @@ img { max-width: 100%; }
 }
 
 .fl-info-item {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: start;
+    gap: 0 8px;
     margin-bottom: 20px;
     font-size: 15px;
 }
@@ -555,8 +559,11 @@ img { max-width: 100%; }
 .fl-info-item strong {
     font-weight: 600;
     color: var(--c-ink);
-    display: inline-block;
-    min-width: 100px;
+}
+
+.fl-info-value {
+    color: var(--c-body);
+    word-break: break-word;
 }
 
 .fl-avatar-section {

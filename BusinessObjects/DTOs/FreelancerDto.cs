@@ -7,6 +7,7 @@ public class FreelancerPersonalInfoDto
     public int AccountId { get; set; }
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;
+    [StringLength(12)]
     public string? Phone { get; set; }
     public string? Address { get; set; }
     public string? ProfilePhoto { get; set; } 
@@ -19,7 +20,7 @@ public class UpdateFreelancerPersonalInfoDto
     [EmailAddress(ErrorMessage = "Invalid Email address")]
     public string Email { get; set; } = null!;
     [Phone(ErrorMessage = "Invalid phone number")]
-    [StringLength(20)]
+    [StringLength(12)]
     public string? Phone { get; set; }
     [StringLength(255)]
     public string? Address { get; set; }

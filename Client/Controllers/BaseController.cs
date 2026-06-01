@@ -1,4 +1,4 @@
-﻿using Client.Models.Auth;
+using Client.Models.Auth;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Diagnostics;

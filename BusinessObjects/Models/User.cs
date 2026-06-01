@@ -40,5 +40,8 @@ namespace BusinessObjects.Models
         public EmployerProfile EmployerProfile { get; set; }
 
         public ICollection<Notification> Notifications { get; set; }
+
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
     }
 }

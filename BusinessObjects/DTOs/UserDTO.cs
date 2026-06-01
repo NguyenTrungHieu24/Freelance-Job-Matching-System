@@ -32,11 +32,13 @@ namespace BusinessObjects.DTOs
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Role is required")]
+
         [RegularExpression("", ErrorMessage = "Invalid Role")]
+
         public string Role { get; set; }
     }
 
-    public class RegisterDto
+    public class RegisterDto    
     {
         [Required(ErrorMessage = "Name is required")]
         [StringLength(100, MinimumLength = 2)]
@@ -57,8 +59,11 @@ namespace BusinessObjects.DTOs
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
-        [RegularExpression("", ErrorMessage = "Invalid Role")]
+
+
+        [Range(1, int.MaxValue, ErrorMessage = "Invalid Role")]
         public int? Role { get; set; }
+        public string? CompanyName { get; set; }
     }
 
     public class LoginDto
