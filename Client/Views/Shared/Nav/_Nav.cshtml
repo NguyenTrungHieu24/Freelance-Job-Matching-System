@@ -1,0 +1,13 @@
+﻿@using Client.Helpers
+@model List<NavViewModel>
+
+@foreach (var item in Model)
+{
+    <li class="tl-nav-item">
+        <a asp-controller="@(item.Controller)" asp-action="@(item.Action)" class="tl-nav-link @Html.IsActive(item.Controller, item.Action)">
+            <i class="nav-icon fas @(item.Icon)"></i>
+            @(item.Title)
+        </a>
+    </li>
+}
+
