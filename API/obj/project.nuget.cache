@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zD0uNTWjJsQ=",
+  "dgSpecHash": "1113IH3MODw=",
   "success": true,
-  "projectFilePath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\API\\API.csproj",
+  "projectFilePath": "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Duong\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Duong\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj": {}
+    "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj": {}
   },
   "projects": {
-    "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj": {
+    "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj",
+        "projectUniqueName": "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj",
         "projectName": "BusinessObjects",
-        "projectPath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj",
+        "projectPath": "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\BusinessObjects\\BusinessObjects.csproj",
         "packagesPath": "C:\\Users\\Duong\\.nuget\\packages\\",
-        "outputPath": "D:\\Duong\\Desktop\\SWP391-SU26\\Freelance-Job-Matching-System\\BusinessObjects\\obj\\",
+        "outputPath": "D:\\Duong\\Desktop\\SWP391\\Freelance-Job-Matching-System\\BusinessObjects\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
