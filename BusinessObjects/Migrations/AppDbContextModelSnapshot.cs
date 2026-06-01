@@ -489,7 +489,7 @@ namespace BusinessObjects.Migrations
                         .IsRequired();
 
                     b.HasOne("BusinessObjects.Models.Job", "Job")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -654,6 +654,11 @@ namespace BusinessObjects.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("BusinessObjects.Models.Job", b =>
+                {
+                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.User", b =>

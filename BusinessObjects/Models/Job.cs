@@ -36,5 +36,7 @@ namespace BusinessObjects.Models
 
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+
+        public ICollection<Application> Applications { get; set; } = new List<Application>();
     }
 }
