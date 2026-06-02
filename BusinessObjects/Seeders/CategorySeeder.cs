@@ -12,7 +12,7 @@ namespace BusinessObjects.Seeders
         public static async Task SeedAsync(
            AppDbContext context)
         {
-            if (context.Skills.Any())
+            if (context.Categories.Any())
                 return;
 
             var categories = new List<Category>

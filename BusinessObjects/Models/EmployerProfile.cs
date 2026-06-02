@@ -25,7 +25,7 @@ namespace BusinessObjects.Models
         public string? Address { get; set; }
 
         [StringLength(255)]
-        public string Logo { get; set; }
+        public string? Logo { get; set; }
 
         [ForeignKey("AccountId")]
         public User Account { get; set; }

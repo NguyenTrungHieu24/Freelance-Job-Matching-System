@@ -1,4 +1,4 @@
-﻿@inject IUserService CurrentUser
+@inject IUserService CurrentUser
 
 <!DOCTYPE html>
 <html>
@@ -10,8 +10,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/skeleton.css" />
-    <link rel="stylesheet" href="~/css/layout.css" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -84,7 +85,14 @@
                             <img src="~/image/user.png" alt="Avatar" class="tl-avatar-img" />
                         </button>
                         <div class="tl-nav-dropdown tl-nav-dropdown--right">
-                            <a href="/freelancer/personal-info">Profile</a>
+                            @if (CurrentUser.Role == "FREELANCER")
+                            {
+                                <a href="/freelancer/personal-info">Profile</a>
+                            }
+                            else if (CurrentUser.Role == "EMPLOYER")
+                            {
+                                <a href="/employer/personal-info">Profile</a>
+                            }
                             <a href="#">Member Package</a>
                         </div>
                     </div>
@@ -209,6 +217,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="~/js/ui.js"></script>
     <script src="~/js/modal.js"></script>

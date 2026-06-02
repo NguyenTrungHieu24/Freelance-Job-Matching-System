@@ -1,4 +1,5 @@
 ﻿using API.Services.Auth;
+using API.Services.Memory;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common;
@@ -15,8 +16,10 @@ namespace API.Controllers
     [ApiController]
     public class SkillsController : BaseController
     {
-        public SkillsController(AppDbContext context, IMapper mapper, IUserService user) : base(context, mapper, user)
+        protected ICacheService _cache;
+        public SkillsController(AppDbContext context, IMapper mapper, IUserService user, ICacheService cache) : base(context, mapper, user)
         {
+            _cache = cache;
         }
 
 
@@ -44,6 +47,23 @@ namespace API.Controllers
                 TotalItems = totalItems
             });
         }
+
+        [HttpGet("all")]
+        public async Task<ActionResult<List<SkillDTO>>> GetAllSkills()
+        {
+            return Ok(await _cache.GetOrCreateAsync(
+                    "skills_all",
+                    async () =>
+                    {
+                        return _mapper.Map<List<SkillDTO>>(
+                            await _context.Skills
+                                .OrderBy(x => x.Name)
+                                .ToListAsync());
+                    },
+                    TimeSpan.FromHours(1))
+                );
+        }
+
 
         private IQueryable<Skill> BindingQuery(IQueryable<Skill> query, FilterSkillDTO args)
         {

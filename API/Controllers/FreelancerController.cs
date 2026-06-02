@@ -41,7 +41,7 @@ namespace API.Controllers
 
             if (user.FreelancerProfile == null)
             {
-                var newProfile = new FreelancerProfile { AccountId = userId, Title = "", Bio = "" };
+                var newProfile = new FreelancerProfile { AccountId = userId, Title = "New Freelancer", Bio = "New Bio" };
                 _context.FreelancerProfiles.Add(newProfile);
                 await _context.SaveChangesAsync();
             }

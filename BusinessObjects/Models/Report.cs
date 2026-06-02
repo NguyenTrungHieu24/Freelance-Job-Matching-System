@@ -26,19 +26,16 @@ namespace BusinessObjects.Models
 
         [Required]
         [MaxLength(255)]
-        public string Reason { get; set; }
-            = string.Empty;
+        public string Reason { get; set; } = string.Empty;
 
         public string? Description { get; set; }
 
         [MaxLength(500)]
         public string? EvidenceUrl { get; set; }
 
-        public ReportStatus Status { get; set; }
-            = ReportStatus.PENDING;
+        public ReportStatus Status { get; set; } = ReportStatus.PENDING;
 
-        public DateTime CreatedAt { get; set; }
-            = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? ResolvedAt { get; set; }
 

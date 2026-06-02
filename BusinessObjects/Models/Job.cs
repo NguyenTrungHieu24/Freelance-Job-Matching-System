@@ -1,3 +1,4 @@
+using BusinessObjects.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,7 +22,7 @@ namespace BusinessObjects.Models
 
         public decimal Budget { get; set; }
 
-        public string Status { get; set; }
+        public JobStatus Status { get; set; }
 
         public DateTime? Deadline { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -30,12 +31,14 @@ namespace BusinessObjects.Models
 
         public int CategoryId { get; set; }
 
-        [ForeignKey("EmployerProfileId")]
+        [ForeignKey(nameof(EmployerProfileId))]
         public EmployerProfile EmployerProfile { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; }
 
-        public ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();
+        public ICollection<Application> Applications { get; set; } = new List<Application>();
+
+        public ICollection<JobSkill> JobSkills { get; set; }
     }
 }

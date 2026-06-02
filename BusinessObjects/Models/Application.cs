@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjects.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,14 +20,14 @@ namespace BusinessObjects.Models
 
         public string CoverLetter { get; set; }
 
-        public string Status { get; set; }
+        public ApplicationStatus Status { get; set; }
 
         public DateTime AppliedAt { get; set; } = DateTime.Now;
 
-        [ForeignKey("JobId")]
+        [ForeignKey(nameof(JobId))]
         public Job Job { get; set; }
 
-        [ForeignKey("FreelancerProfileId")]
+        [ForeignKey(nameof(FreelancerProfileId))]
         public FreelancerProfile FreelancerProfile { get; set; }
     }
 }

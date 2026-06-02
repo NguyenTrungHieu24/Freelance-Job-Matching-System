@@ -1,4 +1,9 @@
 ﻿@model PaginateResult
+@using Microsoft.AspNetCore.WebUtilities
+@using System.Globalization
+@{
+    var query = Context.Request.Query.ToDictionary(x => x.Key, x => x.Value.ToString());
+}
 
 @if (Model.TotalPages > 1)
 {
@@ -6,27 +11,37 @@
         <ul class="pagination justify-content-end">
 
             <!-- Previous -->
-            <li class="page-item @(Model.HasPreviousPage ? "disabled" : "")">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                @{
+                    query.Remove("page");
+                    query.Add("page", (Model.PageNumber - 1).ToString());
+                }
                 <a class="page-link"
-                   asp-route-page="@(Model.PageNumber - 1)">
+                   asp-all-route-data="query">
                     Previous
                 </a>
             </li>
 
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
+                query.Remove("page");
+                query.Add("page", i.ToString());
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
                     <a class="page-link"
-                       asp-route-page="@i">
+                       asp-all-route-data="query">
                         @i
                     </a>
                 </li>
             }
 
             <!-- Next -->
-            <li class="page-item @(Model.HasNextPage ? "disabled" : "")">
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                @{
+                    query.Remove("page");
+                    query.Add("page", (Model.PageNumber + 1).ToString());
+                }
                 <a class="page-link"
-                   asp-route-page="@(Model.PageNumber + 1)">
+                   asp-all-route-data="query">
                     Next
                 </a>
             </li>

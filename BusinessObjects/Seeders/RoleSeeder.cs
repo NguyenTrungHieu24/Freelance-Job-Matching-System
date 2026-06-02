@@ -1,10 +1,5 @@
 ﻿using BusinessObjects.Enums;
 using BusinessObjects.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessObjects.Seeders
 {
@@ -15,15 +10,15 @@ namespace BusinessObjects.Seeders
             if (context.Roles.Any())
                 return;
 
-            var roles = Enum.GetValues<RoleEnum>()
-                .Select(role => new Role
+            var Roles = Enum.GetValues<RoleEnum>()
+                .Select(Role => new Role
                 {
-                    Id = (int)role,
-                    Name = role.ToString()
+                    Id = (int)Role,
+                    Name = Role.ToString()
                 })
                 .ToList();
 
-            context.Roles.AddRange(roles);
+            context.Roles.AddRange(Roles);
 
             await context.SaveChangesAsync();
         }

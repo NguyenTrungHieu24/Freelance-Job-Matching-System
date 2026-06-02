@@ -1,13 +1,19 @@
+using API.Configurations;
 using API.Services;
 using API.Services.Auth;
+using API.Services.Memory;
+using API.Services.Payment;
 using BusinessObjects;
 using BusinessObjects.Enums;
-using BusinessObjects.Seeders;
 using BusinessObjects.Mapping;
+using BusinessObjects.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PayOS;
+using System;
 using System.Security.Claims;
 using System.Text;
 
@@ -105,6 +111,28 @@ builder.Services.AddAuthorization(options =>
             nameof(RoleEnum.EMPLOYER)
         ));
 });
+
+builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
+
+builder.Services.AddSingleton<PayOSClient>(x =>
+{
+    var settings = x.GetRequiredService<IOptions<PayOSSettings>>().Value;
+
+    Console.WriteLine($"ClientId: {settings.ClientId}");
+    Console.WriteLine($"ApiKey: {settings.ApiKey}");
+    Console.WriteLine($"ChecksumKey: {settings.ChecksumKey}");
+
+    return new PayOSClient(
+        settings.ClientId,
+        settings.ApiKey,
+        settings.ChecksumKey
+    );
+});
+builder.Services.AddScoped<IPayOSService, PayOSService>();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<ICacheService, CacheService>();
+
 var webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 if (!Directory.Exists(webRootPath))
 {
@@ -123,6 +151,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseStaticFiles();
 app.MapControllers();
 
