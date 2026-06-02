@@ -27,6 +27,10 @@ API/wwwroot/uploads/
 # Visual Studio / IDE
 .vs/
 .vscode/
+*.user
+*.suo
+
+# Rider
 .idea/
 
 # Logs
@@ -87,3 +91,10 @@ secrets.json
 *.db
 *.db-shm
 *.db-wal
+
+#File local
+API/wwwroot/uploads
+
+# Build folders
+**/bin/
+**/obj/

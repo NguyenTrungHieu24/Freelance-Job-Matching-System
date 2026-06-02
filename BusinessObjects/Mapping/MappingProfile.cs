@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using System;
@@ -25,6 +25,18 @@ namespace BusinessObjects.Mapping
             // Mapping for CV, Portfolio
             CreateMap<FreelancerProfile, FreelancerCvDto>();
 
+            // Mapping for Job
+            CreateMap<Job, JobDto>()
+                .ForMember(dest => dest.EmployerName, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null && src.EmployerProfile.Account != null 
+                        ? src.EmployerProfile.Account.FullName 
+                        : (src.EmployerProfile != null ? src.EmployerProfile.CompanyName : "")))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => 
+                    src.Category != null ? src.Category.Name : ""))
+                .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => 
+                    src.JobSkills != null && src.JobSkills.Any()
+                        ? src.JobSkills.Select(js => js.Skill).ToList() 
+                        : new List<Skill>()));
             CreateMap<Job, JobDTO>()
                 .ForMember(
                     dest => dest.EmployerName,
