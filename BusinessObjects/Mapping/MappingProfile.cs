@@ -47,6 +47,14 @@ namespace BusinessObjects.Mapping
                 .ForMember(
                     d => d.Skills,
                     o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
+
+            CreateMap<User, UserDto>()
+                .ForMember(
+                    d => d.Name,
+                    o => o.MapFrom(s => s.FullName))
+                .ForMember(
+                    d => d.Role,
+                    o => o.MapFrom(s => s.Role.Name));
         }
     }
 }
