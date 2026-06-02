@@ -1,0 +1,244 @@
+﻿@using BusinessObjects.Enums
+@model Client.Models.Jobs.ListJobsModel
+
+@{
+    ViewData["Title"] = "Jobs List";
+    Layout = "_Layout";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <h3>List Jobs</h3>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <div class="w-100">
+                <form method="get" class="card p-3 mb-4 shadow-sm">
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+                            <input asp-for="Filter.Keyword"
+                                   class="form-control"
+                                   placeholder="Search Job title..." />
+                        </div>
+
+                        <div class="col-md-3">
+                            <input asp-for="Filter.EmployerKeyword"
+                                   class="form-control"
+                                   placeholder="Search Employer..." />
+                        </div>
+
+                        <div class="col-md-2">
+                            <select asp-for="Filter.Status"
+                                    class="form-select">
+                                <option value="">All Status</option>
+
+                                @foreach (JobStatus status in Enum.GetValues(typeof(JobStatus)))
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select asp-for="Filter.SkillIds"
+                                    asp-items="ViewBag.Skills"
+                                    class="form-select js-select-skills" multiple="true">
+                                <option value="">All Skills</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.MinBudget"
+                                   type="number"
+                                   class="form-control"
+                                   placeholder="Min Budget" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.MaxBudget"
+                                   type="number"
+                                   class="form-control"
+                                   placeholder="Max Budget" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.CreatedFrom"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.CreatedTo"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-check">
+                                <select asp-for="Filter.Temperature" class="form-select">
+                                    <option value="">All temperature</option>
+
+                                    @foreach (JobTemperature item in Enum.GetValues(typeof(JobTemperature)))
+                                    {
+                                        <option value="@item">@(item) Jobs</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 d-grid">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+        @if (Model.Jobs.Items.Count == 0)
+        {
+            <div class="d-flex flex-column gap-2 align-items-center">
+                <h4>Oops... There are no jobs</h4>
+
+                @if (Model.HasFilter())
+                {
+                    <a class="btn btn-sm btn-outline-secondary"
+                       asp-action="Manage">
+                        Clear filter
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Employer</th>
+                        <th>Category</th>
+                        <th>Skills</th>
+                        <th>Budget</th>
+                        <th>Applications</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Created</th>
+                        <th width="150">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Jobs.Items)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.Title</strong>
+                            </td>
+
+                            <td>
+                                @item.EmployerName
+                            </td>
+
+                            <td>
+                                @item.CategoryName
+                            </td>
+
+                            <td>
+                                @foreach (var skill in item.Skills)
+                                {
+                                    <span class="badge bg-secondary me-1">
+                                        @skill
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @item.Budget.ToString("N0")
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    @item.ApplicationsCount
+
+                                    @if (item.ApplicationsCount >= 10)
+                                    {
+                                        <span class="badge bg-danger">Hot</span>
+                                    }
+                                    else if (item.ApplicationsCount >= 5)
+                                    {
+                                        <span class="badge bg-warning">Warm</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Cool</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    @item.Status
+                                </span>
+                            </td>
+
+                            <td>
+                                @(item.Deadline?.ToString("dd/MM/yyyy"))
+                            </td>
+
+                            <td>
+                                @item.CreatedAt.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                <div class="d-flex gap-1">
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteJob"
+                                            data-job-id="@item.Id"
+                                            data-job-title="@item.Title">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
+        }
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(() => {
+            $(".js-select-skills").select2({
+                placeholder: 'Select skills',
+                multiple: true,
+                theme: "classic"
+            });
+        });
+    </script>
+}

@@ -1,3 +1,4 @@
+using BusinessObjects.Enums;
 using Client.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,24 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.ADMIN)));
+
+    options.AddPolicy("EmployerOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.EMPLOYER)));
+
+    options.AddPolicy("FreelancerOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.FREELANCER)));
+
+    options.AddPolicy("AdminOrEmployer", policy =>
+        policy.RequireRole(
+            nameof(RoleEnum.ADMIN),
+            nameof(RoleEnum.EMPLOYER)
+        ));
+});
 
 var app = builder.Build();
 

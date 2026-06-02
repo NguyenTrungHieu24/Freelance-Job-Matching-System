@@ -45,7 +45,7 @@ namespace BusinessObjects
 
             modelBuilder.Entity<Application>()
                 .HasOne(a => a.Job)
-                .WithMany()
+                .WithMany(a => a.Applications)
                 .HasForeignKey(a => a.JobId)
                 .OnDelete(DeleteBehavior.NoAction);
 

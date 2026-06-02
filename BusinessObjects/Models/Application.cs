@@ -24,10 +24,10 @@ namespace BusinessObjects.Models
 
         public DateTime AppliedAt { get; set; } = DateTime.Now;
 
-        [ForeignKey("JobId")]
+        [ForeignKey(nameof(JobId))]
         public Job Job { get; set; }
 
-        [ForeignKey("FreelancerProfileId")]
+        [ForeignKey(nameof(FreelancerProfileId))]
         public FreelancerProfile FreelancerProfile { get; set; }
     }
 }
