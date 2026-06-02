@@ -1,6 +1,7 @@
 using API.Configurations;
 using API.Services;
 using API.Services.Auth;
+using API.Services.Memory;
 using API.Services.Payment;
 using BusinessObjects;
 using BusinessObjects.Enums;
@@ -127,8 +128,10 @@ builder.Services.AddSingleton<PayOSClient>(x =>
         settings.ChecksumKey
     );
 });
-
 builder.Services.AddScoped<IPayOSService, PayOSService>();
+
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<ICacheService, CacheService>();
 
 var webRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
 if (!Directory.Exists(webRootPath))
@@ -148,6 +151,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseStaticFiles();
 app.MapControllers();
 

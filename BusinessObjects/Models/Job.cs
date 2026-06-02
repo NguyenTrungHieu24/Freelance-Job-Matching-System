@@ -31,10 +31,14 @@ namespace BusinessObjects.Models
 
         public int CategoryId { get; set; }
 
-        [ForeignKey("EmployerProfileId")]
+        [ForeignKey(nameof(EmployerProfileId))]
         public EmployerProfile EmployerProfile { get; set; }
 
-        [ForeignKey("CategoryId")]
+        [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; }
+
+        public ICollection<Application> Applications { get; set; } = new List<Application>();
+
+        public ICollection<JobSkill> JobSkills { get; set; }
     }
 }

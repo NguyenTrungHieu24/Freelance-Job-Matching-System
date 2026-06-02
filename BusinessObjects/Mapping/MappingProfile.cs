@@ -24,6 +24,29 @@ namespace BusinessObjects.Mapping
 
             // Mapping for CV, Portfolio
             CreateMap<FreelancerProfile, FreelancerCvDto>();
+
+            CreateMap<Job, JobDTO>()
+                .ForMember(
+                    dest => dest.EmployerName,
+                    opt => opt.MapFrom(src =>
+                        src.EmployerProfile.Account.FullName))
+                .ForMember(
+                    dest => dest.CategoryName,
+                    opt => opt.MapFrom(src =>
+                        src.Category.Name));
+            CreateMap<Job, JobDTO>()
+                .ForMember(
+                    d => d.CategoryName,
+                    o => o.MapFrom(s => s.Category.Name))
+                .ForMember(
+                    d => d.EmployerName,
+                    o => o.MapFrom(s => s.EmployerProfile.Account.FullName))
+                .ForMember(
+                    d => d.ApplicationsCount,
+                    o => o.MapFrom(s => s.Applications.Count))
+                .ForMember(
+                    d => d.Skills,
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
         }
     }
 }
