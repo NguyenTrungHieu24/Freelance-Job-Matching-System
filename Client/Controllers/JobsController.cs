@@ -26,11 +26,19 @@ namespace Client.Controllers
 
         [Route("manage")]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Manage(FilterJobDTO filter)
+        public async Task<IActionResult> Manage(FilterJobDTO filter, [FromQuery] int? page)
         {
             try
             {
-                var url = QueryHelpers.AddQueryString("api/jobs", BuildQueryParams(filter));
+                if (page != null)
+                {
+                    filter.Page = (int)page;
+                }
+
+                var queries = BuildQueryParams(filter);
+
+
+                var url = QueryHelpers.AddQueryString("api/jobs", queries);
 
                 var data = await GetAsync<PaginateResult<JobDTO>>(url);
 
@@ -109,9 +117,8 @@ namespace Client.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.SortBy))
                 queryParams.Add(new KeyValuePair<string, string>("sortBy", filter.SortBy));
-
             queryParams.Add(new KeyValuePair<string, string>("isDescending", filter.IsDescending.ToString()));
-            queryParams.Add(new KeyValuePair<string, string>("page", filter.Page.ToString()));
+            queryParams.Add(new KeyValuePair<string, string>("page", (filter.Page == 0 ? 1 : filter.Page).ToString()));
             queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
 
             return queryParams;

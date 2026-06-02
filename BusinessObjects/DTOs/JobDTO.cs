@@ -57,7 +57,7 @@ namespace BusinessObjects.DTOs
         public string? SortBy { get; set; } = "CreatedAt";
         public bool IsDescending { get; set; } = true;
 
-        public int Page { get; set; } = 1;
+        public int Page { get; set; }
         public int PageSize { get; set; } = 10;
     }
 }
