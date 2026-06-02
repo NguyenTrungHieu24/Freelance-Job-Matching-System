@@ -54,6 +54,7 @@ namespace API.Controllers
                     var f = new FreelancerProfile
                     {
                         AccountId = account.Id,
+                        Title = "New Freelancer"
                     };
                     _context.FreelancerProfiles.Add(f);
                     await _context.SaveChangesAsync();
@@ -158,7 +159,7 @@ namespace API.Controllers
             var email = dto.Email.Trim().ToLower();
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
-            // Vì lý do bảo mật, nếu không tìm thấy email, chúng ta vẫn trả về Ok 
+            
             // để tránh kẻ xấu dò tìm email có tồn tại trong hệ thống hay không.
             if (user == null)
                 return Ok(new { message = "Nếu email tồn tại trên hệ thống, mã khôi phục đã được gửi." });

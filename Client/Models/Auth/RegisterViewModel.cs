@@ -7,5 +7,6 @@
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public int Role { get; set; }
+        public string? Title { get; set; }
     }
 }

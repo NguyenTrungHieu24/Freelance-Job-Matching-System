@@ -32,8 +32,8 @@ public class EmployerController : BaseController
             var newProfile = new EmployerProfile
             {
                 AccountId = userId,
-                CompanyName = "",
-                Description =  "",
+                CompanyName = "New Company",
+                Description =  "New Description",
             };
             _context.EmployerProfiles.Add(newProfile);
             await _context.SaveChangesAsync();
