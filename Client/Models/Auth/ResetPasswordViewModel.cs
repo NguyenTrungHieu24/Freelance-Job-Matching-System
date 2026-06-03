@@ -8,7 +8,8 @@ namespace Client.Models.Auth
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập mã OTP.")]
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "Mã OTP phải gồm 6 chữ số.")]
         public string Token { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Vui lòng nhập mật khẩu mới.")]

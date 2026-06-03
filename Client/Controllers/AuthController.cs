@@ -148,10 +148,7 @@ namespace Client.Controllers
             }
         }
 
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
@@ -207,8 +204,8 @@ namespace Client.Controllers
                     model
                 );
 
-                ViewBag.SuccessMessage = "Yêu cầu thành công! Nếu email tồn tại, hệ thống đã gửi hướng dẫn đổi mật khẩu.";
-                return View();
+                TempData["SuccessMessage"] = "Nếu email tồn tại, hệ thống đã gửi mã OTP đặt lại mật khẩu.";
+                return RedirectToAction("ResetPassword", new { email = model.Email });
             }
             catch (Exception ex)
             {
@@ -225,14 +222,14 @@ namespace Client.Controllers
         // 3. GET: Hiển thị trang nhập mật khẩu mới
         // Đường dẫn thực tế sẽ có dạng: /auth/reset-password?email=abc@gmail.com&token=xyz
         [HttpGet("reset-password")]
-        public IActionResult ResetPassword([FromQuery] string email, [FromQuery] string token)
+        public IActionResult ResetPassword([FromQuery] string email, [FromQuery] string? token)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(email))
             {
                 return RedirectToAction("Login");
             }
 
-            var model = new ResetPasswordViewModel { Email = email, Token = token };
+            var model = new ResetPasswordViewModel { Email = email, Token = token ?? string.Empty };
             return View(model);
         }
 
@@ -260,6 +257,26 @@ namespace Client.Controllers
                 // Hiển thị lỗi chi tiết từ API trả về (ví dụ: "Mã xác thực đã hết hạn")
                 ModelState.AddModelError("", ex.Message ?? "Mã xác thực không hợp lệ hoặc đã hết hạn.");
                 return View(model);
+            }
+        }
+
+
+        [HttpGet("test-email")]
+        public async Task<IActionResult> TestEmail()
+        {
+            try
+            {
+                // Call API endpoint to send email from server-side
+                var result = await PostAsync<object, object>(
+                    "api/auth/test-email",
+                    new { }
+                );
+
+                return Ok("Requested send mail via API");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
             }
         }
 
