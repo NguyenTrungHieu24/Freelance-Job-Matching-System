@@ -11,12 +11,12 @@ namespace API.Services.Memory
             _cache = cache;
         }
 
-        public async Task<T> GetOrCreateAsync<T>(
+        public async Task<T?> GetOrCreateAsync<T>(
             string key,
             Func<Task<T>> factory,
             TimeSpan? expiration = null)
         {
-            if (_cache.TryGetValue(key, out T value))
+            if (_cache.TryGetValue(key, out T? value))
             {
                 return value;
             }

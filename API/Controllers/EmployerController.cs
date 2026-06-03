@@ -48,7 +48,7 @@ public class EmployerController : BaseController
             Email = user.Email,
             Phone = user.EmployerProfile?.Phone,
             Address = user.EmployerProfile?.Address,
-            Logo = user.EmployerProfile?.Logo
+            Logo = user.EmployerProfile?.Logo ?? ""
         };
         return Ok(dto);
     }

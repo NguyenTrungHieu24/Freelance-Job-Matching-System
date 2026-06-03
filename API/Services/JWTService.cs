@@ -20,7 +20,7 @@ namespace API.Services
         public string GenerateToken(User user)
         {
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"])
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "")
             );
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -37,7 +37,7 @@ namespace API.Services
                 audience: _config["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(
-                    int.Parse(_config["Jwt:ExpireMinutes"])
+                    int.Parse(_config["Jwt:ExpireMinutes"] ?? "60")
                 ),
                 signingCredentials: creds
             );

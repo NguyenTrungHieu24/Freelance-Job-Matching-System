@@ -16,7 +16,7 @@
         {
             var smtpClient = new SmtpClient(_configuration["EmailSettings:SmtpServer"])
             {
-                Port = int.Parse(_configuration["EmailSettings:Port"]),
+                Port = int.Parse(_configuration["EmailSettings:Port"] ?? "0"),
                 Credentials = new NetworkCredential(
                     _configuration["EmailSettings:SenderEmail"],
                     _configuration["EmailSettings:AppPassword"]
