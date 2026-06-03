@@ -13,6 +13,8 @@ namespace BusinessObjects.DTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public int Status { get; set; }
+        public DateTime CreatedAt { get; set; }
         public string Role { get; set; }
     }
 
@@ -38,7 +40,7 @@ namespace BusinessObjects.DTOs
         public string Role { get; set; }
     }
 
-    public class RegisterDto    
+    public class RegisterDto
     {
         [Required(ErrorMessage = "Name is required")]
         [StringLength(100, MinimumLength = 2)]
@@ -87,5 +89,24 @@ namespace BusinessObjects.DTOs
         [Required(ErrorMessage = "Confirm new password")]
         [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; } = null!;
+    }
+
+
+    public class FilterUserDTO
+    {
+        public string? Keyword { get; set; }
+
+        public int? Status { get; set; }
+
+        public DateTime? CreatedFrom { get; set; }
+        public DateTime? CreatedTo { get; set; }
+
+        public List<int> RoleIds { get; set; } = [];
+        public string? SortBy { get; set; } = "CreatedAt";
+        public bool IsDescending { get; set; } = true;
+
+        public int Page { get; set; }
+
+        public int PageSize { get; set; } = 10;
     }
 }

@@ -1,0 +1,182 @@
+﻿@model Client.Models.Users.ListUsersModel
+
+@{
+    ViewData["Title"] = "Users Management";
+    Layout = "_Layout";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <h3>List Users</h3>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <div class="w-100">
+                <form method="get" class="card p-3 mb-4 shadow-sm">
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+                            <input asp-for="Filter.Keyword"
+                                   class="form-control"
+                                   placeholder="Search name or email..." />
+                        </div>
+
+                        <div class="col-md-2">
+                            <select asp-for="Filter.Status"
+                                    class="form-select">
+                                <option value="">All Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <select asp-for="Filter.RoleIds"
+                                    asp-items="ViewBag.Roles"
+                                    class="form-select js-select-roles"
+                                    multiple>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.CreatedFrom"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <input asp-for="Filter.CreatedTo"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-1 d-grid">
+                            <button class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+        @if (!Model.Users.Items.Any())
+        {
+            <div class="d-flex flex-column gap-2 align-items-center">
+                <h4>Oops... There are no users</h4>
+
+                @if (Model.HasFilter())
+                {
+                    <a class="btn btn-sm btn-outline-secondary"
+                       asp-action="Manage">
+                        Clear filter
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Users)
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th width="80">ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th width="120">Status</th>
+                        <th width="150">Created</th>
+                        <th width="150">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.Users.Items)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+
+                            <td>
+                                <strong>@item.Name</strong>
+                            </td>
+
+                            <td>@item.Email</td>
+
+                            <td>
+                                <span class="badge bg-info">
+                                    @item.Role
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (item.Status == 1)
+                                {
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        Inactive
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @item.CreatedAt.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+                                <div class="d-flex gap-1">
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteUser"
+                                            data-user-id="@item.Id"
+                                            data-user-name="@item.Name">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Users)
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            $(".js-select-roles").select2({
+                placeholder: 'Select roles',
+                multiple: true,
+                theme: "classic"
+            });
+        });
+    </script>
+}

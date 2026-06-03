@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")
         ),
         RoleClaimType = ClaimTypes.Role
     };
@@ -123,9 +123,9 @@ builder.Services.AddSingleton<PayOSClient>(x =>
     Console.WriteLine($"ChecksumKey: {settings.ChecksumKey}");
 
     return new PayOSClient(
-        settings.ClientId,
-        settings.ApiKey,
-        settings.ChecksumKey
+        settings.ClientId ?? "",
+        settings.ApiKey ?? "",
+        settings.ChecksumKey ?? ""
     );
 });
 builder.Services.AddScoped<IPayOSService, PayOSService>();

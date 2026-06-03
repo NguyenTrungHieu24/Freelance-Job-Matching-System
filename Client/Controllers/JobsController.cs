@@ -26,7 +26,7 @@ namespace Client.Controllers
 
         [Route("manage")]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Manage(FilterJobDto filter, [FromQuery] int? page)
+        public async Task<IActionResult> Manage(FilterJobDTO filter, [FromQuery] int? page)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Client.Controllers
 
                 var url = QueryHelpers.AddQueryString("api/jobs", queries);
 
-                var data = await GetAsync<PaginateResult<JobDto>>(url);
+                var data = await GetAsync<PaginateResult<JobDTO>>(url);
 
                 var skills = await GetAsync<List<SkillDTO>>("api/skills/all");
 
@@ -49,7 +49,7 @@ namespace Client.Controllers
                 return View(new ListJobsModel
                 {
                     Filter = filter,
-                    Jobs = data ?? new PaginateResult<JobDto>()
+                    Jobs = data ?? new PaginateResult<JobDTO>()
                 });
             }
             catch (Exception ex)
@@ -59,12 +59,12 @@ namespace Client.Controllers
                 return View(new ListJobsModel
                 {
                     Filter = filter,
-                    Jobs = new PaginateResult<JobDto>()
+                    Jobs = new PaginateResult<JobDTO>()
                 });
             }
         }
 
-        private static List<KeyValuePair<string, string>> BuildQueryParams(FilterJobDto filter)
+        private static List<KeyValuePair<string, string>> BuildQueryParams(FilterJobDTO filter)
         {
             var queryParams = new List<KeyValuePair<string, string>>();
 
