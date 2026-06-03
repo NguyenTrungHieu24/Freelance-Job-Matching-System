@@ -135,9 +135,7 @@
 
                             <td>
                                 @{
-                                    await Component.InvokeAsync("ActionDropdown", new
-                                    {
-                                        actions = new List<ActionItemModel>{
+                                    var actions = new List<ActionItemModel> {
                                                 new() {
                                                 Title = "Chi tiết",
                                                 Icon = "bi-eye",
@@ -154,10 +152,10 @@
                                                 CssClass = "text-danger",
                                                 OnClick = $"deleteItem({item.Id})"
                                                 }
-                                                }
-                                    }
-                                    );
+                                                };
                                 }
+
+                                @await Component.InvokeAsync("ActionDropdown", new { actions = actions })
                             </td>
                         </tr>
                     }
