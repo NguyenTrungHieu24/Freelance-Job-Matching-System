@@ -14,7 +14,23 @@ public class EmployerController : BaseController
     }
 
     [HttpGet("dashboard")]
-    public IActionResult Dashboard() => View();
+    public async Task<IActionResult> Dashboard()
+    {
+        try
+        {
+            var data = await GetAsync<DashBoardDto>("api/employer/dashboard/summary");
+            var model = new EmployerDashboard
+            {
+                Dashboard = data
+            };
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Cannot load dashboard: " + ex.Message;
+            return View(new EmployerDashboard { Dashboard = new DashBoardDto() });
+        }
+    }
 
     [HttpGet("personal-info")]
     public async Task<IActionResult> PersonalInfo()
