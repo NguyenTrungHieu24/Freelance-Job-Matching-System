@@ -119,11 +119,12 @@ namespace API.Controllers
                 .Reference(x => x.Role)
                 .LoadAsync();
 
-            var token = _jwt.GenerateToken(user);
+            var jwt = _jwt.GenerateToken(user);
 
             return Ok(new
             {
-                Token = token,
+                Token = jwt.Token,
+                ExpiresAt = jwt.ExpiresAt,
                 Role = user.Role.Name,
                 User = new
                 {

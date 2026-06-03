@@ -44,8 +44,7 @@ namespace API.Controllers
 
             if (filter.RoleIds.Count > 0)
             {
-                query = query.Where(x =>
-                    filter.RoleIds.Contains(x.RoleId));
+                query = query.Where(x => filter.RoleIds.Contains(x.RoleId));
             }
 
             if (filter.CreatedFrom.HasValue)

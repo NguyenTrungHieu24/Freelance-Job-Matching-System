@@ -55,7 +55,11 @@ namespace Client.Controllers
                 var identity = new ClaimsIdentity(claims, "Cookies");
                 var principal = new ClaimsPrincipal(identity);
 
-                await HttpContext.SignInAsync("Cookies", principal);
+                await HttpContext.SignInAsync("Cookies", principal, new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = result.ExpiresAt
+                });
 
                 Response.Cookies.Append(
                     "Auth.JWT",
@@ -65,7 +69,7 @@ namespace Client.Controllers
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Lax,
-                        Expires = DateTimeOffset.UtcNow.AddDays(7)
+                        Expires = result.ExpiresAt
                     });
 
                 // Safe redirect
@@ -85,10 +89,10 @@ namespace Client.Controllers
                         // ignore invalid base64
                     }
                 }
-                
+
                 if (result.Role.Equals("FREELANCER"))
                     return RedirectToAction("Dashboard", "Freelancer");
-                else if(result.Role.Equals("EMPLOYER"))
+                else if (result.Role.Equals("EMPLOYER"))
                     return RedirectToAction("Dashboard", "Employer");
                 else
                     return RedirectToAction("Index", "Home");

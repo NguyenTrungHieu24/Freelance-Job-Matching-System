@@ -66,8 +66,13 @@ namespace BusinessObjects.Mapping
                     d => d.Name,
                     o => o.MapFrom(s => s.FullName))
                 .ForMember(
+                    d => d.Status,
+                    o => o.MapFrom(s => s.IsActive ? 1 : 0))
+                .ForMember(
                     d => d.Role,
                     o => o.MapFrom(s => s.Role.Name));
+
+            CreateMap<Role, RoleDTO>();
         }
     }
 }

@@ -27,10 +27,15 @@ namespace Client.Controllers
 
                 var queries = BuildQueryParams(filter);
 
-
                 var url = QueryHelpers.AddQueryString("api/users", queries);
 
                 var data = await GetAsync<PaginateResult<UserDto>>(url);
+
+                var roles = await GetAsync<List<RoleDTO>>("api/roles");
+
+                Console.WriteLine(roles.Count);
+
+                ViewBag.Roles = new SelectList(roles, "Id", "Name");
 
                 return View(new ListUsersModel
                 {
@@ -68,11 +73,11 @@ namespace Client.Controllers
 
             if (filter.RoleIds.Count > 0)
             {
-                foreach (var rollId in filter.RoleIds)
+                foreach (var roleId in filter.RoleIds)
                 {
                     queryParams.Add(new KeyValuePair<string, string>(
-                       "rollIds",
-                       rollId.ToString())
+                       "roleIds",
+                       roleId.ToString())
                     );
                 }
             }

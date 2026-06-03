@@ -73,7 +73,7 @@
                 @if (Model.HasFilter())
                 {
                     <a class="btn btn-sm btn-outline-secondary"
-                       asp-action="Manage">
+                       asp-controller="Users">
                         Clear filter
                     </a>
                 }
@@ -134,29 +134,30 @@
                             </td>
 
                             <td>
-                                <div class="d-flex gap-1">
-
-                                    <a asp-action="Details"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-info">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-
-                                    <a asp-action="Edit"
-                                       asp-route-id="@item.Id"
-                                       class="btn btn-sm btn-outline-warning">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    <button class="btn btn-sm btn-outline-danger"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteUser"
-                                            data-user-id="@item.Id"
-                                            data-user-name="@item.Name">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-
-                                </div>
+                                @{
+                                    await Component.InvokeAsync("ActionDropdown", new
+                                    {
+                                        actions = new List<ActionItemModel>{
+                                                new() {
+                                                Title = "Chi tiết",
+                                                Icon = "bi-eye",
+                                                Url = Url.Action("Detail", new { id = item.Id })
+                                                },
+                                                new() {
+                                                Title = "Sửa",
+                                                Icon = "bi-pencil",
+                                                Url = Url.Action("Edit", new { id = item.Id })
+                                                },
+                                                new() {
+                                                Title = "Xóa",
+                                                Icon = "bi-trash",
+                                                CssClass = "text-danger",
+                                                OnClick = $"deleteItem({item.Id})"
+                                                }
+                                                }
+                                    }
+                                    );
+                                }
                             </td>
                         </tr>
                     }

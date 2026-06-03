@@ -1,0 +1,48 @@
+﻿@model List<ActionItemModel>
+
+<div class="btn-group">
+    <button class="@ViewBag.ButtonClass"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+
+        @ViewBag.ButtonText
+    </button>
+
+    <ul class="dropdown-menu">
+        @foreach (var item in Model)
+        {
+            <li>
+
+                @if (!string.IsNullOrWhiteSpace(item.Url))
+                {
+                    <a href="@item.Url"
+                       class="dropdown-item @item.CssClass">
+
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <i class="bi @item.Icon me-2"></i>
+                        }
+
+                        @item.Title
+                    </a>
+                }
+                else
+                {
+                    <button type="button"
+                            class="dropdown-item @item.CssClass"
+                            onclick="@item.OnClick">
+
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <i class="bi @item.Icon me-2"></i>
+                        }
+
+                        @item.Title
+                    </button>
+                }
+
+            </li>
+        }
+    </ul>
+</div>
