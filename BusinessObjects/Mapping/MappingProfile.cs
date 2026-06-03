@@ -33,32 +33,13 @@ namespace BusinessObjects.Mapping
                         : (src.EmployerProfile != null ? src.EmployerProfile.CompanyName : "")))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => 
                     src.Category != null ? src.Category.Name : ""))
+                .ForMember(dest => dest.ApplicationsCount, opt => opt.MapFrom(src =>
+                    src.Applications != null ? src.Applications.Count : 0))
                 .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => 
                     src.JobSkills != null && src.JobSkills.Any()
                         ? src.JobSkills.Select(js => js.Skill).ToList() 
                         : new List<Skill>()));
-            CreateMap<Job, JobDTO>()
-                .ForMember(
-                    dest => dest.EmployerName,
-                    opt => opt.MapFrom(src =>
-                        src.EmployerProfile.Account.FullName))
-                .ForMember(
-                    dest => dest.CategoryName,
-                    opt => opt.MapFrom(src =>
-                        src.Category.Name));
-            CreateMap<Job, JobDTO>()
-                .ForMember(
-                    d => d.CategoryName,
-                    o => o.MapFrom(s => s.Category.Name))
-                .ForMember(
-                    d => d.EmployerName,
-                    o => o.MapFrom(s => s.EmployerProfile.Account.FullName))
-                .ForMember(
-                    d => d.ApplicationsCount,
-                    o => o.MapFrom(s => s.Applications.Count))
-                .ForMember(
-                    d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
+            // Remove mappings for non-existing JobDTO to avoid confusion
         }
     }
 }

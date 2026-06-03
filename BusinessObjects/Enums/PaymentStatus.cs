@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.Enums
 {
-    public enum JobStatus
+    public enum PaymentStatus
     {
-        ACTIVE = 1,
-        CLOSED = 2,
+        PENDING = 1,
+        PAID = 2,
+        FAILED = 3,
+        CANCELED = 4,
     }
 }

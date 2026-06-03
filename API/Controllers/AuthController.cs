@@ -7,6 +7,7 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace API.Controllers
 {
@@ -17,12 +18,14 @@ namespace API.Controllers
         private readonly AppDbContext _context;
         private readonly JwtService _jwt;
         private readonly IUserService _user;
+        private readonly IEmailService _emailService;
 
-        public AuthController(AppDbContext context, JwtService jwt, IUserService user)
+        public AuthController(AppDbContext context, JwtService jwt, IUserService user, IEmailService emailService)
         {
             _context = context;
             _jwt = jwt;
             _user = user;
+            _emailService = emailService;
         }
 
         // =========================
@@ -47,6 +50,7 @@ namespace API.Controllers
 
             _context.Users.Add(account);
             await _context.SaveChangesAsync();
+            EmployerProfile e = null;
 
             switch (account.RoleId)
             {
@@ -60,7 +64,7 @@ namespace API.Controllers
                     await _context.SaveChangesAsync();
                     break;
                 case 2:
-                    var e = new EmployerProfile
+                    e = new EmployerProfile
                     {
                         AccountId = account.Id,
                         CompanyName = account.FullName,
@@ -164,9 +168,8 @@ namespace API.Controllers
             if (user == null)
                 return Ok(new { message = "Nếu email tồn tại trên hệ thống, mã khôi phục đã được gửi." });
 
-            // 1. Tạo một Token ngẫu nhiên (hoặc mã OTP số tùy bạn chọn)
-            // Ở đây dùng GUID để làm token trên URL cho an toàn
-            var resetToken = Guid.NewGuid().ToString();
+            // 1. Tạo mã OTP 6 số để người dùng nhập trên trang đặt lại mật khẩu
+            var resetToken = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
 
             // 2. Lưu Token và thời gian hết hạn trực tiếp vào bảng User
            
@@ -175,9 +178,19 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
 
-            // 3. GỬI EMAIL CHỨA LINK RESET
-            // Tạm thời bạn có thể trả về Token này trong API để test bằng Postman/Swagger trước.
-         
+            // 3. GỬI EMAIL CHỨA MÃ OTP
+            var subject = "Khôi phục mật khẩu";
+            var body = $@"
+        <p>Xin chào <b>{user.FullName}</b>,</p>
+        <p>Bạn vừa yêu cầu đặt lại mật khẩu.</p>
+        <p>Mã OTP đặt lại mật khẩu của bạn là:</p>
+        <h2 style='letter-spacing:4px'>{resetToken}</h2>
+        <p>Mã này có hiệu lực trong 15 phút.</p>
+        <p>Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
+    ";
+
+            await _emailService.SendEmailAsync(user.Email, subject, body);
+
 
             return Ok(new
             {
@@ -185,6 +198,28 @@ namespace API.Controllers
                 
             });
         }
+
+        // Test endpoint to send an email via configured IEmailService
+        [HttpPost("test-email")]
+        public async Task<IActionResult> TestEmail()
+        {
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    "hieu81194@gmail.com",
+                    "Test Mail",
+                    "<h2>Gửi thành công</h2>"
+                );
+
+                return Ok(new { message = "Email sent" });
+            }
+            catch (Exception ex)
+            {
+                // Return full exception for debugging; remove/limit in production
+                return BadRequest(new { error = ex.ToString() });
+            }
+        }
+// Removed duplicate constructor; single constructor now includes IEmailService.
 
         // =========================
         // RESET PASSWORD (Xác nhận đổi mật khẩu mới)
@@ -199,12 +234,12 @@ namespace API.Controllers
                 return BadRequest("Yêu cầu không hợp lệ.");
 
             // Kiểm tra Token khớp không và đã hết hạn chưa
-            if (user.PasswordResetToken != dto.Token || user.ResetTokenExpires < DateTime.UtcNow)
+            if (user.PasswordResetToken != dto.Token.Trim() || user.ResetTokenExpires < DateTime.UtcNow)
             {
                 return BadRequest("Mã xác thực không chính xác hoặc đã hết hạn.");
             }
 
-            // Tiến hành đổi mật khẩu mới (Băm mật khẩu bằng BCrypt tương tự như lúc Register)
+            // Tiến hành đổi mật khẩu mới (Bcryt mật khẩu bằng BCrypt tương tự như lúc Register)
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
 
             // Xóa token sau khi đã sử dụng thành công để tránh dùng lại
@@ -215,6 +250,7 @@ namespace API.Controllers
 
             return Ok(new { message = "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay bây giờ." });
         }
+
 
     }
 }

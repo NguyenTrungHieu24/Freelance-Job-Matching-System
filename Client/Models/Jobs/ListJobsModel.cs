@@ -5,8 +5,8 @@ namespace Client.Models.Jobs
 {
     public class ListJobsModel
     {
-        public FilterJobDTO Filter { get; set; } = new();
-        public PaginateResult<JobDTO> Jobs { get; set; }
+        public FilterJobDto Filter { get; set; } = new();
+        public PaginateResult<JobDto> Jobs { get; set; } = new();
 
         public bool HasFilter()
         {

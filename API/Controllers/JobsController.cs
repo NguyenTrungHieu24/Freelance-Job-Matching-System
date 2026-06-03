@@ -27,15 +27,15 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<PaginateResult<JobDto>>> GetJobs([FromQuery] FilterJobDto q)
         {
-            // Exclude soft-deleted jobs (Status = "DELETED")
-            var deletedStatus = JobStatus.DELETED.ToString();
+            // Exclude soft-deleted jobs
             var query = _context.Jobs
                 .Include(j => j.Category)
                 .Include(j => j.EmployerProfile)
                     .ThenInclude(e => e.Account)
                 .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
-                .Where(j => j.Status != deletedStatus)
+                .Include(j => j.Applications)
+                .Where(j => j.Status != JobStatus.DELETED)
                 .AsQueryable();
 
             // Keyword filter (title or description)
@@ -52,10 +52,28 @@ namespace API.Controllers
                 query = query.Where(j => j.CategoryId == q.CategoryId.Value);
             }
 
+            if (!string.IsNullOrWhiteSpace(q.EmployerKeyword))
+            {
+                var employerKeyword = q.EmployerKeyword.Trim().ToLower();
+                query = query.Where(j =>
+                    j.EmployerProfile.CompanyName.ToLower().Contains(employerKeyword) ||
+                    j.EmployerProfile.Account.FullName.ToLower().Contains(employerKeyword));
+            }
+
+            if (q.EmployerProfileId.HasValue)
+            {
+                query = query.Where(j => j.EmployerProfileId == q.EmployerProfileId.Value);
+            }
+
             // Skill filter
             if (q.SkillId.HasValue)
             {
                 query = query.Where(j => j.JobSkills.Any(js => js.SkillId == q.SkillId.Value));
+            }
+
+            if (q.SkillIds.Count > 0)
+            {
+                query = query.Where(j => j.JobSkills.Any(js => q.SkillIds.Contains(js.SkillId)));
             }
 
             // Budget filter
@@ -68,30 +86,65 @@ namespace API.Controllers
                 query = query.Where(j => j.Budget <= q.MaxBudget.Value);
             }
 
-            // Status filter (e.g. ACTIVE or CLOSED)
-            if (!string.IsNullOrWhiteSpace(q.Status))
+            if (q.CreatedFrom.HasValue)
             {
-                var statusStr = q.Status.Trim().ToUpper();
-                // Ensure they don't query deleted ones through here
-                if (statusStr != deletedStatus)
+                query = query.Where(j => j.CreatedAt.Date >= q.CreatedFrom.Value.Date);
+            }
+
+            if (q.CreatedTo.HasValue)
+            {
+                query = query.Where(j => j.CreatedAt.Date <= q.CreatedTo.Value.Date);
+            }
+
+            if (q.DeadlineFrom.HasValue)
+            {
+                query = query.Where(j => j.Deadline.HasValue && j.Deadline.Value.Date >= q.DeadlineFrom.Value.Date);
+            }
+
+            if (q.DeadlineTo.HasValue)
+            {
+                query = query.Where(j => j.Deadline.HasValue && j.Deadline.Value.Date <= q.DeadlineTo.Value.Date);
+            }
+
+            if (q.Temperature.HasValue)
+            {
+                query = q.Temperature.Value switch
                 {
-                    query = query.Where(j => j.Status == statusStr);
-                }
+                    JobTemperature.Hot => query.Where(j => j.Applications.Count >= 10),
+                    JobTemperature.Warm => query.Where(j => j.Applications.Count >= 5 && j.Applications.Count < 10),
+                    JobTemperature.Cool => query.Where(j => j.Applications.Count < 5),
+                    _ => query
+                };
+            }
+
+            if (q.Status.HasValue)
+            {
+                if (q.Status.Value != JobStatus.DELETED)
+                    query = query.Where(j => j.Status == q.Status.Value);
             }
             else
             {
                 // Default to ACTIVE if no status is specified
-                var activeStatus = JobStatus.ACTIVE.ToString();
-                query = query.Where(j => j.Status == activeStatus);
+                query = query.Where(j => j.Status == JobStatus.ACTIVE);
             }
 
             var totalItems = await query.CountAsync();
 
-            // Order by most recent job first
+            query = (q.SortBy?.Trim().ToLower()) switch
+            {
+                "title" => q.IsDescending ? query.OrderByDescending(j => j.Title) : query.OrderBy(j => j.Title),
+                "budget" => q.IsDescending ? query.OrderByDescending(j => j.Budget) : query.OrderBy(j => j.Budget),
+                "deadline" => q.IsDescending ? query.OrderByDescending(j => j.Deadline) : query.OrderBy(j => j.Deadline),
+                "applications" => q.IsDescending ? query.OrderByDescending(j => j.Applications.Count) : query.OrderBy(j => j.Applications.Count),
+                _ => q.IsDescending ? query.OrderByDescending(j => j.CreatedAt) : query.OrderBy(j => j.CreatedAt)
+            };
+
+            var page = q.Page <= 0 ? 1 : q.Page;
+            var pageSize = q.PageSize <= 0 ? 10 : q.PageSize;
+
             var jobs = await query
-                .OrderByDescending(j => j.CreatedAt)
-                .Skip((q.Page - 1) * q.PageSize)
-                .Take(q.PageSize)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
             var mappedJobs = _mapper.Map<List<JobDto>>(jobs);
@@ -99,8 +152,8 @@ namespace API.Controllers
             return Ok(new PaginateResult<JobDto>
             {
                 Items = mappedJobs,
-                PageNumber = q.Page,
-                PageSize = q.PageSize,
+                PageNumber = page,
+                PageSize = pageSize,
                 TotalItems = totalItems
             });
         }
@@ -110,14 +163,14 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<JobDto>> GetJob(int id)
         {
-            var deletedStatus = JobStatus.DELETED.ToString();
             var job = await _context.Jobs
                 .Include(j => j.Category)
                 .Include(j => j.EmployerProfile)
                     .ThenInclude(e => e.Account)
                 .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
+                .Include(j => j.Applications)
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status != JobStatus.DELETED);
 
             if (job == null)
             {
@@ -159,7 +212,7 @@ namespace API.Controllers
                 Budget = dto.Budget,
                 CategoryId = dto.CategoryId,
                 Deadline = dto.Deadline,
-                Status = JobStatus.ACTIVE.ToString(),
+                Status = JobStatus.ACTIVE,
                 EmployerProfileId = employerProfile.Id,
                 CreatedAt = DateTime.Now
             };
@@ -208,11 +261,10 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateJob(int id, [FromBody] UpdateJobDto dto)
         {
             var userId = _user.UserId;
-            var deletedStatus = JobStatus.DELETED.ToString();
 
             // Find existing Job
             var job = await _context.Jobs
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status != JobStatus.DELETED);
 
             if (job == null)
             {
@@ -236,8 +288,7 @@ namespace API.Controllers
             }
 
             // Parse and validate Status
-            var newStatus = dto.Status.Trim().ToUpper();
-            if (newStatus == deletedStatus || (!Enum.TryParse<JobStatus>(newStatus, out _)))
+            if (!Enum.TryParse<JobStatus>(dto.Status.Trim(), true, out var newStatus) || newStatus == JobStatus.DELETED)
             {
                 return BadRequest(new { message = "Invalid job status value" });
             }
@@ -283,11 +334,10 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteJob(int id)
         {
             var userId = _user.UserId;
-            var deletedStatus = JobStatus.DELETED.ToString();
 
             // Find existing Job
             var job = await _context.Jobs
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status != JobStatus.DELETED);
 
             if (job == null)
             {
@@ -304,185 +354,11 @@ namespace API.Controllers
             }
 
             // Perform Soft Delete
-            job.Status = deletedStatus;
+            job.Status = JobStatus.DELETED;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Job deleted successfully" });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetJobs([FromQuery] FilterJobDTO filter) {
-            var query = _context.Jobs
-                .Include(x => x.Category)
-                .Include(x => x.EmployerProfile)
-                .ThenInclude(x => x.Account)
-                .AsQueryable();
-
-            query = ApplyPermission(query);
-
-            #region Filters
-
-            if (!string.IsNullOrWhiteSpace(filter.Keyword))
-            {
-                query = query.Where(x =>
-                    x.Title.Contains(filter.Keyword) ||
-                    x.Description.Contains(filter.Keyword));
-            }
-
-            if (filter.Status.HasValue)
-            {
-                query = query.Where(x => x.Status == filter.Status.Value);
-            }
-
-            if (filter.CategoryId.HasValue)
-            {
-                query = query.Where(x => x.CategoryId == filter.CategoryId.Value);
-            }
-
-            if (filter.EmployerProfileId.HasValue)
-            {
-                query = query.Where(x => x.EmployerProfileId == filter.EmployerProfileId.Value);
-            }
-
-            if (filter.MinBudget.HasValue)
-            {
-                query = query.Where(x => x.Budget >= filter.MinBudget.Value);
-            }
-
-            if (filter.MaxBudget.HasValue)
-            {
-                query = query.Where(x => x.Budget <= filter.MaxBudget.Value);
-            }
-
-            if (filter.CreatedFrom.HasValue)
-            {
-                query = query.Where(x => x.CreatedAt >= filter.CreatedFrom.Value);
-            }
-
-            if (filter.CreatedTo.HasValue)
-            {
-                query = query.Where(x => x.CreatedAt <= filter.CreatedTo.Value);
-            }
-
-            if (filter.DeadlineFrom.HasValue)
-            {
-                query = query.Where(x => x.Deadline >= filter.DeadlineFrom.Value);
-            }
-
-            if (filter.DeadlineTo.HasValue)
-            {
-                query = query.Where(x => x.Deadline <= filter.DeadlineTo.Value);
-            }
-
-            if (filter.Temperature.HasValue)
-            {
-                switch (filter.Temperature.Value)
-                {
-                    case JobTemperature.Cool:
-                        query = query.Where(x => x.Applications.Count < 2);
-                        break;
-
-                    case JobTemperature.Warm:
-                        query = query.Where(x => x.Applications.Count >= 2 && x.Applications.Count < 8);
-                        break;
-
-                    case JobTemperature.Hot:
-                        query = query.Where(x => x.Applications.Count >= 8);
-                        break;
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.EmployerKeyword))
-            {
-                query = query.Where(x => x.EmployerProfile.Account.FullName.Contains(filter.EmployerKeyword));
-            }
-
-            if (filter.SkillIds.Count > 0)
-            {
-                query = query.Where(x => x.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
-            }
-
-            #endregion
-
-            #region Sorting
-
-            query = filter.SortBy?.ToLower() switch
-            {
-                "title" => filter.IsDescending
-                    ? query.OrderByDescending(x => x.Title)
-                    : query.OrderBy(x => x.Title),
-
-                "budget" => filter.IsDescending
-                    ? query.OrderByDescending(x => x.Budget)
-                    : query.OrderBy(x => x.Budget),
-
-                "deadline" => filter.IsDescending
-                    ? query.OrderByDescending(x => x.Deadline)
-                    : query.OrderBy(x => x.Deadline),
-
-                _ => filter.IsDescending
-                    ? query.OrderByDescending(x => x.CreatedAt)
-                    : query.OrderBy(x => x.CreatedAt)
-            };
-
-            #endregion
-
-            var totalItems = await query.CountAsync();
-
-            var items = await query
-                .Skip((filter.Page - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .ProjectTo<JobDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
-
-            var result = new PaginateResult<JobDTO>
-            {
-                Items = items,
-                TotalItems = totalItems,
-                PageNumber = filter.Page,
-                PageSize = filter.PageSize
-            };
-
-            return Ok(result);
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetJob(int id)
-        {
-            var query = _context.Jobs
-                .Include(x => x.Category)
-                .Include(x => x.EmployerProfile)
-                .ThenInclude(x => x.Account)
-                .AsQueryable();
-
-            query = ApplyPermission(query);
-
-            var job = await query.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (job == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(_mapper.Map<JobDTO>(job));
-        }
-
-        private IQueryable<Job> ApplyPermission(IQueryable<Job> query)
-        {
-            switch (_user.Role.ToLower())
-            {
-                case "admin":
-                    return query;
-
-                case "employer":
-                    return query.Where(x => x.EmployerProfile.AccountId == _user.UserId);
-
-                case "freelancer":
-                    return query.Where(x => x.Status == JobStatus.ACTIVE);
-
-                default:
-                    return query.Where(x => false);
-            }
-        }
     }
 }

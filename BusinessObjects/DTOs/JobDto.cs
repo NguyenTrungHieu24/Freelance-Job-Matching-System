@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BusinessObjects.Enums;
 
 namespace BusinessObjects.DTOs
 {
@@ -19,6 +20,7 @@ namespace BusinessObjects.DTOs
         public string EmployerName { get; set; } = null!;
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = null!;
+        public int ApplicationsCount { get; set; }
         public List<SkillDTO> Skills { get; set; } = new();
     }
 
@@ -68,11 +70,21 @@ namespace BusinessObjects.DTOs
     public class FilterJobDto
     {
         public string? Keyword { get; set; }
+        public string? EmployerKeyword { get; set; }
         public int? CategoryId { get; set; }
         public int? SkillId { get; set; }
+        public List<int> SkillIds { get; set; } = new();
+        public int? EmployerProfileId { get; set; }
         public decimal? MinBudget { get; set; }
         public decimal? MaxBudget { get; set; }
-        public string? Status { get; set; } // Allow filtering by status if needed
+        public JobStatus? Status { get; set; }
+        public DateTime? CreatedFrom { get; set; }
+        public DateTime? CreatedTo { get; set; }
+        public DateTime? DeadlineFrom { get; set; }
+        public DateTime? DeadlineTo { get; set; }
+        public JobTemperature? Temperature { get; set; }
+        public string? SortBy { get; set; }
+        public bool IsDescending { get; set; } = true;
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 10;
     }
