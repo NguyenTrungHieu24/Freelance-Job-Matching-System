@@ -19,7 +19,7 @@
     "Projects": [
       {
         "Path": "API\\API.csproj",
-        "Action": "Start",
+        "Action": "StartWithoutDebugging",
         "DebugTarget": "https"
       },
       {

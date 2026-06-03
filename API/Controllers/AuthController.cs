@@ -50,7 +50,7 @@ namespace API.Controllers
 
             _context.Users.Add(account);
             await _context.SaveChangesAsync();
-            EmployerProfile e;
+            EmployerProfile e = null;
 
             switch (account.RoleId)
             {

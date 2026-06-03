@@ -115,7 +115,7 @@ namespace BusinessObjects.Seeders
 
         public string Email { get; set; } = string.Empty;
 
-        public string Role { get; set; }
+        public string? Role { get; set; }
 
         public string CreatedAt { get; set; } = String.Empty;
 

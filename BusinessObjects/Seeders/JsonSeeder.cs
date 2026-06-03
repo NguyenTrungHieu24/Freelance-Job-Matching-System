@@ -10,7 +10,7 @@ namespace BusinessObjects.Seeders
 {
     public class JsonSeeder
     {
-        public static async Task<List<T>> SeedingFromJson<T>(string fileName)
+        public static async Task<List<T>?> SeedingFromJson<T>(string fileName)
         {
             var path = Path.GetFullPath(Path.Combine(
                     Directory.GetCurrentDirectory(),

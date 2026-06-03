@@ -13,8 +13,7 @@ namespace API.Services.Auth
             _httpContextAccessor = httpContextAccessor;
         }
 
-        private ClaimsPrincipal User =>
-            _httpContextAccessor.HttpContext?.User;
+        private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
 
         public bool IsAuthenticated =>
             User?.Identity?.IsAuthenticated ?? false;
