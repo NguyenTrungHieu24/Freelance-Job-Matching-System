@@ -37,7 +37,7 @@ namespace BusinessObjects.Mapping
                     src.JobSkills != null && src.JobSkills.Any()
                         ? src.JobSkills.Select(js => js.Skill).ToList() 
                         : new List<Skill>()));
-            CreateMap<Job, JobDTO>()
+            CreateMap<Job, JobDto>()
                 .ForMember(
                     dest => dest.EmployerName,
                     opt => opt.MapFrom(src =>
@@ -46,6 +46,7 @@ namespace BusinessObjects.Mapping
                     dest => dest.CategoryName,
                     opt => opt.MapFrom(src =>
                         src.Category.Name));
+
             CreateMap<Job, JobDTO>()
                 .ForMember(
                     d => d.CategoryName,
