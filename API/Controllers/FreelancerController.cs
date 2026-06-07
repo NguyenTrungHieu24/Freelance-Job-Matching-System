@@ -2,6 +2,7 @@ using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -205,6 +206,48 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(new { cvUrl = profile.CVUrl, message = "Upload CV successfully" });
+        }
+
+        [HttpGet("jobs")]
+        public async Task<IActionResult> GetJobs([FromQuery] FreelancerFilterJobDTO filter)
+        {
+            var query = _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
+                .Include(j => j.Applications)
+                .AsQueryable();
+            
+            if(!string.IsNullOrEmpty(filter.Keyword))
+                query = query.Where(j => j.Title.Contains(filter.Keyword));
+            
+            if(filter.CategoryId.HasValue)
+                query = query.Where(j => j.CategoryId == filter.CategoryId.Value);
+
+            if (filter.SkillIds != null && filter.SkillIds.Count() > 0)
+            {
+                query = query.Where(j => j.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
+            }
+            
+            if(filter.MinBudget.HasValue)
+                query = query.Where(j => j.Budget >= filter.MinBudget.Value);
+            if(filter.MaxBudget.HasValue)
+                query = query.Where(j => j.Budget <= filter.MaxBudget.Value);
+
+            int totalCount = await query.CountAsync();
+            var jobs = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+            
+            var mappedJobs = _mapper.Map<List<FreelancerJobDTO>>(jobs);
+            return Ok(new PaginateResult<FreelancerJobDTO>
+            {
+                Items = mappedJobs,
+                TotalItems = totalCount,
+                PageNumber = filter.Page,
+                PageSize = filter.PageSize
+            });
         }
     }
 }

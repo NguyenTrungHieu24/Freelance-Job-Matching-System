@@ -1,0 +1,104 @@
+@using BusinessObjects.DTOs
+@model Client.Models.Freelancer.FreelancerListJobsModel
+
+@{
+    ViewData["Title"] = "Jobs List";
+    Layout = "_Layout";
+    
+    var category = ViewBag.Category as List<CategoryDTO>;
+    var skill = ViewBag.Skills as List<SkillDTO>;
+}
+
+<form method="get" asp-action="JobList" asp-controller="Freelancer">
+    <div class="search-bar-container" style="max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 10px;">
+        <input type="text" asp-for="Filter.Keyword" class="form-control" placeholder="Searching title of job..." style="flex-grow: 1;"/>
+        <button type="submit" class="btn btn-primary" style="background-color: #00A3C4; border: none;">Search</button>
+    </div>
+    
+    <div class="job-board-container">
+        
+        <aside class="job-filter-sidebar">
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Categories</h3>
+                <select asp-for="Filter.CategoryId" class="form-select" style="width: 100%; padding: 8px;">
+                    <option value="">Tất cả danh mục</option>
+                    @if(category != null) {
+                        foreach(var cat in category) {
+                            <option value="@cat.Id">@cat.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="filter-group">
+                <h3 class="filter-title">Skills</h3>
+                @if(skill != null) {
+                    foreach(var skill in skill) {
+                        bool isChecked = Model.Filter.SkillIds.Contains(skill.Id);
+                        <label class="filter-option">
+                            <input type="checkbox" name="Filter.SkillIds" value="@skill.Id" @(isChecked ? "checked" : "")> 
+                            @skill.Name
+                        </label>
+                    }
+                }
+            </div>
+            <!-- Budgets: 2 Ổ NHẬP SỐ -->
+            <div class="filter-group">
+                <h3 class="filter-title">Budgets (VND)</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" asp-for="Filter.MinBudget" class="form-control" placeholder="From..." min="0">
+                    <span> - </span>
+                    <input type="number" asp-for="Filter.MaxBudget" class="form-control" placeholder="To...">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-outline-primary mt-3" style="width: 100%;">Lọc kết quả</button>
+        </aside>
+        <main class="job-list-content">
+            @if (Model.Jobs.Items != null && Model.Jobs.Items.Any())
+            {
+                foreach (var job in Model.Jobs.Items)
+                {
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="job-info">
+                                <h2 class="job-title">@job.Title</h2>
+                                <p class="job-desc">@(job.Description?.Length > 150 ? job.Description.Substring(0, 150) + "..." : job.Description)</p>
+                                <div class="job-tags">
+                                    <span class="tag">Category: @job.CategoryName</span>
+                                    @if (job.Skills != null && job.Skills.Any())
+                                    {
+                                        <span class="tag">Skill: @string.Join(", ", job.Skills)</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="job-budget">
+                                <span class="budget-badge">Budget: @job.Budget.ToString("N0") VND</span>
+                            </div>
+                        </div>
+                        <hr class="divider">
+                        <div class="job-card-footer">
+                            <div class="employer-info">
+                                <img src="@(string.IsNullOrEmpty(job.EmployerLogo) ? "/image/user.png" : job.EmployerLogo)" 
+                                     alt="Logo" class="employer-avatar" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" />
+                                
+                                <div class="employer-details">
+                                    <span class="company-name" style="font-weight: bold; color: #111827;">@job.CompanyName</span>
+                                    <span class="employer-name" style="font-size: 13px;">Đăng bởi: @job.EmployerName</span>
+                                    <span class="applications" style="font-size: 13px;">Ứng viên: @job.ApplicationsCount</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-apply">Apply</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    Không tìm thấy công việc nào phù hợp với bộ lọc của bạn.
+                </div>
+            }
+        </main>
+    </div>
+</form>
