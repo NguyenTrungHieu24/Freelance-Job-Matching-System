@@ -4,6 +4,7 @@ using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,8 @@ namespace API.Controllers
 
             if (user.FreelancerProfile == null)
             {
-                var newProfile = new FreelancerProfile { AccountId = userId, Title = "New Freelancer", Bio = "New Bio" };
+                var newProfile = new FreelancerProfile
+                    { AccountId = userId, Title = "New Freelancer", Bio = "New Bio" };
                 _context.FreelancerProfiles.Add(newProfile);
                 await _context.SaveChangesAsync();
             }
@@ -213,41 +215,99 @@ namespace API.Controllers
         {
             var query = _context.Jobs
                 .Include(j => j.Category)
-                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
                 .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
                 .Include(j => j.Applications)
+                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .Where(j => j.Status != JobStatus.DELETED && j.Status == JobStatus.ACTIVE)
                 .AsQueryable();
             
-            if(!string.IsNullOrEmpty(filter.Keyword))
-                query = query.Where(j => j.Title.Contains(filter.Keyword));
-            
-            if(filter.CategoryId.HasValue)
-                query = query.Where(j => j.CategoryId == filter.CategoryId.Value);
-
-            if (filter.SkillIds != null && filter.SkillIds.Count() > 0)
+            if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
-                query = query.Where(j => j.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
+                query = query.Where(x => x.Title.Contains(filter.Keyword) || x.Description.Contains(filter.Keyword));
             }
-            
-            if(filter.MinBudget.HasValue)
-                query = query.Where(j => j.Budget >= filter.MinBudget.Value);
-            if(filter.MaxBudget.HasValue)
-                query = query.Where(j => j.Budget <= filter.MaxBudget.Value);
+            if (filter.CategoryId.HasValue)
+                query = query.Where(x => x.CategoryId == filter.CategoryId.Value);
+            if (filter.Temperature.HasValue)
+            {
+                switch (filter.Temperature.Value)
+                {
+                    case JobTemperature.Cool:
+                        query = query.Where(x => x.Applications.Count < 2);
+                        break;
 
-            int totalCount = await query.CountAsync();
-            var jobs = await query
+                    case JobTemperature.Warm:
+                        query = query.Where(x => x.Applications.Count >= 2 && x.Applications.Count < 8);
+                        break;
+
+                    case JobTemperature.Hot:
+                        query = query.Where(x => x.Applications.Count >= 8);
+                        break;
+                }
+            }
+            if (filter.SkillIds.Count > 0)
+                query = query.Where(x => x.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
+            if (filter.MinBudget.HasValue)
+                query = query.Where(x => x.Budget >= filter.MinBudget.Value);
+            if (filter.MaxBudget.HasValue)
+                query = query.Where(x => x.Budget <= filter.MaxBudget.Value);
+            if (filter.CreatedFrom.HasValue)
+                query = query.Where(x => x.CreatedAt >= filter.CreatedFrom.Value);
+            if (filter.CreatedTo.HasValue)
+                query = query.Where(x => x.CreatedAt <= filter.CreatedTo.Value);
+            if (filter.DeadlineFrom.HasValue)
+                query = query.Where(x => x.Deadline >= filter.DeadlineFrom.Value);
+            if (filter.DeadlineTo.HasValue)
+                query = query.Where(x => x.Deadline <= filter.DeadlineTo.Value);
+            
+            query = filter.SortBy?.ToLower() switch
+            {
+                "title" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Title)
+                    : query.OrderBy(x => x.Title),
+
+                "budget" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Budget)
+                    : query.OrderBy(x => x.Budget),
+
+                "deadline" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Deadline)
+                    : query.OrderBy(x => x.Deadline),
+
+                _ => filter.IsDescending
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt)
+            };
+            
+            var totalItems = await query.CountAsync();
+            var items = await query
                 .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
+                .Select(e => new FreelancerJobDTO
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    Budget = e.Budget,
+                    Deadline = e.Deadline,
+                    CreatedAt = e.CreatedAt,
+                    EmployerProfileId = e.EmployerProfileId,
+                    CategoryName = e.Category.Name,
+                    Skills = e.JobSkills.Select(x => x.Skill.Name).ToList(),
+                    EmployerName = e.EmployerProfile.Account.FullName,
+                    EmployerLogo = e.EmployerProfile.Logo,
+                    CompanyName = e.EmployerProfile.CompanyName,
+                    ApplicationsCount = e.Applications.Where(a => a.JobId == e.Id).Count(),
+                })
                 .ToListAsync();
             
-            var mappedJobs = _mapper.Map<List<FreelancerJobDTO>>(jobs);
-            return Ok(new PaginateResult<FreelancerJobDTO>
+            var result = new PaginateResult<FreelancerJobDTO>
             {
-                Items = mappedJobs,
-                TotalItems = totalCount,
+                Items = items,
+                TotalItems = totalItems,
                 PageNumber = filter.Page,
                 PageSize = filter.PageSize
-            });
+            };
+            return Ok(result);
         }
     }
 }

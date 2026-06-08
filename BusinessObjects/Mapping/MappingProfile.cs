@@ -73,13 +73,6 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Role.Name));
 
             CreateMap<Role, RoleDTO>();
-            CreateMap<Job, FreelancerJobDTO>()
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
-                .ForMember(d => d.EmployerName, o => o.MapFrom(s => s.EmployerProfile.Account.FullName))
-                .ForMember(d => d.CompanyName, o => o.MapFrom(s => s.EmployerProfile.CompanyName))
-                .ForMember(d => d.EmployerLogo, o => o.MapFrom(s => s.EmployerProfile.Logo))
-                .ForMember(d => d.ApplicationsCount, o => o.MapFrom(s => s.Applications.Count))
-                .ForMember(d => d.Skills, o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)));
 
         }
     }

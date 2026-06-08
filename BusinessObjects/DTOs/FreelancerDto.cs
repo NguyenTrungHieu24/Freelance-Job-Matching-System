@@ -56,6 +56,9 @@ public class FreelancerJobDTO
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
     public decimal Budget { get; set; }
+    public DateTime? Deadline { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public int EmployerProfileId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public List<string> Skills { get; set; } = new();
     public string EmployerName { get; set; } = string.Empty;
@@ -67,10 +70,9 @@ public class FreelancerJobDTO
 public class FreelancerFilterJobDTO
 {
     public string? Keyword { get; set; }
-    public int? CategoryId { get; set; } = new(); 
+    public int? CategoryId { get; set; }
     public List<int> SkillIds { get; set; } = new();
     public JobStatus? Status { get; set; }
-    public int? EmployerProfileId { get; set; }
     public decimal? MinBudget { get; set; }
     public decimal? MaxBudget { get; set; }
     public DateTime? DeadlineFrom { get; set; }

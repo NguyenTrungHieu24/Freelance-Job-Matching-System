@@ -808,3 +808,41 @@ img { max-width: 100%; }
         width: 100%; 
     }
 }
+
+.filter-option input[type="radio"] {
+    margin-right: 8px;
+    accent-color: #00A3C4;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.filter-group input[type="date"].form-control {
+    height: 38px;
+    font-size: 13px;
+    color: var(--c-ink);
+    padding: 6px 10px;
+}
+
+.job-tags {
+    flex-direction: row !important;   
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #374151;
+    white-space: nowrap;
+}
+
+.employer-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}

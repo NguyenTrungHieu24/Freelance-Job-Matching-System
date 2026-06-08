@@ -233,63 +233,46 @@ public class FreelancerController : BaseController
 
     private static List<KeyValuePair<string, string>> BuildQueryParams(FreelancerFilterJobDTO filter)
     {
-        var queryParams = new List<KeyValuePair<string, string>>();
+        var q = new List<KeyValuePair<string, string>>();
 
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
-            queryParams.Add(new KeyValuePair<string, string>("keyword", filter.Keyword));
-
-        if (filter.Status.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("status", ((int)filter.Status.Value).ToString()));
+            q.Add(new("Keyword", filter.Keyword));           // ✅ bỏ "Filter."
 
         if (filter.CategoryId.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("categoryId", filter.CategoryId.ToString()));
-
-        if (filter.EmployerProfileId.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("employerProfileId", filter.EmployerProfileId.ToString()));
+            q.Add(new("CategoryId", filter.CategoryId.Value.ToString()));
 
         if (filter.MinBudget.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("minBudget", filter.MinBudget.ToString()));
+            q.Add(new("MinBudget", filter.MinBudget.Value.ToString()));
 
         if (filter.MaxBudget.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("maxBudget", filter.MaxBudget.ToString()));
-
-        if (filter.CreatedFrom.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("createdFrom",
-                filter.CreatedFrom.Value.ToString("yyyy-MM-dd")));
+            q.Add(new("MaxBudget", filter.MaxBudget.Value.ToString()));
 
         if (filter.Temperature.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("temperature", filter.Temperature.Value.ToString()));
+            q.Add(new("Temperature", ((int)filter.Temperature.Value).ToString())); // ✅ gửi số, không gửi string
+
+        if (filter.CreatedFrom.HasValue)
+            q.Add(new("CreatedFrom", filter.CreatedFrom.Value.ToString("yyyy-MM-dd")));
 
         if (filter.CreatedTo.HasValue)
-            queryParams.Add(
-                new KeyValuePair<string, string>("createdTo", filter.CreatedTo.Value.ToString("yyyy-MM-dd")));
+            q.Add(new("CreatedTo", filter.CreatedTo.Value.ToString("yyyy-MM-dd")));
 
         if (filter.DeadlineFrom.HasValue)
-            queryParams.Add(new KeyValuePair<string, string>("deadlineFrom",
-                filter.DeadlineFrom.Value.ToString("yyyy-MM-dd")));
+            q.Add(new("DeadlineFrom", filter.DeadlineFrom.Value.ToString("yyyy-MM-dd")));
 
         if (filter.DeadlineTo.HasValue)
-            queryParams.Add(
-                new KeyValuePair<string, string>("deadlineTo", filter.DeadlineTo.Value.ToString("yyyy-MM-dd")));
+            q.Add(new("DeadlineTo", filter.DeadlineTo.Value.ToString("yyyy-MM-dd")));
 
-        if (filter.SkillIds.Count > 0)
-        {
-            foreach (var skillId in filter.SkillIds)
-            {
-                queryParams.Add(new KeyValuePair<string, string>(
-                    "skillIds",
-                    skillId.ToString())
-                );
-            }
-        }
+        foreach (var skillId in filter.SkillIds)
+            q.Add(new("SkillIds", skillId.ToString()));      // ✅ bỏ "Filter."
 
         if (!string.IsNullOrWhiteSpace(filter.SortBy))
-            queryParams.Add(new KeyValuePair<string, string>("sortBy", filter.SortBy));
-        queryParams.Add(new KeyValuePair<string, string>("isDescending", filter.IsDescending.ToString()));
-        queryParams.Add(new KeyValuePair<string, string>("page", (filter.Page == 0 ? 1 : filter.Page).ToString()));
-        queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
+            q.Add(new("SortBy", filter.SortBy));
 
-        return queryParams;
+        q.Add(new("IsDescending", filter.IsDescending.ToString().ToLower()));
+        q.Add(new("Page", (filter.Page < 1 ? 1 : filter.Page).ToString()));
+        q.Add(new("PageSize", filter.PageSize.ToString()));
+
+        return q;
     }
 
     [HttpGet("jobs")]
