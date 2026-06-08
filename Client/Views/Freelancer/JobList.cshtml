@@ -1,0 +1,185 @@
+@using BusinessObjects.DTOs
+@using BusinessObjects.Enums
+@model Client.Models.Freelancer.FreelancerListJobsModel
+
+@{
+    ViewData["Title"] = "Jobs List";
+    Layout = "_Layout";
+    
+    var category = ViewBag.Category as List<CategoryDTO>;
+    var skill = ViewBag.Skills as List<SkillDTO>;
+}
+
+<form method="get" asp-action="JobList" asp-controller="Freelancer">
+    <div class="search-bar-container" style="max-width: 1200px; margin: 20px auto; padding: 0 20px; display: flex; gap: 10px;">
+        <input type="text" asp-for="Filter.Keyword" class="form-control" placeholder="Searching title of job..." style="flex-grow: 1;"/>
+        <button type="submit" class="btn btn-primary" style="background-color: #00A3C4; border: none;">Search</button>
+    </div>
+    
+    <div class="job-board-container">
+        
+        <aside class="job-filter-sidebar">
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Categories</h3>
+                <select asp-for="Filter.CategoryId" class="form-select" style="width: 100%; padding: 8px;">
+                    <option value="">All</option>
+                    @if(category != null) {
+                        foreach(var cat in category) {
+                            <option value="@cat.Id">@cat.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Skills</h3>
+                @if(skill != null) {
+                    foreach(var s in skill) {
+                        bool isChecked = Model.Filter.SkillIds != null && Model.Filter.SkillIds.Contains(s.Id);
+                        <label class="filter-option">
+                            <input type="checkbox" name="Filter.SkillIds" value="@s.Id" @(isChecked ? "checked" : "")> 
+                            @s.Name
+                        </label>
+                    }
+                }
+            </div>
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Budgets</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" asp-for="Filter.MinBudget" class="form-control" placeholder="From..." min="0">
+                    <span> - </span>
+                    <input type="number" asp-for="Filter.MaxBudget" class="form-control" placeholder="To...">
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Competition</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label class="filter-option">
+                        <input type="radio" name="Filter.Temperature" value=""
+                               @(Model.Filter.Temperature == null ? "checked" : "")>
+                        All
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="Filter.Temperature" value="1"
+                               @(Model.Filter.Temperature == JobTemperature.Cool ? "checked" : "")>
+                        Cool 
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="Filter.Temperature" value="2"
+                               @(Model.Filter.Temperature == JobTemperature.Warm ? "checked" : "")>
+                        Warm 
+                    </label>
+                    <label class="filter-option">
+                        <input type="radio" name="Filter.Temperature" value="3"
+                               @(Model.Filter.Temperature == JobTemperature.Hot ? "checked" : "")>
+                        Hot 
+                    </label>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Deadline</h3>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size:13px; color:#6b7280; min-width:30px;">From</label>
+                        <input type="date" asp-for="Filter.DeadlineFrom" class="form-control" style="font-size:13px;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size:13px; color:#6b7280; min-width:30px;">To</label>
+                        <input type="date" asp-for="Filter.DeadlineTo" class="form-control" style="font-size:13px;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <h3 class="filter-title">Sort By</h3>
+                <select asp-for="Filter.SortBy" class="form-select" style="width: 100%; padding: 8px; margin-bottom: 8px;">
+                    <option value="CreatedAt">Newest First</option>
+                    <option value="Budget">Budget</option>
+                    <option value="Deadline">Deadline</option>
+                    <option value="Title">Title</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" asp-for="Filter.IsDescending" id="sortDesc" style="accent-color: #00A3C4;">
+                    <label for="sortDesc" style="font-size:13px; color:#4b5563; margin:0; cursor:pointer;">Descending</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-outline-primary mt-3" style="width: 100%;">Filter results</button>
+            <a href="@Url.Action("JobList", "Freelancer")" class="btn btn-outline-secondary mt-2" style="width: 100%; text-align: center;">Clear filter</a>
+        </aside>
+
+        <main class="job-list-content">
+            @if (Model.Jobs.Items != null && Model.Jobs.Items.Any())
+            {
+                foreach (var job in Model.Jobs.Items)
+                {
+                    int appCount = job.ApplicationsCount;
+                    string tempLabel = appCount < 2 ? "Cool" : appCount < 8 ? "Warm" : "Hot";
+                    string tempColor = appCount < 2 ? "#1D4ED8" : appCount < 8 ? "#92400E" : "#991B1B";
+                    string tempBg    = appCount < 2 ? "#EFF6FF" : appCount < 8 ? "#FFFBEB" : "#FEF2F2";
+
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="job-info">
+                                <h2 class="job-title">@job.Title</h2>
+                                <p class="job-desc">@(job.Description?.Length > 150 ? job.Description.Substring(0, 150) + "..." : job.Description)</p>
+                                <div class="job-tags" style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+                                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                        <span class="tag">Category: @job.CategoryName</span>
+                                        <span style="display:inline-block; font-size:11px; font-weight:700; padding:2px 9px;
+                                                     border-radius:20px; background:@tempBg; color:@tempColor;">
+                                            @tempLabel
+                                        </span>
+                                    </div>
+                                    @if (job.Skills != null && job.Skills.Any())
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                            <span style="font-size: 13px; color: #6b7280; font-weight: 500;">Skills:</span>
+                                            @foreach (var s in job.Skills)
+                                            {
+                                                <span class="tag" style="background-color: #e0f2fe; border-color: #bae6fd; color: #0369a1;">@s</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="job-budget" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                                <span class="budget-badge">Budget: @job.Budget.ToString("N0") VND</span>
+                                @if (job.Deadline.HasValue)
+                                {
+                                    <span style="font-size: 12px; color: #6b7280; font-weight: 500;">
+                                        Deadline: @job.Deadline.Value.ToString("dd/MM/yyyy")
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <hr class="divider">
+                        <div class="job-card-footer">
+                            <div class="employer-info">
+                                <img src="@(string.IsNullOrEmpty(job.EmployerLogo) ? "/image/user.png" : job.EmployerLogo)" 
+                                     alt="Logo" class="employer-avatar" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" />
+                                <div class="employer-details">
+                                    <span class="company-name" style="font-weight: 500; color: #111827;">Company: @job.CompanyName</span>
+                                    <span class="employer-name" style="font-size: 13px; color: #4b5563;">Posted by: @job.EmployerName</span>
+                                    <span class="applications" style="font-size: 13px;">Submitted applications: @job.ApplicationsCount</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-apply">Apply</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No jobs were found that match your filters.
+                </div>
+            }
+            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
+        </main>
+    </div>
+</form>
