@@ -1,0 +1,575 @@
+@inject IUserService CurrentUser
+@model BusinessObjects.DTOs.JobDTO
+
+@{
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        .jd-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: 'DM Sans', sans-serif;
+            color: #2D3748;
+        }
+
+        .jd-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 20px;
+        }
+
+        .jd-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #1A202C;
+            margin-bottom: 15px;
+        }
+
+        .jd-subtitle {
+            font-size: 1rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .jd-badge-cat {
+            background-color: #EBF8FF;
+            color: #2B6CB0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .jd-main-layout {
+            display: grid;
+            grid-template-columns: 7fr 5fr;
+            gap: 40px;
+        }
+
+        @@media (max-width: 992px) {
+            .jd-main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .jd-left-col {
+            display: flex;
+            flex-column: column;
+            gap: 30px;
+        }
+
+        .jd-image-wrapper {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E2E8F0;
+            background-color: #F7FAFC;
+        }
+
+        .jd-image {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .jd-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            margin-bottom: 25px;
+        }
+
+        .jd-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #EDF2F7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .jd-info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .jd-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #E2E8F0;
+            font-size: 0.95rem;
+        }
+
+        .jd-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .jd-info-label {
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .jd-info-value {
+            color: #2D3748;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .jd-skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .jd-skill-badge {
+            background-color: #EDF2F7;
+            color: #4A5568;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .jd-employer-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .jd-employer-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background-color: #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4A5568;
+            border: 2px solid #EDF2F7;
+        }
+
+        .jd-employer-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 2px;
+        }
+
+        .jd-employer-role {
+            font-size: 0.85rem;
+            color: #A0AEC0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .jd-stars {
+            color: #ED8936;
+            font-size: 0.9rem;
+            margin-top: 3px;
+        }
+
+        .btn-jd-apply {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3182CE 0%, #2B6CB0 100%);
+            color: #FFFFFF !important;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 20px rgba(49, 130, 206, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-jd-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(49, 130, 206, 0.3);
+            background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
+        }
+
+        .btn-jd-apply:active {
+            transform: translateY(0);
+        }
+
+        .btn-jd-disabled {
+            background: #E2E8F0;
+            color: #A0AEC0 !important;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-jd-disabled:hover {
+            transform: none;
+            background: #E2E8F0;
+            box-shadow: none;
+        }
+
+        .jd-desc-container {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .jd-desc-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 20px;
+        }
+
+        .jd-desc-text {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: #4A5568;
+            white-space: pre-line;
+        }
+
+        /* Modal Styles */
+        .v-modal-header {
+            border-bottom: none;
+            padding: 25px 25px 10px 25px;
+        }
+
+        .v-modal-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            color: #1A202C;
+            font-size: 1.4rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .v-modal-body {
+            padding: 20px 30px 30px 30px;
+        }
+
+        .social-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-google {
+            background-color: #FFFFFF;
+            border: 1px solid #CBD5E0;
+            color: #4A5568;
+        }
+
+        .btn-google:hover {
+            background-color: #F7FAFC;
+            border-color: #A0AEC0;
+        }
+
+        .btn-facebook {
+            background-color: #E2E8F0;
+            border: 1px solid #CBD5E0;
+            color: #A0AEC0;
+            cursor: not-allowed;
+        }
+
+        .divider-text {
+            text-align: center;
+            position: relative;
+            margin: 20px 0;
+            color: #718096;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .divider-text::before, .divider-text::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background-color: #E2E8F0;
+        }
+
+        .divider-text::before { left: 0; }
+        .divider-text::after { right: 0; }
+
+        .btn-vlance {
+            background-color: #F6AD55;
+            color: #FFFFFF;
+            border: none;
+            box-shadow: 0 4px 6px rgba(246, 173, 85, 0.2);
+        }
+
+        .btn-vlance:hover {
+            background-color: #ED8936;
+            color: #FFFFFF;
+        }
+
+        .modal-footer-text {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .modal-footer-text a {
+            color: #3182CE;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .modal-footer-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+}
+
+<div class="jd-container">
+    <!-- Header: Title on Top Left -->
+    <div class="jd-header">
+        <h1 class="jd-title">@Model.Title</h1>
+        <div class="jd-subtitle">
+            <span class="jd-badge-cat">
+                <i class="bi bi-briefcase-fill me-1"></i> @Model.CategoryName
+            </span>
+            <span><i class="bi bi-calendar3 me-1"></i> Ngày đăng: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+            <span><i class="bi bi-people-fill me-1"></i> Lượt ứng tuyển: <strong>@Model.ApplicationsCount</strong></span>
+        </div>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="jd-main-layout">
+        <!-- Left Side: Image at Bottom Left of Title, then Job Description -->
+        <div class="jd-left-col">
+            <div class="jd-image-wrapper">
+                <img src="~/image/job_detail_placeholder.png" alt="Chi tiết công việc" class="jd-image" />
+            </div>
+
+            <div class="jd-desc-container">
+                <h3 class="jd-desc-title"><i class="bi bi-file-earmark-text-fill me-2 text-primary"></i>Mô tả công việc</h3>
+                <div class="jd-desc-text">@Model.Description</div>
+            </div>
+        </div>
+
+        <!-- Right Side: Job Detailed Info Boxes -->
+        <div class="jd-right-col">
+            <!-- Box 1: Thông tin dự án -->
+            <div class="jd-card">
+                <h4 class="jd-card-title">
+                    <i class="bi bi-info-circle-fill text-primary"></i> Thông tin dự án
+                </h4>
+                <ul class="jd-info-list">
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">ID dự án</span>
+                        <span class="jd-info-value">#@Model.Id</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Ngày đăng</span>
+                        <span class="jd-info-value">@Model.CreatedAt.ToString("dd/MM/yyyy")</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Hạn nộp</span>
+                        <span class="jd-info-value">@(Model.Deadline?.ToString("dd/MM/yyyy") ?? "Không thời hạn")</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Địa điểm</span>
+                        <span class="jd-info-value">Toàn quốc / Remote</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Ngân sách</span>
+                        <span class="jd-info-value text-success font-weight-bold">
+                            @Model.Budget.ToString("N0") VNĐ
+                        </span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Hình thức làm việc</span>
+                        <span class="jd-info-value">Làm việc từ xa</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Kỹ năng cần thiết</span>
+                        <div class="jd-skills-list">
+                            @if (Model.Skills != null && Model.Skills.Any())
+                            {
+                                @foreach (var skill in Model.Skills)
+                                {
+                                    <span class="jd-skill-badge">@skill</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted font-italic">Không yêu cầu</span>
+                            }
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Box 2: Thông tin khách hàng -->
+            <div class="jd-card">
+                <h4 class="jd-card-title">
+                    <i class="bi bi-person-badge-fill text-primary"></i> Thông tin khách hàng
+                </h4>
+                <div class="jd-employer-profile">
+                    <div class="jd-employer-avatar">
+                        @(string.IsNullOrEmpty(Model.EmployerName) ? "E" : Model.EmployerName.Substring(0, 1).ToUpper())
+                    </div>
+                    <div>
+                        <div class="jd-employer-name">@Model.EmployerName</div>
+                        <div class="jd-employer-role">
+                            <span>Nhà tuyển dụng</span>
+                            <i class="bi bi-patch-check-fill text-success" title="Xác minh danh tính"></i>
+                        </div>
+                        <div class="jd-stars">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <span class="text-muted ms-1">(5.0)</span>
+                        </div>
+                    </div>
+                </div>
+                <ul class="jd-info-list">
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Đến từ</span>
+                        <span class="jd-info-value">Việt Nam</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Tham gia</span>
+                        <span class="jd-info-value">01/01/2026</span>
+                    </li>
+                    <li class="jd-info-item">
+                        <span class="jd-info-label">Đã đăng</span>
+                        <span class="jd-info-value">3 việc</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Apply Button at the very end of right column -->
+            <div class="mt-4">
+                @if (CurrentUser.IsGuest)
+                {
+                    <button class="btn-jd-apply" data-bs-toggle="modal" data-bs-target="#loginPromptModal">
+                        <i class="bi bi-send-fill"></i> Ứng tuyển dự án này
+                    </button>
+                }
+                else if (CurrentUser.Role == "FREELANCER")
+                {
+                    <button class="btn-jd-apply" data-bs-toggle="modal" data-bs-target="#applyJobModal">
+                        <i class="bi bi-send-fill"></i> Ứng tuyển dự án này
+                    </button>
+                }
+                else
+                {
+                    <button class="btn-jd-apply btn-jd-disabled" disabled>
+                        <i class="bi bi-slash-circle-fill"></i> Chỉ dành cho Freelancer
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GUEST LOGIN PROMPT MODAL -->
+<div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header v-modal-header">
+                <h5 class="modal-title v-modal-title" id="loginPromptModalLabel">Để đọc thông tin, vui lòng đăng nhập bằng một trong hai cách sau:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body v-modal-body">
+                <!-- Google Login Button -->
+                <a href="/auth/login" class="social-login-btn btn-google">
+                    <img src="https://img.icons8.com/color/24/000000/google-logo.png" alt="Google Logo">
+                    Đăng nhập bằng Google
+                </a>
+
+                <!-- Facebook Login Button (Disabled styling matching reference) -->
+                <button class="social-login-btn btn-facebook" disabled>
+                    <img src="https://img.icons8.com/color/24/000000/facebook-new.png" alt="Facebook Logo">
+                    Đăng nhập bằng Facebook
+                </button>
+                <div class="text-muted text-center mb-3" style="font-size: 0.8rem; line-height: 1.4;">
+                    Facebook hiện đang bảo trì. Bạn hãy sử dụng chức năng Quên mật khẩu và Đăng nhập bằng email hoặc Google.
+                </div>
+
+                <div class="divider-text">Hoặc</div>
+
+                <!-- TopLancer/vLance Account Button -->
+                <a href="/auth/login" class="social-login-btn btn-vlance">
+                    Tài khoản TopLancer
+                </a>
+
+                <div class="modal-footer-text">
+                    Bạn chưa có tài khoản TopLancer? <a href="/auth/register">Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FREELANCER APPLY MODAL -->
+<div class="modal fade" id="applyJobModal" tabindex="-1" aria-labelledby="applyJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <form asp-action="Apply" asp-route-id="@Model.Id" method="post">
+                <div class="modal-header v-modal-header">
+                    <h5 class="modal-title v-modal-title" id="applyJobModalLabel">Ứng tuyển dự án này</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body v-modal-body">
+                    <div class="mb-3">
+                        <label for="coverLetter" class="form-label font-weight-bold text-dark">Thư giới thiệu / Proposal</label>
+                        <textarea class="form-control border-secondary-subtle" id="coverLetter" name="coverLetter" rows="6" 
+                                  placeholder="Mô tả ngắn gọn kinh nghiệm và lý do nhà tuyển dụng nên chọn bạn..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 px-4 pb-4">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4 py-2" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4 py-2" style="background-color: #3182CE; border-color: #3182CE;">
+                        Gửi đơn ứng tuyển
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

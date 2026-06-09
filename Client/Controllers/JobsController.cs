@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Common;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using Client.Models.Jobs;
@@ -122,6 +122,55 @@ namespace Client.Controllers
             queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
 
             return queryParams;
+        }
+
+        [HttpGet("details/{id:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var job = await GetAsync<JobDTO>($"api/jobs/{id}");
+                if (job == null)
+                {
+                    return NotFound();
+                }
+                return View(job);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Cannot load job details: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost("apply/{id:int}")]
+        [Authorize(Roles = "FREELANCER")]
+        public async Task<IActionResult> Apply(int id, [FromForm] string coverLetter)
+        {
+            try
+            {
+                var response = await PostAsync<object, dynamic>($"api/jobs/{id}/apply", new { CoverLetter = coverLetter });
+                TempData["Success"] = "Ứng tuyển dự án thành công!";
+            }
+            catch (Exception ex)
+            {
+                string errMsg = ex.Message;
+                try
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(ex.Message);
+                    if (doc.RootElement.TryGetProperty("message", out var msgProp))
+                    {
+                        errMsg = msgProp.GetString() ?? ex.Message;
+                    }
+                }
+                catch
+                {
+                    // Fallback to raw message
+                }
+                TempData["Error"] = $"Ứng tuyển thất bại: {errMsg}";
+            }
+            return RedirectToAction("Details", new { id = id });
         }
     }
 }

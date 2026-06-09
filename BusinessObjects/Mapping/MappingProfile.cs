@@ -39,26 +39,24 @@ namespace BusinessObjects.Mapping
                         : new List<Skill>()));
             CreateMap<Job, JobDTO>()
                 .ForMember(
-                    dest => dest.EmployerName,
-                    opt => opt.MapFrom(src =>
-                        src.EmployerProfile.Account.FullName))
-                .ForMember(
-                    dest => dest.CategoryName,
-                    opt => opt.MapFrom(src =>
-                        src.Category.Name));
-            CreateMap<Job, JobDTO>()
-                .ForMember(
                     d => d.CategoryName,
-                    o => o.MapFrom(s => s.Category.Name))
+                    o => o.MapFrom(s => 
+                        s.Category != null ? s.Category.Name : ""))
                 .ForMember(
                     d => d.EmployerName,
-                    o => o.MapFrom(s => s.EmployerProfile.Account.FullName))
+                    o => o.MapFrom(s => 
+                        s.EmployerProfile != null && s.EmployerProfile.Account != null 
+                            ? s.EmployerProfile.Account.FullName 
+                            : (s.EmployerProfile != null ? s.EmployerProfile.CompanyName : "")))
                 .ForMember(
                     d => d.ApplicationsCount,
                     o => o.MapFrom(s => s.Applications.Count))
                 .ForMember(
                     d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
+                    o => o.MapFrom(s => 
+                        s.JobSkills != null 
+                            ? s.JobSkills.Select(x => x.Skill != null ? x.Skill.Name : "").ToList() 
+                            : new List<string>()));
         }
     }
 }

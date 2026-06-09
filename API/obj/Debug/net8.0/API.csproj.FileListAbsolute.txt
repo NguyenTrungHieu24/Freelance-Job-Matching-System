@@ -789,10 +789,16 @@ D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\stati
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\staticwebassets.development.json
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\staticwebassets.build.endpoints.json
-D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.csproj.Up2Date
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.dll
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\refint\API.dll
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.pdb
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\API.genruntimeconfig.cache
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\obj\Debug\net8.0\ref\API.dll
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Seeders\Data\users.json
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\PayOS.dll
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Client.deps.json
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Client.runtimeconfig.json
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Client.staticwebassets.runtime.json
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Client.staticwebassets.endpoints.json
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\API\bin\Debug\net8.0\Client.exe

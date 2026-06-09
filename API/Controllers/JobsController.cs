@@ -22,116 +22,10 @@ namespace API.Controllers
         {
         }
 
-        // GET: api/jobs
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<PaginateResult<JobDto>>> GetJobs([FromQuery] FilterJobDto q)
-        {
-            // Exclude soft-deleted jobs (Status = "DELETED")
-            var deletedStatus = JobStatus.DELETED.ToString();
-            var query = _context.Jobs
-                .Include(j => j.Category)
-                .Include(j => j.EmployerProfile)
-                    .ThenInclude(e => e.Account)
-                .Include(j => j.JobSkills)
-                    .ThenInclude(js => js.Skill)
-                .Where(j => j.Status != deletedStatus)
-                .AsQueryable();
-
-            // Keyword filter (title or description)
-            if (!string.IsNullOrWhiteSpace(q.Keyword))
-            {
-                var keyword = q.Keyword.Trim().ToLower();
-                query = query.Where(j => j.Title.ToLower().Contains(keyword) || 
-                                         j.Description.ToLower().Contains(keyword));
-            }
-
-            // Category filter
-            if (q.CategoryId.HasValue)
-            {
-                query = query.Where(j => j.CategoryId == q.CategoryId.Value);
-            }
-
-            // Skill filter
-            if (q.SkillId.HasValue)
-            {
-                query = query.Where(j => j.JobSkills.Any(js => js.SkillId == q.SkillId.Value));
-            }
-
-            // Budget filter
-            if (q.MinBudget.HasValue)
-            {
-                query = query.Where(j => j.Budget >= q.MinBudget.Value);
-            }
-            if (q.MaxBudget.HasValue)
-            {
-                query = query.Where(j => j.Budget <= q.MaxBudget.Value);
-            }
-
-            // Status filter (e.g. ACTIVE or CLOSED)
-            if (!string.IsNullOrWhiteSpace(q.Status))
-            {
-                var statusStr = q.Status.Trim().ToUpper();
-                // Ensure they don't query deleted ones through here
-                if (statusStr != deletedStatus)
-                {
-                    query = query.Where(j => j.Status == statusStr);
-                }
-            }
-            else
-            {
-                // Default to ACTIVE if no status is specified
-                var activeStatus = JobStatus.ACTIVE.ToString();
-                query = query.Where(j => j.Status == activeStatus);
-            }
-
-            var totalItems = await query.CountAsync();
-
-            // Order by most recent job first
-            var jobs = await query
-                .OrderByDescending(j => j.CreatedAt)
-                .Skip((q.Page - 1) * q.PageSize)
-                .Take(q.PageSize)
-                .ToListAsync();
-
-            var mappedJobs = _mapper.Map<List<JobDto>>(jobs);
-
-            return Ok(new PaginateResult<JobDto>
-            {
-                Items = mappedJobs,
-                PageNumber = q.Page,
-                PageSize = q.PageSize,
-                TotalItems = totalItems
-            });
-        }
-
-        // GET: api/jobs/5
-        [HttpGet("{id}")]
-        [AllowAnonymous]
-        public async Task<ActionResult<JobDto>> GetJob(int id)
-        {
-            var deletedStatus = JobStatus.DELETED.ToString();
-            var job = await _context.Jobs
-                .Include(j => j.Category)
-                .Include(j => j.EmployerProfile)
-                    .ThenInclude(e => e.Account)
-                .Include(j => j.JobSkills)
-                    .ThenInclude(js => js.Skill)
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
-
-            if (job == null)
-            {
-                return NotFound(new { message = "Job not found" });
-            }
-
-            var dto = _mapper.Map<JobDto>(job);
-            return Ok(dto);
-        }
-
         // POST: api/jobs
         [HttpPost]
         [Authorize(Roles = "EMPLOYER")]
-        public async Task<ActionResult<JobDto>> CreateJob([FromBody] CreateJobDto dto)
+        public async Task<ActionResult<JobDTO>> CreateJob([FromBody] CreateJobDto dto)
         {
             var userId = _user.UserId;
 
@@ -159,7 +53,7 @@ namespace API.Controllers
                 Budget = dto.Budget,
                 CategoryId = dto.CategoryId,
                 Deadline = dto.Deadline,
-                Status = JobStatus.ACTIVE.ToString(),
+                Status = JobStatus.ACTIVE,
                 EmployerProfileId = employerProfile.Id,
                 CreatedAt = DateTime.Now
             };
@@ -197,7 +91,7 @@ namespace API.Controllers
                     .ThenInclude(js => js.Skill)
                 .FirstOrDefaultAsync(j => j.Id == job.Id);
 
-            var resultDto = _mapper.Map<JobDto>(createdJob);
+            var resultDto = _mapper.Map<JobDTO>(createdJob);
 
             return CreatedAtAction(nameof(GetJob), new { id = job.Id }, resultDto);
         }
@@ -208,11 +102,9 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateJob(int id, [FromBody] UpdateJobDto dto)
         {
             var userId = _user.UserId;
-            var deletedStatus = JobStatus.DELETED.ToString();
-
             // Find existing Job
             var job = await _context.Jobs
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status != JobStatus.DELETED);
 
             if (job == null)
             {
@@ -236,8 +128,7 @@ namespace API.Controllers
             }
 
             // Parse and validate Status
-            var newStatus = dto.Status.Trim().ToUpper();
-            if (newStatus == deletedStatus || (!Enum.TryParse<JobStatus>(newStatus, out _)))
+            if (!Enum.TryParse<JobStatus>(dto.Status.Trim(), true, out var parsedStatus) || parsedStatus == JobStatus.DELETED)
             {
                 return BadRequest(new { message = "Invalid job status value" });
             }
@@ -248,7 +139,7 @@ namespace API.Controllers
             job.Budget = dto.Budget;
             job.CategoryId = dto.CategoryId;
             job.Deadline = dto.Deadline;
-            job.Status = newStatus;
+            job.Status = parsedStatus;
 
             // Update Skills
             var existingSkills = _context.JobSkills.Where(js => js.JobId == job.Id);
@@ -283,11 +174,9 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteJob(int id)
         {
             var userId = _user.UserId;
-            var deletedStatus = JobStatus.DELETED.ToString();
-
             // Find existing Job
             var job = await _context.Jobs
-                .FirstOrDefaultAsync(j => j.Id == id && j.Status != deletedStatus);
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status != JobStatus.DELETED);
 
             if (job == null)
             {
@@ -304,7 +193,7 @@ namespace API.Controllers
             }
 
             // Perform Soft Delete
-            job.Status = deletedStatus;
+            job.Status = JobStatus.DELETED;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Job deleted successfully" });
@@ -452,7 +341,10 @@ namespace API.Controllers
             var query = _context.Jobs
                 .Include(x => x.Category)
                 .Include(x => x.EmployerProfile)
-                .ThenInclude(x => x.Account)
+                    .ThenInclude(x => x.Account)
+                .Include(x => x.JobSkills)
+                    .ThenInclude(x => x.Skill)
+                .Include(x => x.Applications)
                 .AsQueryable();
 
             query = ApplyPermission(query);
@@ -465,6 +357,49 @@ namespace API.Controllers
             }
 
             return Ok(_mapper.Map<JobDTO>(job));
+        }
+
+        [HttpPost("{id:int}/apply")]
+        [Authorize(Roles = "FREELANCER")]
+        public async Task<IActionResult> ApplyJob(int id, [FromBody] ApplyJobDto dto)
+        {
+            var userId = _user.UserId;
+
+            var freelancer = await _context.FreelancerProfiles
+                .FirstOrDefaultAsync(f => f.AccountId == userId);
+
+            if (freelancer == null)
+            {
+                return BadRequest(new { message = "Freelancer profile not found." });
+            }
+
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == id && j.Status == JobStatus.ACTIVE);
+            if (job == null)
+            {
+                return NotFound(new { message = "Job not found or not active." });
+            }
+
+            var alreadyApplied = await _context.Applications
+                .AnyAsync(a => a.JobId == id && a.FreelancerProfileId == freelancer.Id);
+
+            if (alreadyApplied)
+            {
+                return BadRequest(new { message = "You have already applied for this job." });
+            }
+
+            var application = new Application
+            {
+                JobId = id,
+                FreelancerProfileId = freelancer.Id,
+                CoverLetter = dto.CoverLetter?.Trim() ?? string.Empty,
+                Status = ApplicationStatus.PENDING,
+                AppliedAt = DateTime.Now
+            };
+
+            _context.Applications.Add(application);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Applied successfully!" });
         }
 
         private IQueryable<Job> ApplyPermission(IQueryable<Job> query)
@@ -481,7 +416,7 @@ namespace API.Controllers
                     return query.Where(x => x.Status == JobStatus.ACTIVE);
 
                 default:
-                    return query.Where(x => false);
+                    return query.Where(x => x.Status == JobStatus.ACTIVE);
             }
         }
     }

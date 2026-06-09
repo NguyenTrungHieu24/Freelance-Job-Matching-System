@@ -43,3 +43,4 @@ D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.pdb
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\BusinessObjects.genruntimeconfig.cache
 D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\BusinessObjects\obj\Debug\net8.0\ref\BusinessObjects.dll
+D:\Duong\Desktop\SWP391\Freelance-Job-Matching-System\BusinessObjects\bin\Debug\net8.0\Seeders\Data\users.json
