@@ -307,4 +307,63 @@ public class FreelancerController : BaseController
             });
         }
     }
+
+    [HttpGet("jobs/{id}")]
+    public async Task<IActionResult> JobDetail(int id)
+    {
+        try
+        {
+            var job = await GetAsync<FreelancerJobDTO>($"api/freelancer/jobs/{id}");
+            if (job == null) return NotFound();
+
+            var model = new FreelancerJobDetailViewModel
+            {
+                Job = job,
+                ApplicationForm = new CreateApplicationDto { JobId = id }
+            };
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction("JobList");
+        }
+    }
+
+    [HttpPost("jobs/apply")]
+    public async Task<IActionResult> ApplyJob(FreelancerJobDetailViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            TempData["Error"] = string.Join(" ", errors);
+            return RedirectToAction("JobDetail", new { id = model.ApplicationForm.JobId });
+        }
+
+        try
+        {
+            var success = await PostAsync<CreateApplicationDto, bool>($"api/freelancer/jobs/apply", model.ApplicationForm);
+            if (success)
+            {
+                TempData["Success"] = "Applied successfully!";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to apply for the job.";
+            }
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message.Contains("CoverLetter"))
+            {
+                TempData["Error"] = "Cover letter is required and cannot exceed the limit.";
+            }
+            else
+            {
+                TempData["Error"] = "An error occurred while applying. Please try again later.";
+            }
+        }
+
+        return RedirectToAction("JobDetail", new { id = model.ApplicationForm.JobId });
+    }
 }

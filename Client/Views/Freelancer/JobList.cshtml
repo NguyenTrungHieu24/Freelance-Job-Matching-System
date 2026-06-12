@@ -168,7 +168,7 @@
                                     <span class="applications" style="font-size: 13px;">Submitted applications: @job.ApplicationsCount</span>
                                 </div>
                             </div>
-                            <button type="button" class="btn-apply">Apply</button>
+                            <a href="@Url.Action("JobDetail", "Freelancer", new { id = job.Id })" class="btn-apply text-decoration-none text-center d-inline-block py-2 px-4" style="line-height: normal; display: flex; align-items: center; justify-content: center;">Apply</a>
                         </div>
                     </div>
                 }
