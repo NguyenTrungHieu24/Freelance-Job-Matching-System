@@ -64,6 +64,9 @@ public class FreelancerJobDTO
     public string EmployerName { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
     public string EmployerLogo { get; set; } = string.Empty;
+    public int PostedJobCount { get; set; } = 0;
+    public bool IsApplied { get; set; } = false;
+    public ApplicationStatus? ApplyStatus { get; set; }
     public int ApplicationsCount { get; set; } = 0;
 }
 
@@ -85,6 +88,4 @@ public class FreelancerFilterJobDTO
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 }
-
-
 
