@@ -383,5 +383,39 @@ namespace API.Controllers
 
             return Ok(true);
         }
+
+        [HttpGet("applications")]
+        public async Task<IActionResult> GetApplicationHistory([FromQuery] ApplicationStatus? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            if (profile == null) return BadRequest("Freelancer not found");
+            
+            var query = _context.Applications
+                .Include(a => a.Job).ThenInclude(j => j.EmployerProfile)
+                .ThenInclude(e => e.Account)
+                .Where(a => a.FreelancerProfileId == profile.Id);
+            if (status.HasValue)
+            {
+                query = query.Where(a => a.Status == status.Value);
+            }
+
+            query = query.OrderByDescending(a => a.AppliedAt);
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var dto = _mapper.Map<List<ApplicationHistoryDto>>(items);
+            var rs = new PaginateResult<ApplicationHistoryDto>
+            {
+                Items = dto,
+                TotalItems = totalItems,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+            return Ok(rs);
+        }
     }
 }
