@@ -1,5 +1,6 @@
 using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Enums;
 using Client.Models.Auth;
 using Client.Models.Freelancer;
 using Microsoft.AspNetCore.Authorization;
@@ -365,5 +366,31 @@ public class FreelancerController : BaseController
         }
 
         return RedirectToAction("JobDetail", new { id = model.ApplicationForm.JobId });
+    }
+
+    [HttpGet("applications")]
+    public async Task<IActionResult> Applications([FromQuery] ApplicationStatus? status, [FromQuery] int page = 1)
+    {
+        try
+        {
+            int pageSize = 5;
+            var queryParams = new List<KeyValuePair<string, string>>();
+            if (status.HasValue)
+            {
+                queryParams.Add(new("status", ((int)status.Value).ToString()));
+            }
+            queryParams.Add(new("page", page.ToString()));
+            queryParams.Add(new("pageSize", pageSize.ToString()));
+
+            var url = QueryHelpers.AddQueryString("api/freelancer/applications", queryParams);
+            var data = await GetAsync<PaginateResult<ApplicationHistoryDto>>(url);
+            ViewData["StatusFilter"] = status;
+            return View(data ?? new PaginateResult<ApplicationHistoryDto>());
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Cannot load application history: " + ex.Message;
+            return RedirectToAction("Dashboard");
+        }
     }
 }
