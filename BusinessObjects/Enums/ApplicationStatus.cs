@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +11,6 @@ namespace BusinessObjects.Enums
         PENDING = 1,
         ACCEPTED = 2,
         REJECTED = 3,
+        CANCELLED = 4,
     }
 }
