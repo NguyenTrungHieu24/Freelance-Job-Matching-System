@@ -18,7 +18,19 @@ public class FreelancerController : BaseController
     }
 
     [HttpGet("dashboard")]
-    public IActionResult Dashboard() => View();
+    public async Task<IActionResult> Dashboard()
+    {
+        try
+        {
+            var data = await GetAsync<FreelancerDashboard>("api/freelancer/dashboard");
+            return View(data);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Cannot load dashboard: " + ex.Message;
+            return View(new FreelancerDashboard());
+        }
+    }
 
     [HttpGet("personal-info")]
     public async Task<IActionResult> PersonalInfo()
@@ -392,5 +404,27 @@ public class FreelancerController : BaseController
             TempData["Error"] = "Cannot load application history: " + ex.Message;
             return RedirectToAction("Dashboard");
         }
+    }
+
+    [HttpPost("applications/{id}/cancel")]
+    public async Task<IActionResult> CancelApplication(int id)
+    {
+        try
+        {
+            var success = await PutAsync($"api/freelancer/application/{id}/cancel", new { });
+            if (success)
+            {
+                TempData["Success"] = "Application cancelled successfully!";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to cancel application.";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "An error occurred: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
     }
 }

@@ -31,6 +31,7 @@
                     <a href="/freelancer/applications?status=@((int)ApplicationStatus.PENDING)" class="btn btn-sm @(currentStatus == ApplicationStatus.PENDING ? "btn-primary" : "btn-outline-primary")">Pending</a>
                     <a href="/freelancer/applications?status=@((int)ApplicationStatus.ACCEPTED)" class="btn btn-sm @(currentStatus == ApplicationStatus.ACCEPTED ? "btn-primary" : "btn-outline-primary")">Accepted</a>
                     <a href="/freelancer/applications?status=@((int)ApplicationStatus.REJECTED)" class="btn btn-sm @(currentStatus == ApplicationStatus.REJECTED ? "btn-primary" : "btn-outline-primary")">Rejected</a>
+                    <a href="/freelancer/applications?status=@((int)ApplicationStatus.CANCELLED)" class="btn btn-sm @(currentStatus == ApplicationStatus.CANCELLED ? "btn-primary" : "btn-outline-primary")">Cancelled</a>
                 </div>
             </div>
             
@@ -63,9 +64,13 @@
                                         {
                                             <span class="badge bg-success px-3 py-2" style="font-size: 12px; border-radius: 20px;">Accepted</span>
                                         }
-                                        else
+                                        else if (app.Status == ApplicationStatus.REJECTED)
                                         {
                                             <span class="badge bg-danger px-3 py-2" style="font-size: 12px; border-radius: 20px;">Rejected</span>
+                                        }
+                                        else if (app.Status == ApplicationStatus.CANCELLED)
+                                        {
+                                            <span class="badge bg-secondary px-3 py-2" style="font-size: 12px; border-radius: 20px;">Cancelled</span>
                                         }
                                         <div class="mt-2 fw-bold text-primary" style="font-size: 14px;">
                                             @app.Budget.ToString("N0") VND
@@ -74,9 +79,19 @@
                                 </div>
                                 <hr class="my-3" style="border-color: #f1f5f9;">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#coverLetterModal-@app.Id">
-                                        <i class="bi bi-file-earmark-text"></i> View Cover Letter
-                                    </button>
+                                    <div>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#coverLetterModal-@app.Id">
+                                            <i class="bi bi-file-earmark-text"></i> View Cover Letter
+                                        </button>
+                                        @if (app.Status == ApplicationStatus.PENDING)
+                                        {
+                                            <form action="/freelancer/applications/@app.Id/cancel" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to cancel this application?');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm ms-2">
+                                                    <i class="bi bi-x-circle"></i> Cancel Application
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
                                     @if (app.Deadline.HasValue)
                                     {
                                         <span class="text-muted small">Job Deadline: @app.Deadline.Value.ToString("dd/MM/yyyy")</span>

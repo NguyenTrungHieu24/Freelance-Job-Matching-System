@@ -89,3 +89,16 @@ public class FreelancerFilterJobDTO
     public int PageSize { get; set; } = 10;
 }
 
+public class FreelancerDashboardDto
+{
+    public int TotalApplications { get; set; }
+    public int PendingApplications { get; set; }
+    public int AcceptedApplications { get; set; }
+    public int RejectedApplications { get; set; }
+    public int CancelledApplications { get; set; }
+    public decimal TotalEarnings { get; set; }
+
+    public List<ApplicationHistoryDto> RecentApplications { get; set; }
+    public List<FreelancerJobDTO> RecommendedJobs { get; set; }
+}
+

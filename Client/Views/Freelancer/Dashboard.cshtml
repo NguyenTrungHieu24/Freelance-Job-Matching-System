@@ -1,7 +1,263 @@
+@using BusinessObjects.Enums
 @model Client.Models.Freelancer.FreelancerDashboard
 @{
     ViewBag.Title = "Freelancer Dashboard";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+<style>
+    .dashboard-container {
+        font-family: 'Inter', sans-serif;
+    }
+    .stat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.05);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+    }
+    .stat-card.earnings::before { background: linear-gradient(to bottom, #10b981, #34d399); }
+    .stat-card.total::before { background: linear-gradient(to bottom, #3b82f6, #60a5fa); }
+    .stat-card.pending::before { background: linear-gradient(to bottom, #f59e0b, #fbbf24); }
+    .stat-card.accepted::before { background: linear-gradient(to bottom, #8b5cf6, #a78bfa); }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    .stat-icon.earnings { background: #d1fae5; color: #10b981; }
+    .stat-icon.total { background: #dbeafe; color: #3b82f6; }
+    .stat-icon.pending { background: #fef3c7; color: #f59e0b; }
+    .stat-icon.accepted { background: #ede9fe; color: #8b5cf6; }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 12px;
+        margin-bottom: 4px;
+    }
+    .stat-label {
+        font-size: 14px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .section-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+        padding: 24px;
+        height: 100%;
+    }
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .app-item, .job-item {
+        padding: 16px 0;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.2s ease;
+    }
+    .app-item:last-child, .job-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .app-item:hover, .job-item:hover {
+        background-color: #f8fafc;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 0 -16px;
+    }
+
+    .badge-status {
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+</style>
+
+<div class="container py-5 dashboard-container">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Freelancer Dashboard</h2>
+            <p class="text-muted mb-0">Overview of your activity and tailored opportunities.</p>
+        </div>
+        <div>
+            <a href="/freelancer/jobs" class="btn btn-primary px-4 py-2" style="border-radius: 8px; font-weight: 500;">
+                <i class="bi bi-search me-2"></i> Find More Jobs
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card earnings">
+                <div class="stat-icon earnings">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="stat-value">@Model.TotalEarnings.ToString("N0") VND</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card total">
+                <div class="stat-icon total">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <div class="stat-value">@Model.TotalApplications</div>
+                <div class="stat-label">Total Applied</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card pending">
+                <div class="stat-icon pending">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-value">@Model.PendingApplications</div>
+                <div class="stat-label">Pending Applications</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card accepted">
+                <div class="stat-icon accepted">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-value">@Model.AcceptedApplications</div>
+                <div class="stat-label">Accepted Jobs</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Applications -->
+        <div class="col-lg-6">
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="bi bi-clock-history text-primary"></i> Recent Applications
+                </div>
+                
+                @if (Model.RecentApplications != null && Model.RecentApplications.Any())
+                {
+                    <div class="list-wrapper">
+                        @foreach (var app in Model.RecentApplications)
+                        {
+                            <div class="app-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="/freelancer/jobs/@app.JobId" class="text-decoration-none fw-bold text-dark d-block mb-1">@app.JobTitle</a>
+                                    <div class="text-muted small">
+                                        <i class="bi bi-building me-1"></i> @app.CompanyName • Applied @app.AppliedAt.ToString("dd MMM, yyyy")
+                                    </div>
+                                </div>
+                                <div>
+                                    @if (app.Status == ApplicationStatus.PENDING)
+                                    {
+                                        <span class="badge-status bg-warning text-dark">Pending</span>
+                                    }
+                                    else if (app.Status == ApplicationStatus.ACCEPTED)
+                                    {
+                                        <span class="badge-status bg-success text-white">Accepted</span>
+                                    }
+                                    else if (app.Status == ApplicationStatus.REJECTED)
+                                    {
+                                        <span class="badge-status bg-danger text-white">Rejected</span>
+                                    }
+                                    else if (app.Status == ApplicationStatus.CANCELLED)
+                                    {
+                                        <span class="badge-status bg-secondary text-white">Cancelled</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="mt-4 text-center">
+                        <a href="/freelancer/applications" class="text-primary text-decoration-none fw-500">View All Applications <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <img src="/image/empty-state.svg" alt="No applications" style="height: 100px; opacity: 0.5;" class="mb-3" onerror="this.style.display='none'">
+                        <p class="text-muted">You haven't applied to any jobs yet.</p>
+                        <a href="/freelancer/jobs" class="btn btn-outline-primary btn-sm mt-2">Browse Jobs</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Recommended Jobs -->
+        <div class="col-lg-6">
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="bi bi-stars text-warning"></i> Recommended For You
+                </div>
+                
+                @if (Model.RecommendedJobs != null && Model.RecommendedJobs.Any())
+                {
+                    <div class="list-wrapper">
+                        @foreach (var job in Model.RecommendedJobs)
+                        {
+                            <div class="job-item">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <a href="/freelancer/jobs/@job.Id" class="text-decoration-none fw-bold text-dark fs-5">@job.Title</a>
+                                    <span class="fw-bold text-primary">@job.Budget.ToString("N0") ₫</span>
+                                </div>
+                                <div class="text-muted small mb-2">
+                                    <i class="bi bi-building me-1"></i> @job.CompanyName • <i class="bi bi-calendar-event ms-2 me-1"></i> Deadline: @job.Deadline?.ToString("dd/MM/yyyy")
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    @foreach (var skill in job.Skills.Take(3))
+                                    {
+                                        <span class="badge bg-light text-dark border">@skill</span>
+                                    }
+                                    @if (job.Skills.Count > 3)
+                                    {
+                                        <span class="badge bg-light text-dark border">+@(job.Skills.Count - 3)</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <p class="text-muted mb-2">No recommendations available right now.</p>
+                        <p class="small text-muted">Update your profile skills to get better matches.</p>
+                        <a href="/freelancer/cv-portfolio" class="btn btn-outline-primary btn-sm mt-2">Update Skills</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
