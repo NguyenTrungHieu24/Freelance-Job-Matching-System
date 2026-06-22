@@ -91,5 +91,25 @@ namespace Client.Controllers
 
             return queryParams;
         }
+
+        [HttpPost]
+        [Route("deactivate")]
+        public async Task<IActionResult> Deactivate([FromQuery] int id)
+        {
+            try
+            {
+                var result = await PostAsync<string, ApiResult<bool>>($"api/users/deactivate/{id}", null);
+
+                if (!result.Success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResult<bool>.Fail(ex.Message));
+            }
+        }
     }
 }

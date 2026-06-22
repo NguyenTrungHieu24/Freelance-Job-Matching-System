@@ -10,7 +10,7 @@
       {
         "Path": "Client\\Client.csproj",
         "Action": "Start",
-        "DebugTarget": "http"
+        "DebugTarget": "https"
       }
     ]
   },
@@ -19,7 +19,7 @@
     "Projects": [
       {
         "Path": "API\\API.csproj",
-        "Action": "StartWithoutDebugging",
+        "Action": "Start",
         "DebugTarget": "https"
       },
       {

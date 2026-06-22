@@ -4,6 +4,7 @@ using AutoMapper.QueryableExtensions;
 using BusinessObjects;
 using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -113,5 +114,30 @@ namespace API.Controllers
                 _mapper.Map<UserDto>(user)
             );
         }
+
+        [HttpPost("deactivate/{id}")]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (user == null)
+            {
+                return Ok(ApiResult<bool>.Fail("User not found"));
+            }
+
+            if ((RoleEnum)user.RoleId == RoleEnum.ADMIN)
+            {
+                return Ok(ApiResult<bool>.Fail("Cannot deactivate admin user"));
+            }
+
+            user.IsActive = false;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, "Deactivate user successfully!"));
+        }
     }
+
+
 }

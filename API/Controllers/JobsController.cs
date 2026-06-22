@@ -43,9 +43,9 @@ namespace API.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
-                query = query.Where(x =>
-                    x.Title.Contains(filter.Keyword) ||
-                    x.Description.Contains(filter.Keyword));
+                var tokens = filter.Keyword.Split(" ",  StringSplitOptions.RemoveEmptyEntries);
+
+                query = query.Where(x => tokens.Any(y => x.Title.Contains(y) || x.Description.Contains(y)));
             }
 
             if (filter.Status.HasValue)
@@ -186,6 +186,11 @@ namespace API.Controllers
 
             var dto = _mapper.Map<JobDto>(job);
             return Ok(dto);
+        }
+
+        private void FullTextSearch()
+        {
+
         }
 
         // POST: api/jobs

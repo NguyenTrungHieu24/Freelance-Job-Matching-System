@@ -1,12 +1,11 @@
 ﻿@model List<ActionItemModel>
 
 <div class="btn-group">
-    <button class="@ViewBag.ButtonClass"
+    <button class="@ViewBag.ButtonClass rounded-2"
             type="button"
             data-bs-toggle="dropdown"
             aria-expanded="false">
-
-        @ViewBag.ButtonText
+        <i class="bi bi-three-dots-vertical"></i>
     </button>
 
     <ul class="dropdown-menu">
@@ -26,6 +25,24 @@
 
                         @item.Title
                     </a>
+                }
+                else if (!string.IsNullOrWhiteSpace(item.AjaxUrl))
+                {
+                    <button type="button"
+                            class="dropdown-item @item.CssClass ajax-postable"
+                            data-ajax="@item.AjaxUrl"
+                            data-success="@item.Handle"
+                            data-confirm="@item.ConfirmMessage"
+                            data-extra="@item.ExtraMessage"
+                            onclick="@item.OnClick">
+
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                            <i class="bi @item.Icon me-2"></i>
+                        }
+
+                        @item.Title
+                    </button>
                 }
                 else
                 {

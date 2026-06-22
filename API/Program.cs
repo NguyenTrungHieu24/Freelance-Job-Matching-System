@@ -55,6 +55,41 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ),
         RoleClaimType = ClaimTypes.Role
     };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var userId = context.Principal?
+                .FindFirst(ClaimTypes.NameIdentifier)?
+                .Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                context.Fail("Invalid token");
+                return;
+            }
+
+            var db = context.HttpContext.RequestServices
+                .GetRequiredService<AppDbContext>();
+
+            var user = await db.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == int.Parse(userId));
+
+            if (user == null)
+            {
+                context.Fail("User not found");
+                return;
+            }
+
+            if (!user.IsActive)
+            {
+                context.Fail("Account has been deactivated");
+                return;
+            }
+        }
+    };
 });
 
 builder.Services.AddAuthorization();

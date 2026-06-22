@@ -7,8 +7,8 @@ namespace Client.ViewComponents
     {
         public IViewComponentResult Invoke(
             List<ActionItemModel> actions,
-            string buttonText = "Thao tác",
-            string buttonClass = "btn btn-secondary btn-sm")
+            string buttonText = "...",
+            string buttonClass = "btn btn-outline-secondary btn-sm")
         {
             ViewBag.ButtonText = buttonText;
             ViewBag.ButtonClass = buttonClass;

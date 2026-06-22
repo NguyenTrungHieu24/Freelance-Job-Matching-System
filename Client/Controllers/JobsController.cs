@@ -40,6 +40,7 @@ namespace Client.Controllers
 
                 var url = QueryHelpers.AddQueryString("api/jobs", queries);
 
+                // Lay jobs
                 var data = await GetAsync<PaginateResult<JobDTO>>(url);
 
                 var skills = await GetAsync<List<SkillDTO>>("api/skills/all");
@@ -69,10 +70,10 @@ namespace Client.Controllers
             var queryParams = new List<KeyValuePair<string, string>>();
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
-                queryParams.Add(new KeyValuePair<string, string>("keyword", filter.Keyword));
+                queryParams.Add(new KeyValuePair<string, string>("keyword", filter.Keyword.Trim()));
 
             if (!string.IsNullOrWhiteSpace(filter.EmployerKeyword))
-                queryParams.Add(new KeyValuePair<string, string>("employerKeyword", filter.EmployerKeyword));
+                queryParams.Add(new KeyValuePair<string, string>("employerKeyword", filter.EmployerKeyword.Trim()));
 
             if (filter.Status.HasValue)
                 queryParams.Add(new KeyValuePair<string, string>("status", ((int)filter.Status.Value).ToString()));
@@ -117,6 +118,7 @@ namespace Client.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.SortBy))
                 queryParams.Add(new KeyValuePair<string, string>("sortBy", filter.SortBy));
+
             queryParams.Add(new KeyValuePair<string, string>("isDescending", filter.IsDescending.ToString()));
             queryParams.Add(new KeyValuePair<string, string>("page", (filter.Page == 0 ? 1 : filter.Page).ToString()));
             queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));

@@ -137,17 +137,24 @@
                                 @{
                                     var actions = new List<ActionItemModel> {
                                                 new() {
-                                                Title = "Chi tiết",
+                                                Title = "View details",
                                                 Icon = "bi-eye",
                                                 Url = Url.Action("Detail", new { id = item.Id })
                                                 },
                                                 new() {
-                                                Title = "Sửa",
+                                                Title = "Edit",
                                                 Icon = "bi-pencil",
                                                 Url = Url.Action("Edit", new { id = item.Id })
                                                 },
                                                 new() {
-                                                Title = "Xóa",
+                                                Title = item.Status == 1 ? "Deactivate" : "Active",
+                                                Icon = item.Status == 1 ? "bi-lock" : "bi-unlock",
+                                                AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "active", new { id = item.Id }),
+                                                ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Active") + " this user?",
+                                                ExtraMessage = "This user "+ (item.Status == 1 ? "can" : "can't") + " login to system!"
+                                                },
+                                                new() {
+                                                Title = "Delete",
                                                 Icon = "bi-trash",
                                                 CssClass = "text-danger",
                                                 OnClick = $"deleteItem({item.Id})"
@@ -169,13 +176,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(() => {
-            $(".js-select-roles").select2({
-                placeholder: 'Select roles',
-                multiple: true,
-                theme: "classic"
-            });
-        });
-    </script>
+    <script src="~/js/pages/admin/users-management.js"></script>
 }
