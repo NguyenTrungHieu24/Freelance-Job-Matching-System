@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Common;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Models;
 using Client.Models.Jobs;

@@ -2,7 +2,9 @@ using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +43,8 @@ namespace API.Controllers
 
             if (user.FreelancerProfile == null)
             {
-                var newProfile = new FreelancerProfile { AccountId = userId, Title = "New Freelancer", Bio = "New Bio" };
+                var newProfile = new FreelancerProfile
+                    { AccountId = userId, Title = "New Freelancer", Bio = "New Bio" };
                 _context.FreelancerProfiles.Add(newProfile);
                 await _context.SaveChangesAsync();
             }
@@ -205,6 +208,311 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
             return Ok(new { cvUrl = profile.CVUrl, message = "Upload CV successfully" });
+        }
+
+        [HttpGet("jobs")]
+        public async Task<IActionResult> GetJobs([FromQuery] FreelancerFilterJobDTO filter)
+        {
+            var query = _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
+                .Include(j => j.Applications)
+                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .Where(j => j.Status != JobStatus.DELETED && j.Status == JobStatus.ACTIVE)
+                .AsQueryable();
+            
+            if (!string.IsNullOrWhiteSpace(filter.Keyword))
+            {
+                query = query.Where(x => x.Title.Contains(filter.Keyword) || x.Description.Contains(filter.Keyword));
+            }
+            if (filter.CategoryId.HasValue)
+                query = query.Where(x => x.CategoryId == filter.CategoryId.Value);
+            if (filter.Temperature.HasValue)
+            {
+                switch (filter.Temperature.Value)
+                {
+                    case JobTemperature.Cool:
+                        query = query.Where(x => x.Applications.Count < 2);
+                        break;
+
+                    case JobTemperature.Warm:
+                        query = query.Where(x => x.Applications.Count >= 2 && x.Applications.Count < 8);
+                        break;
+
+                    case JobTemperature.Hot:
+                        query = query.Where(x => x.Applications.Count >= 8);
+                        break;
+                }
+            }
+            if (filter.SkillIds.Count > 0)
+                query = query.Where(x => x.JobSkills.Any(js => filter.SkillIds.Contains(js.SkillId)));
+            if (filter.MinBudget.HasValue)
+                query = query.Where(x => x.Budget >= filter.MinBudget.Value);
+            if (filter.MaxBudget.HasValue)
+                query = query.Where(x => x.Budget <= filter.MaxBudget.Value);
+            if (filter.CreatedFrom.HasValue)
+                query = query.Where(x => x.CreatedAt >= filter.CreatedFrom.Value);
+            if (filter.CreatedTo.HasValue)
+                query = query.Where(x => x.CreatedAt <= filter.CreatedTo.Value);
+            if (filter.DeadlineFrom.HasValue)
+                query = query.Where(x => x.Deadline >= filter.DeadlineFrom.Value);
+            if (filter.DeadlineTo.HasValue)
+                query = query.Where(x => x.Deadline <= filter.DeadlineTo.Value);
+            
+            query = filter.SortBy?.ToLower() switch
+            {
+                "title" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Title)
+                    : query.OrderBy(x => x.Title),
+
+                "budget" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Budget)
+                    : query.OrderBy(x => x.Budget),
+
+                "deadline" => filter.IsDescending
+                    ? query.OrderByDescending(x => x.Deadline)
+                    : query.OrderBy(x => x.Deadline),
+
+                _ => filter.IsDescending
+                    ? query.OrderByDescending(x => x.CreatedAt)
+                    : query.OrderBy(x => x.CreatedAt)
+            };
+            
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .Select(e => new FreelancerJobDTO
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    Budget = e.Budget,
+                    Deadline = e.Deadline,
+                    CreatedAt = e.CreatedAt,
+                    EmployerProfileId = e.EmployerProfileId,
+                    CategoryName = e.Category.Name,
+                    Skills = e.JobSkills.Select(x => x.Skill.Name).ToList(),
+                    EmployerName = e.EmployerProfile.Account.FullName,
+                    EmployerLogo = e.EmployerProfile.Logo,
+                    CompanyName = e.EmployerProfile.CompanyName,
+                    ApplicationsCount = e.Applications.Where(a => a.JobId == e.Id).Count(),
+                })
+                .ToListAsync();
+            
+            var result = new PaginateResult<FreelancerJobDTO>
+            {
+                Items = items,
+                TotalItems = totalItems,
+                PageNumber = filter.Page,
+                PageSize = filter.PageSize
+            };
+            return Ok(result);
+        }
+
+        [HttpGet("jobs/{id}")]
+        public async Task<IActionResult> GetJobById(int id)
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            
+            var job = await _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
+                .Include(j => j.Applications)
+                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .FirstOrDefaultAsync(j => j.Id == id && j.Status == JobStatus.ACTIVE);
+
+            if (job == null) return NotFound("Job not found or inactive.");
+
+            var employerPostedJobsCount = await _context.Jobs
+                .CountAsync(j => j.EmployerProfileId == job.EmployerProfileId && j.Status == JobStatus.ACTIVE);
+
+            var application = profile != null ? job.Applications.FirstOrDefault(a => a.FreelancerProfileId == profile.Id) : null;
+
+            var dto = new FreelancerJobDTO
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                Budget = job.Budget,
+                Deadline = job.Deadline,
+                CreatedAt = job.CreatedAt,
+                EmployerProfileId = job.EmployerProfileId,
+                CategoryName = job.Category?.Name ?? "",
+                Skills = job.JobSkills.Select(x => x.Skill.Name).ToList(),
+                EmployerName = job.EmployerProfile?.Account?.FullName ?? "",
+                CompanyName = job.EmployerProfile?.CompanyName ?? "",
+                EmployerLogo = job.EmployerProfile?.Logo ?? "",
+                PostedJobCount = employerPostedJobsCount,
+                IsApplied = application != null,
+                ApplyStatus = application?.Status,
+                ApplicationsCount = job.Applications.Count
+            };
+
+            return Ok(dto);
+        }
+
+        [HttpPost("jobs/apply")]
+        public async Task<IActionResult> ApplyJob([FromBody] CreateApplicationDto dto)
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            if (profile == null) return BadRequest("Freelancer profile not found.");
+
+            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == dto.JobId);
+            if (job == null || job.Status != JobStatus.ACTIVE)
+                return BadRequest("Job is not available.");
+
+            var existingApplication = await _context.Applications
+                .AnyAsync(a => a.JobId == dto.JobId && a.FreelancerProfileId == profile.Id);
+            if (existingApplication)
+                return BadRequest("You have already applied for this job.");
+
+            var application = new Application
+            {
+                JobId = dto.JobId,
+                FreelancerProfileId = profile.Id,
+                CoverLetter = dto.CoverLetter,
+                Status = ApplicationStatus.PENDING,
+                AppliedAt = DateTime.Now
+            };
+
+            _context.Applications.Add(application);
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+
+        [HttpGet("applications")]
+        public async Task<IActionResult> GetApplicationHistory([FromQuery] ApplicationStatus? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            if (profile == null) return BadRequest("Freelancer not found");
+            
+            var query = _context.Applications
+                .Include(a => a.Job).ThenInclude(j => j.EmployerProfile)
+                .ThenInclude(e => e.Account)
+                .Where(a => a.FreelancerProfileId == profile.Id);
+            if (status.HasValue)
+            {
+                query = query.Where(a => a.Status == status.Value);
+            }
+
+            query = query.OrderByDescending(a => a.AppliedAt);
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var dto = _mapper.Map<List<ApplicationHistoryDto>>(items);
+            var rs = new PaginateResult<ApplicationHistoryDto>
+            {
+                Items = dto,
+                TotalItems = totalItems,
+                PageNumber = page,
+                PageSize = pageSize
+            };
+            return Ok(rs);
+        }
+
+        [HttpPut("application/{id}/cancel")]
+        public async Task<IActionResult> CancelApply(int id)
+        {
+            var user = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == user);
+            if (profile == null) return BadRequest("Profile not found");
+
+            var application = await _context.Applications
+                .FirstOrDefaultAsync(a => a.Id == id && a.FreelancerProfileId == profile.Id && a.Status == ApplicationStatus.PENDING);
+
+            if (application == null) return NotFound("Application not found or cannot be cancelled.");
+            
+            application.Status = ApplicationStatus.CANCELLED;
+            _context.Applications.Update(application);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Application cancelled successfully" });
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboard()
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            if (profile == null) return BadRequest("Freelancer not found");
+
+            var applicationsQuery = _context.Applications.Where(a => a.FreelancerProfileId == profile.Id);
+            
+            var totalApplications = await applicationsQuery.CountAsync();
+            var pendingApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.PENDING);
+            var acceptedApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.ACCEPTED);
+            var rejectedApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.REJECTED);
+            var cancelledApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.CANCELLED);
+
+            var totalEarnings = await _context.Payments
+                .Include(p => p.Application)
+                .Where(p => p.Application.FreelancerProfileId == profile.Id && p.Status == PaymentStatus.PAID)
+                .SumAsync(p => p.Amount);
+
+            var recentApps = await applicationsQuery
+                .Include(a => a.Job).ThenInclude(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .OrderByDescending(a => a.AppliedAt)
+                .Take(5)
+                .ToListAsync();
+
+            var freelancerSkills = await _context.FreelancerSkills
+                .Where(fs => fs.FreelancerProfileId == profile.Id)
+                .Select(fs => fs.SkillId)
+                .ToListAsync();
+
+            var recommendedJobsQuery = _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
+                .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
+                .Include(j => j.Applications)
+                .Where(j => j.Status == JobStatus.ACTIVE);
+
+            if (freelancerSkills.Any())
+            {
+                recommendedJobsQuery = recommendedJobsQuery
+                    .Where(j => j.JobSkills.Any(js => freelancerSkills.Contains(js.SkillId)));
+            }
+
+            var recommendedJobs = await recommendedJobsQuery
+                .OrderByDescending(j => j.CreatedAt)
+                .Take(5)
+                .ToListAsync();
+
+            var dto = new FreelancerDashboardDto
+            {
+                TotalApplications = totalApplications,
+                PendingApplications = pendingApplications,
+                AcceptedApplications = acceptedApplications,
+                RejectedApplications = rejectedApplications,
+                CancelledApplications = cancelledApplications,
+                TotalEarnings = totalEarnings,
+                RecentApplications = _mapper.Map<List<ApplicationHistoryDto>>(recentApps),
+                RecommendedJobs = recommendedJobs.Select(e => new FreelancerJobDTO
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    Budget = e.Budget,
+                    Deadline = e.Deadline,
+                    CreatedAt = e.CreatedAt,
+                    EmployerProfileId = e.EmployerProfileId,
+                    CategoryName = e.Category?.Name ?? "",
+                    Skills = e.JobSkills.Select(x => x.Skill.Name).ToList(),
+                    EmployerName = e.EmployerProfile?.Account?.FullName ?? "",
+                    EmployerLogo = e.EmployerProfile?.Logo ?? "",
+                    CompanyName = e.EmployerProfile?.CompanyName ?? "",
+                    ApplicationsCount = e.Applications.Count
+                }).ToList()
+            };
+
+            return Ok(dto);
         }
     }
 }

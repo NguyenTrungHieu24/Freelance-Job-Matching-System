@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BusinessObjects.Enums;
 
 namespace BusinessObjects.DTOs;
 
@@ -48,3 +49,56 @@ public class UpdateFreelancerCvDto
     public string? PortfolioDescription { get; set; }
     public List<int> Skills { get; set; } = new();
 }
+
+public class FreelancerJobDTO
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public decimal Budget { get; set; }
+    public DateTime? Deadline { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public int EmployerProfileId { get; set; }
+    public string CategoryName { get; set; } = string.Empty;
+    public List<string> Skills { get; set; } = new();
+    public string EmployerName { get; set; } = string.Empty;
+    public string CompanyName { get; set; } = string.Empty;
+    public string EmployerLogo { get; set; } = string.Empty;
+    public int PostedJobCount { get; set; } = 0;
+    public bool IsApplied { get; set; } = false;
+    public ApplicationStatus? ApplyStatus { get; set; }
+    public int ApplicationsCount { get; set; } = 0;
+}
+
+public class FreelancerFilterJobDTO
+{
+    public string? Keyword { get; set; }
+    public int? CategoryId { get; set; }
+    public List<int> SkillIds { get; set; } = new();
+    public JobStatus? Status { get; set; }
+    public decimal? MinBudget { get; set; }
+    public decimal? MaxBudget { get; set; }
+    public DateTime? DeadlineFrom { get; set; }
+    public DateTime? DeadlineTo { get; set; }
+    public DateTime? CreatedFrom { get; set; }
+    public DateTime? CreatedTo { get; set; }
+    public JobTemperature? Temperature { get; set; }
+    public string? SortBy { get; set; } = "CreatedAt";
+    public bool IsDescending { get; set; } = true;
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+}
+
+public class FreelancerDashboardDto
+{
+    public int TotalApplications { get; set; }
+    public int PendingApplications { get; set; }
+    public int AcceptedApplications { get; set; }
+    public int RejectedApplications { get; set; }
+    public int CancelledApplications { get; set; }
+    public decimal TotalEarnings { get; set; }
+
+    public List<ApplicationHistoryDto> RecentApplications { get; set; }
+    public List<FreelancerJobDTO> RecommendedJobs { get; set; }
+}
+

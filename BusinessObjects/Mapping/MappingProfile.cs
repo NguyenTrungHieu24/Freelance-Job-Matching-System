@@ -16,7 +16,7 @@ namespace BusinessObjects.Mapping
             // Add Mapping here: 
 
             CreateMap<Skill, SkillDTO>();
-
+            CreateMap<Category, CategoryDTO>();
             // Mapping for personal info
             CreateMap<FreelancerProfile, FreelancerPersonalInfoDto>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Account.FullName))
@@ -73,6 +73,18 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Role.Name));
 
             CreateMap<Role, RoleDTO>();
+            CreateMap<Application, ApplicationHistoryDto>()
+                .ForMember(dest => dest.JobTitle, opt => opt.MapFrom(src => src.Job.Title))
+                .ForMember(dest => dest.Budget, opt => opt.MapFrom(src => src.Job.Budget))
+                .ForMember(dest => dest.Deadline, opt => opt.MapFrom(src => src.Job.Deadline))
+                .ForMember(dest => dest.EmployerName, opt => opt.MapFrom(src => 
+                    src.Job.EmployerProfile != null && src.Job.EmployerProfile.Account != null 
+                        ? src.Job.EmployerProfile.Account.FullName 
+                        : ""))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => 
+                    src.Job.EmployerProfile != null ? src.Job.EmployerProfile.CompanyName : ""))
+                .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => 
+                    src.Job.EmployerProfile != null ? src.Job.EmployerProfile.Logo : ""));
         }
     }
 }
