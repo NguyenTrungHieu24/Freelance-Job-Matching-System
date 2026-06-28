@@ -101,4 +101,21 @@ public class FreelancerDashboardDto
     public List<ApplicationHistoryDto> RecentApplications { get; set; }
     public List<FreelancerJobDTO> RecommendedJobs { get; set; }
 }
-
+public class MyJobDto
+{
+    public int ApplicationId { get; set; }
+    public int JobId { get; set; }
+    public string JobTitle { get; set; } 
+    public string EmployerName { get; set; } 
+    public int EmployerId { get; set; }
+    public string CompanyName  { get; set; }
+    public decimal Budget { get; set; }
+    public DateTime AppliedAt { get; set; }
+    
+    public ApplicationStatus Status { get; set; }
+    public JobStatus JobStatus { get; set; }
+    public PaymentStatus? PaymentStatus { get; set; }
+    public bool IsReviewed { get; set; } = false;
+    
+    public int ProgressStage { get; set; }
+}

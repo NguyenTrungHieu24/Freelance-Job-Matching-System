@@ -427,4 +427,19 @@ public class FreelancerController : BaseController
         }
         return RedirectToAction("Applications");
     }
+
+    [HttpGet("my-jobs")]
+    public async Task<IActionResult> MyJobs()
+    {
+        try
+        {
+            var data = await GetAsync<List<MyJobDto>>("api/freelancer/my-jobs");
+            return View(data ?? new List<MyJobDto>());
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = "Cannot load your jobs: "+e.Message;
+            return View(new List<MyJobDto>());
+        }
+    }
 }

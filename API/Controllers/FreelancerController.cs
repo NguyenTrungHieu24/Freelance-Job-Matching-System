@@ -514,5 +514,83 @@ namespace API.Controllers
 
             return Ok(dto);
         }
+
+        [HttpGet("my-jobs")]
+        public async Task<IActionResult> GetMyJobs()
+        {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+            if (profile == null) return NotFound();
+
+            var application = await _context.Applications
+                .Include(a => a.Job).ThenInclude(j => j.EmployerProfile)
+                .ThenInclude(e => e.Account)
+                .Where(a => a.FreelancerProfileId == profile.Id)
+                .ToListAsync();
+
+            var myJobs = new List<MyJobDto>();
+            foreach (var a in application)
+            {
+                var payment = await _context.Payments.FirstOrDefaultAsync(p => p.ApplicationId == a.Id);
+                int employerId = a.Job?.EmployerProfile?.AccountId ?? 0;
+                var isReviewed = false;
+                if (employerId > 0)
+                {
+                    isReviewed = await _context.Reviews.AnyAsync(r =>
+                        r.ReviewerId == employerId && r.RevieweeId == userId);
+                }
+
+                var dto = new MyJobDto
+                {
+                    ApplicationId = a.Id,
+                    JobId = a.JobId,
+                    JobTitle = a.Job?.Title ?? "",
+                    EmployerName = a.Job?.EmployerProfile?.Account?.FullName ?? "",
+                    EmployerId = a.Job?.EmployerProfile?.AccountId ?? 0,
+                    CompanyName = a.Job?.EmployerProfile?.CompanyName ?? "",
+                    Budget = a.Job?.Budget ?? 0,
+                    AppliedAt = a.AppliedAt,
+                    Status = a.Status,
+                    JobStatus = a.Job?.Status ?? JobStatus.ACTIVE,
+                    PaymentStatus = payment?.Status,
+                    IsReviewed = isReviewed,
+                };
+
+                if (a.Status == ApplicationStatus.CANCELLED || a.Status == ApplicationStatus.REJECTED)
+                    dto.ProgressStage = -1;
+                else if(a.Status == ApplicationStatus.PENDING)
+                    dto.ProgressStage = 1;
+                else if(a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.ACTIVE)
+                    dto.ProgressStage = 2;
+                else if (a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.CLOSED)
+                {
+                    if(payment == null || payment.Status == PaymentStatus.PENDING)
+                        dto.ProgressStage = 3;
+                    else if (payment.Status == PaymentStatus.PAID)
+                        dto.ProgressStage = 4;
+                }
+                myJobs.Add(dto);
+            }
+
+            return Ok(myJobs.OrderByDescending(j => j.AppliedAt));
+        }
+
+        [HttpPost("report")]
+        public async Task<IActionResult> CreateReport([FromBody] CreateReportDto dto)
+        {
+            var reporterId = _user.UserId;
+            var report = new Report
+            {
+                ReporterId = reporterId,
+                ReportedUserId = dto.ReportUserId,
+                Reason = dto.Reason,
+                Description = dto.Description,
+                Status = ReportStatus.PENDING,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Reports.Add(report);
+            await _context.SaveChangesAsync();
+            return Ok(new { messsage = "Report submitted successfully" });
+        }
     }
 }
