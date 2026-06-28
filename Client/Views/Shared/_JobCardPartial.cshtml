@@ -1,0 +1,60 @@
+@model BusinessObjects.DTOs.MyJobDto
+
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title text-primary">@Model.JobTitle</h5>
+            <span class="badge bg-secondary">Budget: $@Model.Budget</span>
+        </div>
+        <p class="text-muted mb-1">
+            <strong>Employer:</strong> @Model.EmployerName 
+            <a href="javascript:void(0)" class="text-danger ms-2" onclick="openReportModal(@Model.EmployerId)" title="Report this Employer">
+                <i class="bi bi-flag-fill">🚩 Report</i>
+            </a>
+        </p>
+        <p class="text-muted"><small>Applied: @Model.AppliedAt.ToString("dd/MM/yyyy")</small></p>
+        
+        @if(Model.ProgressStage > 0)
+        {
+            <div class="d-flex justify-content-between text-center mt-4 position-relative">
+                <div class="progress position-absolute w-100" style="top: 15px; height: 3px; z-index: 1;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: @((Model.ProgressStage - 1) * 33)%"></div>
+                </div>
+
+                <div class="position-relative" style="z-index: 2;">
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 1 ? "btn-success" : "btn-secondary")">1</div>
+                    <div class="mt-1"><small>Applied</small></div>
+                </div>
+                <div class="position-relative" style="z-index: 2;">
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 2 ? "btn-success" : "btn-secondary")">2</div>
+                    <div class="mt-1"><small>In Progress</small></div>
+                </div>
+                <div class="position-relative" style="z-index: 2;">
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 3 ? "btn-success" : "btn-secondary")">3</div>
+                    <div class="mt-1"><small>Awaiting Payment</small></div>
+                </div>
+                <div class="position-relative" style="z-index: 2;">
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 4 ? "btn-success" : "btn-secondary")">4</div>
+                    <div class="mt-1"><small>Review</small></div>
+                </div>
+            </div>
+        } 
+        else if (Model.ProgressStage == -1)
+        {
+            <div class="alert alert-danger mt-3">This job is closed or your application was rejected.</div>
+        }
+        
+        <div class="mt-4 text-end">
+            <a href="/jobs/details/@Model.JobId" class="btn btn-outline-primary btn-sm">View Job Details</a>
+            
+            @if (Model.ProgressStage == 3)
+            {
+                <span class="text-warning ms-3">⏳ Waiting for Employer's payment...</span>
+            }
+            @if (Model.ProgressStage == 4 && !Model.IsReviewed)
+            {
+                <button class="btn btn-primary btn-sm ms-2">Review Employer</button>
+            }
+        </div>
+    </div>
+</div>
