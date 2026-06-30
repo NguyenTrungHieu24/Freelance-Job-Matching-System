@@ -846,3 +846,102 @@ img { max-width: 100%; }
     flex-direction: column;
     gap: 1px;
 }
+
+.dashboard-container {
+    font-family: 'Inter', sans-serif;
+}
+.stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+.stat-card.earnings::before { background: linear-gradient(to bottom, #10b981, #34d399); }
+.stat-card.total::before { background: linear-gradient(to bottom, #3b82f6, #60a5fa); }
+.stat-card.pending::before { background: linear-gradient(to bottom, #f59e0b, #fbbf24); }
+.stat-card.accepted::before { background: linear-gradient(to bottom, #8b5cf6, #a78bfa); }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+.stat-icon.earnings { background: #d1fae5; color: #10b981; }
+.stat-icon.total { background: #dbeafe; color: #3b82f6; }
+.stat-icon.pending { background: #fef3c7; color: #f59e0b; }
+.stat-icon.accepted { background: #ede9fe; color: #8b5cf6; }
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+.stat-label {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.section-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 24px;
+    height: 100%;
+}
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.app-item, .job-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s ease;
+}
+.app-item:last-child, .job-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.app-item:hover, .job-item:hover {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 0 -16px;
+}
+
+.badge-status {
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
