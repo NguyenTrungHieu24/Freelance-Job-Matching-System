@@ -1028,154 +1028,97 @@
 
                 <div class="fv-job-grid">
 
-                    <!-- Card 1 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-globe"></i></div>
-                            <div>
-                                <div class="fv-job-title">Thiết kế & lập trình website bán hàng Shopify</div>
-                                <div class="fv-job-company">Công ty Thời Trang VOGUE VN</div>
-                            </div>
-                        </div>
-                        <p class="fv-job-desc">Cần freelancer có kinh nghiệm Shopify, tích hợp thanh toán VNPAY, thiết
-                            kế responsive hiện đại cho ngành thời trang.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">Shopify</span>
-                                <span class="fv-job-tag">Liquid</span>
-                                <span class="fv-job-tag">UI/UX</span>
-                            </div>
-                            <span class="fv-job-budget">5–10 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>2 giờ trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>8 bids</span>
-                        </div>
-                    </a>
+                    @{
+                        var latestJobs = ViewBag.LatestJobs as List<Client.Controllers.HomeJobDto> ?? new List<Client.Controllers.HomeJobDto>();
+                    }
 
-                    <!-- Card 2 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-phone"></i></div>
-                            <div>
-                                <div class="fv-job-title">Xây dựng app quản lý đặt lịch React Native</div>
-                                <div class="fv-job-company">BeautyBook Startup</div>
-                            </div>
-                        </div>
-                        <p class="fv-job-desc">App đặt lịch spa/salon, tích hợp calendar, push notification, thanh toán
-                            online. Backend Node.js đã có sẵn.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">React Native</span>
-                                <span class="fv-job-tag">Firebase</span>
-                                <span class="fv-job-tag">REST API</span>
-                            </div>
-                            <span class="fv-job-budget">12–18 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>5 giờ trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>14 bids</span>
-                        </div>
-                    </a>
+                    @if (latestJobs.Any())
+                    {
+                        @foreach (var job in latestJobs)
+                        {
+                            var timeAgo = "";
+                            var diff = DateTime.Now - job.CreatedAt;
+                            if (diff.TotalMinutes < 60)
+                            {
+                                timeAgo = $"{(int)diff.TotalMinutes} phút trước";
+                            }
+                            else if (diff.TotalHours < 24)
+                            {
+                                timeAgo = $"{(int)diff.TotalHours} giờ trước";
+                            }
+                            else
+                            {
+                                timeAgo = $"{(int)diff.TotalDays} ngày trước";
+                            }
 
-                    <!-- Card 3 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-palette2"></i></div>
-                            <div>
-                                <div class="fv-job-title">Thiết kế bộ nhận diện thương hiệu startup F&B</div>
-                                <div class="fv-job-company">The Coffee Collective</div>
-                            </div>
-                        </div>
-                        <p class="fv-job-desc">Cần logo, brand guideline, menu design, bao bì sản phẩm cho chuỗi cà phê
-                            mới. Phong cách minimalist, màu đất.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">Branding</span>
-                                <span class="fv-job-tag">Illustrator</span>
-                                <span class="fv-job-tag">Packaging</span>
-                            </div>
-                            <span class="fv-job-budget">8–15 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>1 ngày trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>22 bids</span>
-                        </div>
-                    </a>
+                            var budgetDisplay = job.Budget.ToString("N0") + "đ";
 
-                    <!-- Card 4 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-pencil-square"></i></div>
-                            <div>
-                                <div class="fv-job-title">Viết 20 bài blog chuẩn SEO về tài chính cá nhân</div>
-                                <div class="fv-job-company">FinSmart Media</div>
-                            </div>
-                        </div>
-                        <p class="fv-job-desc">Cần writer am hiểu tài chính, đầu tư. Mỗi bài 1200–1500 từ, keyword
-                            research có sẵn, deadline 30 ngày.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">SEO Writing</span>
-                                <span class="fv-job-tag">Tài chính</span>
-                            </div>
-                            <span class="fv-job-budget">3–6 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>1 ngày trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>7 bids</span>
-                        </div>
-                    </a>
+                            var iconClass = "bi bi-briefcase";
+                            var catLower = (job.CategoryName ?? "").ToLower();
+                            if (catLower.Contains("web") || catLower.Contains("lập trình") || catLower.Contains("code"))
+                                iconClass = "bi bi-code-slash";
+                            else if (catLower.Contains("mobile") || catLower.Contains("app"))
+                                iconClass = "bi bi-phone";
+                            else if (catLower.Contains("design") || catLower.Contains("thiết kế") || catLower.Contains("ui"))
+                                iconClass = "bi bi-palette2";
+                            else if (catLower.Contains("marketing"))
+                                iconClass = "bi bi-megaphone";
+                            else if (catLower.Contains("content") || catLower.Contains("viết") || catLower.Contains("nội dung"))
+                                iconClass = "bi bi-pencil-square";
+                            else if (catLower.Contains("video") || catLower.Contains("motion"))
+                                iconClass = "bi bi-camera-video";
+                            else if (catLower.Contains("data") || catLower.Contains("dữ liệu") || catLower.Contains("phân tích"))
+                                iconClass = "bi bi-bar-chart-line";
 
-                    <!-- Card 5 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-bar-chart-line"></i></div>
-                            <div>
-                                <div class="fv-job-title">Phân tích dữ liệu bán hàng & dashboard Power BI</div>
-                                <div class="fv-job-company">RetailMax Corp</div>
-                            </div>
-                        </div>
-                        <p class="fv-job-desc">Xây dựng dashboard Power BI từ dữ liệu SQL Server, báo cáo doanh thu theo
-                            vùng, sản phẩm và kênh phân phối.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">Power BI</span>
-                                <span class="fv-job-tag">SQL</span>
-                                <span class="fv-job-tag">DAX</span>
-                            </div>
-                            <span class="fv-job-budget">4–8 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>2 ngày trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>11 bids</span>
-                        </div>
-                    </a>
+                            var descTruncated = job.Description.Length > 120
+                                ? job.Description.Substring(0, 120) + "..."
+                                : job.Description;
 
-                    <!-- Card 6 -->
-                    <a href="#" class="fv-job-card">
-                        <div class="fv-job-header">
-                            <div class="fv-job-logo"><i class="bi bi-camera-video"></i></div>
-                            <div>
-                                <div class="fv-job-title">Dựng video quảng cáo TikTok & Reels 15s</div>
-                                <div class="fv-job-company">GreenLife Products</div>
-                            </div>
+                            <a href="/Jobs/Detail/@job.Id" class="fv-job-card">
+                                <div class="fv-job-header">
+                                    <div class="fv-job-logo"><i class="@iconClass"></i></div>
+                                    <div>
+                                        <div class="fv-job-title">@job.Title</div>
+                                        <div class="fv-job-company">@job.EmployerName</div>
+                                    </div>
+                                </div>
+                                <p class="fv-job-desc">@descTruncated</p>
+                                <div class="fv-job-footer">
+                                    <div class="fv-job-tags">
+                                        @foreach (var skill in job.Skills.Take(3))
+                                        {
+                                            <span class="fv-job-tag">@skill</span>
+                                        }
+                                        @if (job.Skills.Count > 3)
+                                        {
+                                            <span class="fv-job-tag">+@(job.Skills.Count - 3)</span>
+                                        }
+                                    </div>
+                                    <span class="fv-job-budget">@budgetDisplay</span>
+                                </div>
+                                <div class="fv-job-meta">
+                                    <span><i class="bi bi-clock me-1"></i>@timeAgo</span>
+                                    @if (!string.IsNullOrEmpty(job.CategoryName))
+                                    {
+                                        <span class="fv-bid-badge"><i class="bi bi-folder me-1"></i>@job.CategoryName</span>
+                                    }
+                                </div>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div style="grid-column: 1/-1; text-align:center; padding:48px 20px;">
+                            <i class="bi bi-inbox" style="font-size:3rem; color:var(--muted); opacity:.5;"></i>
+                            <p style="color:var(--muted); margin-top:12px; font-size:.95rem;">
+                                Hiện chưa có dự án nào. Hãy quay lại sau nhé!
+                            </p>
+                            @if (ViewBag.ErrorMessage != null)
+                            {
+                                <pre style="text-align: left; background: #fff5f5; color: #c53030; padding: 16px; border-radius: 8px; margin-top: 16px; font-size: 0.8rem; overflow-x: auto; border: 1px solid #fed7d7;">@ViewBag.ErrorMessage</pre>
+                            }
                         </div>
-                        <p class="fv-job-desc">Cần 5 video quảng cáo sản phẩm FMCG, phong cách trendy, có hook mạnh
-                            trong 3 giây đầu. Có sẵn footage thô.</p>
-                        <div class="fv-job-footer">
-                            <div class="fv-job-tags">
-                                <span class="fv-job-tag">Video Edit</span>
-                                <span class="fv-job-tag">After Effects</span>
-                                <span class="fv-job-tag">TikTok</span>
-                            </div>
-                            <span class="fv-job-budget">2–4 triệu</span>
-                        </div>
-                        <div class="fv-job-meta">
-                            <span><i class="bi bi-clock me-1"></i>3 ngày trước</span>
-                            <span class="fv-bid-badge"><i class="bi bi-people me-1"></i>18 bids</span>
-                        </div>
-                    </a>
+                    }
 
                 </div>
             </div>
