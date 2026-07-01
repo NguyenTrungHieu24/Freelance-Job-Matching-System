@@ -123,7 +123,7 @@ public class EmployerController : BaseController
                 Skills = await GetAsync<List<SkillDTO>>("api/skills/all")
             };
 
-            return View(vm);
+            return View("JobForm", vm);
         }
         catch (Exception ex)
         {
@@ -141,7 +141,7 @@ public class EmployerController : BaseController
             model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
             model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
 
-            return View(model);
+            return View("JobForm", model);
         }
 
         await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
@@ -230,6 +230,82 @@ public class EmployerController : BaseController
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction("MyJobs");
+        }
+    }
+
+
+    [HttpGet("job/edit/{id}")]
+    public async Task<IActionResult> EditJob(int id)
+    {
+        try
+        {
+            var job = await GetAsync<JobDTO>($"api/jobs/{id}");
+
+            var categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            var skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+
+            var model = new CreateJobViewModel
+            {
+                Title = job.Title,
+                Description = job.Description,
+                Budget = job.Budget,
+                Deadline = job.Deadline,
+                CategoryId = job.CategoryId,
+
+                SkillIds = job.Skills != null
+                    ? skills.Where(s => job.Skills.Contains(s.Name)).Select(s => s.Id).ToList()
+                    : new List<int>(),
+
+                Categories = categories,
+                Skills = skills
+            };
+
+            ViewBag.IsEdit = true;
+            ViewBag.JobId = id;
+
+            return View("JobForm", model);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction("MyJobs");
+        }
+    }
+
+    [HttpPost("job/edit/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditJob(int id, CreateJobViewModel model)
+    {
+        try
+        {
+            var dto = new UpdateJobDto
+            {
+                Title = model.Title,
+                Description = model.Description,
+                Budget = model.Budget,
+                CategoryId = model.CategoryId,
+                Deadline = model.Deadline,
+                Skills = model.SkillIds
+            };
+
+            await PutAsync($"api/jobs/{id}", dto);
+
+            TempData["Success"] = "Job updated successfully";
+
+            return RedirectToAction("JobDetails", new { id });
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+
+            // reload dropdowns
+            model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+
+            ViewBag.IsEdit = true;
+            ViewBag.JobId = id;
+
+            return View("JobForm", model);
         }
     }
 

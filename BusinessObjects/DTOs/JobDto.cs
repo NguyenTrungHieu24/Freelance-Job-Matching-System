@@ -60,9 +60,6 @@ namespace BusinessObjects.DTOs
 
         public DateTime? Deadline { get; set; }
 
-        [Required(ErrorMessage = "Status is required")]
-        public string Status { get; set; } = null!;
-
         public List<int> Skills { get; set; } = new();
     }
 

@@ -59,7 +59,7 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Applications.Count))
                 .ForMember(
                     d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)));
 
             CreateMap<User, UserDto>()
                 .ForMember(

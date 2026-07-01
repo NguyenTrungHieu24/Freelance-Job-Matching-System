@@ -339,11 +339,6 @@ namespace API.Controllers
                 return BadRequest(new { message = "Invalid CategoryId" });
             }
 
-            // Parse and validate Status
-            if (!Enum.TryParse<JobStatus>(dto.Status.Trim(), true, out var newStatus) || newStatus == JobStatus.DELETED)
-            {
-                return BadRequest(new { message = "Invalid job status value" });
-            }
 
             // Update Job fields
             job.Title = dto.Title.Trim();
@@ -351,28 +346,33 @@ namespace API.Controllers
             job.Budget = dto.Budget;
             job.CategoryId = dto.CategoryId;
             job.Deadline = dto.Deadline;
-            job.Status = newStatus;
 
             // Update Skills
-            var existingSkills = _context.JobSkills.Where(js => js.JobId == job.Id);
-            _context.JobSkills.RemoveRange(existingSkills);
+            var currentSkills = await _context.JobSkills
+                                            .Where(x => x.JobId == job.Id)
+                                            .Select(x => x.SkillId)
+                                            .ToListAsync();
 
-            if (dto.Skills != null && dto.Skills.Any())
+            var newSkills = dto.Skills.Distinct().ToList();
+
+            var toRemove = currentSkills.Except(newSkills);
+            var toAdd = newSkills.Except(currentSkills);
+
+            // remove
+            var removeEntities = await _context.JobSkills
+                .Where(x => x.JobId == job.Id && toRemove.Contains(x.SkillId))
+                .ToListAsync();
+
+            _context.JobSkills.RemoveRange(removeEntities);
+
+            // add
+            foreach (var skillId in toAdd)
             {
-                // Filter out non-existent skills
-                var validSkillIds = await _context.Skills
-                    .Where(s => dto.Skills.Contains(s.Id))
-                    .Select(s => s.Id)
-                    .ToListAsync();
-
-                foreach (var skillId in validSkillIds)
+                _context.JobSkills.Add(new JobSkill
                 {
-                    _context.JobSkills.Add(new JobSkill
-                    {
-                        JobId = job.Id,
-                        SkillId = skillId
-                    });
-                }
+                    JobId = job.Id,
+                    SkillId = skillId
+                });
             }
 
             await _context.SaveChangesAsync();
@@ -430,5 +430,56 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPost("close/{id}")]
+        public async Task<IActionResult> Close(int id)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.EmployerProfile)
+                    .ThenInclude(e => e.Account)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.EmployerProfile.AccountId != _user.UserId && _user.Role.ToLower() != "admin")
+            {
+                return Ok(ApiResult<bool>.Fail("Unauthorized"));
+            }
+
+            job.Status = JobStatus.CLOSED;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+        }
+
+
+        [HttpPost("open/{id}")]
+        public async Task<IActionResult> Open(int id)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.EmployerProfile)
+                    .ThenInclude(e => e.Account)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.EmployerProfile.AccountId != _user.UserId && _user.Role.ToLower() != "admin")
+            {
+                return Ok(ApiResult<bool>.Fail("Unauthorized"));
+            }
+
+            job.Status = JobStatus.ACTIVE;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+        }
     }
 }

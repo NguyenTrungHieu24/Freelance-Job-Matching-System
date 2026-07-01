@@ -221,14 +221,15 @@
                                                         new() {
                                                         Title = "Edit",
                                                         Icon = "bi-pencil",
-                                                        Url = Url.Action("Edit", new { id = job.Id })
+                                                        Url = Url.Action("EditJob", new { id = job.Id })
                                                         },
                                                         new() {
                                                         Title = is_open ? "Close job" : "Open job",
                                                         Icon = is_open ? "bi-lock" : "bi-unlock",
-                                                        AjaxUrl = Url.Action(is_open ? "close" : "open", new { id = job.Id }),
+                                                        AjaxUrl = Url.Action(is_open ? "CloseJob" : "OpenJob", "Jobs", new { id = job.Id }),
                                                         ConfirmMessage = (is_open ? "Close" : "Open") + " this job?",
-                                                        ExtraMessage = "Frelancer "+ (is_open ? "can" : "can't") + " see this jobs!"
+                                                        ExtraMessage = "Frelancer "+ (is_open ? "can" : "can't") + " see this jobs!",
+                                                        Handle = "location.reload();"
                                                         },
                                                         new() {
                                                         Title = "Delete",

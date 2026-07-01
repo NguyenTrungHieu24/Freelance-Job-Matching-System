@@ -10,13 +10,20 @@
 
     <!-- Header -->
     <div class="mb-4">
-        <h2 class="fw-bold mb-1">Post a New Job</h2>
+        <h2 class="fw-bold mb-1">
+            @(ViewBag.IsEdit == true ? "Edit Job" : "Post a New Job")
+        </h2>
+
         <p class="text-muted mb-0">
-            Describe your job clearly to attract the right candidates.
+            @(ViewBag.IsEdit == true
+                        ? "Update job details to attract better candidates."
+                        : "Describe your job clearly to attract the right candidates.")
         </p>
     </div>
 
-    <form asp-action="CreateJob" method="post">
+    <form asp-action="@(ViewBag.IsEdit == true ? "EditJob" : "CreateJob")"
+          asp-route-id="@(ViewBag.JobId)"
+          method="post">
         @Html.AntiForgeryToken()
 
         <!-- BASIC INFO -->
@@ -119,8 +126,11 @@
             </a>
 
             <button type="submit" class="btn btn-primary px-5">
+
                 <i class="fa fa-rocket me-2"></i>
-                Publish Job
+
+                @(ViewBag.IsEdit == true ? "Update Job" : "Publish Job")
+
             </button>
 
         </div>
@@ -132,10 +142,12 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        $('.category-select').select2({
+        $('.category-select').val('@Model.CategoryId').select2({
             width: '100%',
             placeholder: 'Select category'
         });
+        
+        $('.skill-select').val(@Html.Raw(Json.Serialize(Model.SkillIds))).trigger('change');
 
         $('.skill-select').select2({
             width: '100%',
@@ -146,16 +158,18 @@
 
     <script>
         tinymce.init({
-            selector: 'textarea[name="Description"]',
-            height: 400,
-            menubar: false,
-            plugins: [
-                'lists link image table code help wordcount'
-            ],
-            toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link table | code',
-            branding: false,
-            statusbar: false,
-            content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:14px }'
-        });
+                    selector: 'textarea[name="Description"]',
+                    height: 400,
+                    setup: function (editor) {
+                        editor.on('init', function () {
+                            editor.setContent(`@Html.Raw(Model.Description)`);
+                        });
+                    },
+                    menubar: false,
+                    plugins: [
+                        'lists link image table code help wordcount'
+                    ],
+                    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link table | code',
+                });
     </script>
 }
