@@ -21,6 +21,12 @@ namespace BusinessObjects.DTOs
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = null!;
         public List<SkillDTO> Skills { get; set; } = new();
+        public string? EmployerCompanyName { get; set; }
+        public string? EmployerDescription { get; set; }
+        public string? EmployerEmail { get; set; }
+        public string? EmployerPhone { get; set; }
+        public string? EmployerAddress { get; set; }
+        public string? EmployerLogo { get; set; }
     }
 
     public class CreateJobDto

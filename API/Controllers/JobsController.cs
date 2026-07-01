@@ -434,10 +434,9 @@ namespace API.Controllers
                     return query.Where(x => x.EmployerProfile.AccountId == _user.UserId);
 
                 case "freelancer":
-                    return query.Where(x => x.Status == JobStatus.ACTIVE);
-
                 default:
-                    return query.Where(x => false);
+                    // Freelancers and anonymous users can only see ACTIVE jobs
+                    return query.Where(x => x.Status == JobStatus.ACTIVE);
             }
         }
 

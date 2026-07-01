@@ -65,6 +65,26 @@ namespace Client.Controllers
             }
         }
 
+        [Route("detail/{id}")]
+        public async Task<IActionResult> Detail(int id)
+        {
+            try
+            {
+                var job = await GetAsync<JobDto>($"api/jobs/{id}");
+                if (job == null)
+                {
+                    TempData["Error"] = "Job not found.";
+                    return RedirectToAction("Index", "Home");
+                }
+                return View(job);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Cannot load job details: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
         private static List<KeyValuePair<string, string>> BuildQueryParams(FilterJobDTO filter)
         {
             var queryParams = new List<KeyValuePair<string, string>>();
