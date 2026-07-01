@@ -6,6 +6,7 @@ using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using LinqKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +44,21 @@ namespace API.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
-                var tokens = filter.Keyword.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                var tokens = filter.Keyword
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                query = query.Where(x => tokens.Any(y => x.Title.Contains(y) || x.Description.Contains(y)));
+                var predicate = PredicateBuilder.New<Job>(false);
+
+                foreach (var t in tokens)
+                {
+                    var token = t;
+
+                    predicate = predicate.Or(x =>
+                        x.Title.Contains(token) ||
+                        x.Description.Contains(token));
+                }
+
+                query = query.Where(predicate);
             }
 
             if (filter.Status.HasValue)
@@ -165,34 +178,10 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("my")]
-        [Authorize(Roles = "EMPLOYER")]
-        public async Task<ActionResult<List<JobDTO>>> GetMyJobs()
-        {
-            var userId = _user.UserId;
-
-            var employer = await _context.EmployerProfiles
-                .FirstOrDefaultAsync(x => x.AccountId == userId);
-
-            if (employer == null)
-                return BadRequest("Employer profile not found.");
-
-            var jobs = await _context.Jobs
-                .Include(x => x.Category)
-                .Include(x => x.JobSkills)
-                    .ThenInclude(x => x.Skill)
-                .Include(x => x.Applications)
-                .Where(x => x.EmployerProfileId == employer.Id)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
-
-            return Ok(_mapper.Map<List<JobDTO>>(jobs));
-        }
-
         // GET: api/jobs/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<JobDto>> GetJob(int id)
+        public async Task<ActionResult<JobDTO>> GetJob(int id)
         {
             var job = await _context.Jobs
                 .Include(j => j.Category)
@@ -208,7 +197,7 @@ namespace API.Controllers
                 return NotFound(new { message = "Job not found" });
             }
 
-            var dto = _mapper.Map<JobDto>(job);
+            var dto = _mapper.Map<JobDTO>(job);
             return Ok(dto);
         }
 

@@ -1,0 +1,156 @@
+﻿@model Client.Models.Jobs.JobDetailViewModel
+
+@{
+    ViewBag.Title = "Job Details";
+    Layout = "_Layout";
+}
+
+<div class="container py-4" style="max-width: 1100px;">
+
+    <!-- HEADER -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">@Model.Title</h2>
+
+        <div class="text-muted small d-flex gap-3 flex-wrap">
+
+            <span>
+                <i class="fa fa-building me-1"></i>
+                @Model.EmployerName
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-folder me-1"></i>
+                @Model.CategoryName
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-users me-1"></i>
+                @Model.ApplicationsCount applicants
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-circle me-1"></i>
+                @Model.Status
+            </span>
+
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-lg-8">
+
+            <!-- DESCRIPTION -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">Job Description</h5>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div style="line-height:1.7;">
+                            @Html.Raw(Model.Description)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">
+                            No description provided.
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">Required Skills</h5>
+
+                    @if (Model.Skills.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var skill in Model.Skills)
+                            {
+                                <span class="badge bg-light text-dark border">
+                                    @skill
+                                </span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No skills specified.</div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR: APPLICATIONS -->
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm sticky-top" style="top:20px;">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">
+                        Applications (@Model.ApplicationsCount)
+                    </h5>
+
+                    <!-- EMPTY STATE -->
+                    @if (Model.Applications == null || !Model.Applications.Any())
+                    {
+                        <div class="text-muted small">
+                            No applications yet.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column gap-3">
+
+                            @foreach (var app in Model.Applications)
+                            {
+                                <div class="border rounded p-3">
+
+                                    <div class="fw-semibold">
+                                        @app.EmployerName
+                                    </div>
+
+                                    <div class="text-muted small">
+                                        @app.AppliedAt.ToString("dd MMM yyyy")
+                                    </div>
+
+                                    <div class="mt-2 d-flex gap-2">
+
+                                        <span class="badge bg-light text-dark border">
+                                            @app.Status
+                                        </span>
+
+                                        <a href="/applications/@app.Id"
+                                           class="btn btn-sm btn-outline-primary ms-auto">
+                                            View
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

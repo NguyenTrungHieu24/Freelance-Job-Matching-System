@@ -104,6 +104,7 @@ namespace BusinessObjects.DTOs
         public int ApplicationsCount { get; set; } = 0;
 
         public List<string> Skills { get; set; } = [];
+        public List<ApplicationHistoryDto> Applications { get; set; } = [];
     }
 
     public class FilterJobDTO
