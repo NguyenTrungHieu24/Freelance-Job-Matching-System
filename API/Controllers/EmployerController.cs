@@ -190,4 +190,87 @@ public class EmployerController : BaseController
     }
 
 
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> GetDashboard()
+    {
+        var userId = _user.UserId;
+
+        var profile = await _context.EmployerProfiles
+            .FirstOrDefaultAsync(e => e.AccountId == userId);
+
+        if (profile == null)
+            return BadRequest("Employer not found");
+
+        var jobsQuery = _context.Jobs
+            .Where(j => j.EmployerProfileId == profile.Id);
+
+        var totalJobs = await jobsQuery.CountAsync();
+
+        var activeJobs = await jobsQuery.CountAsync(j =>
+            j.Status == JobStatus.ACTIVE);
+
+        var jobIds = await jobsQuery
+            .Select(j => j.Id)
+            .ToListAsync();
+
+        var applicationsQuery = _context.Applications
+            .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
+                .ThenInclude(f => f.Account)
+            .Where(a => a.Job.EmployerProfileId == profile.Id);
+
+        var totalApplications = await applicationsQuery.CountAsync();
+
+        var pendingApplications = await applicationsQuery.CountAsync(a =>
+            a.Status == ApplicationStatus.PENDING);
+
+        var recentJobs = await jobsQuery
+            .Include(j => j.JobSkills)
+                .ThenInclude(js => js.Skill)
+            .Include(j => j.Applications)
+            .OrderByDescending(j => j.CreatedAt)
+            .Take(5)
+            .ToListAsync();
+
+        var recentApplications = await applicationsQuery
+            .OrderByDescending(a => a.AppliedAt)
+            .Take(5)
+            .ToListAsync();
+
+        var dto = new EmployerDashboardDto
+        {
+            TotalJobs = totalJobs,
+
+            ActiveJobs = activeJobs,
+
+            TotalApplications = totalApplications,
+
+            PendingApplications = pendingApplications,
+
+            RecentJobs = recentJobs.Select(j => new EmployerRecentJobDto
+            {
+                Id = j.Id,
+                Title = j.Title,
+                Deadline = j.Deadline,
+                ApplicationCount = j.Applications.Count,
+                IsActive = j.Status == JobStatus.ACTIVE,
+                Skills = j.JobSkills
+                    .Select(x => x.Skill.Name)
+                    .ToList()
+            }).ToList(),
+
+            RecentApplications = recentApplications.Select(a => new EmployerRecentApplicationDto
+            {
+                Id = a.Id,
+                JobId = a.JobId,
+                JobTitle = a.Job.Title,
+                CandidateName = a.FreelancerProfile.Account.FullName,
+                CandidateAvatar = a.FreelancerProfile?.ProfilePhoto ?? "",
+                AppliedAt = a.AppliedAt,
+                Status = a.Status
+            }).ToList()
+        };
+
+        return Ok(dto);
+    }
 }

@@ -43,7 +43,7 @@ namespace API.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
-                var tokens = filter.Keyword.Split(" ",  StringSplitOptions.RemoveEmptyEntries);
+                var tokens = filter.Keyword.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
                 query = query.Where(x => tokens.Any(y => x.Title.Contains(y) || x.Description.Contains(y)));
             }
@@ -165,6 +165,30 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("my")]
+        [Authorize(Roles = "EMPLOYER")]
+        public async Task<ActionResult<List<JobDTO>>> GetMyJobs()
+        {
+            var userId = _user.UserId;
+
+            var employer = await _context.EmployerProfiles
+                .FirstOrDefaultAsync(x => x.AccountId == userId);
+
+            if (employer == null)
+                return BadRequest("Employer profile not found.");
+
+            var jobs = await _context.Jobs
+                .Include(x => x.Category)
+                .Include(x => x.JobSkills)
+                    .ThenInclude(x => x.Skill)
+                .Include(x => x.Applications)
+                .Where(x => x.EmployerProfileId == employer.Id)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
+
+            return Ok(_mapper.Map<List<JobDTO>>(jobs));
+        }
+
         // GET: api/jobs/5
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -196,8 +220,13 @@ namespace API.Controllers
         // POST: api/jobs
         [HttpPost]
         [Authorize(Roles = "EMPLOYER")]
-        public async Task<ActionResult<JobDto>> CreateJob([FromBody] CreateJobDto dto)
+        public async Task<ActionResult<JobDTO>> CreateJob([FromBody] CreateJobDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var userId = _user.UserId;
 
             // Resolve Employer Profile
@@ -216,6 +245,16 @@ namespace API.Controllers
                 return BadRequest(new { message = "Invalid CategoryId" });
             }
 
+            if (dto.Budget <= 0)
+            {
+                return BadRequest("Budget must be greater than zero.");
+            }
+
+            if (dto.Deadline <= DateTime.Now)
+            {
+                return BadRequest("Deadline must be in the future.");
+            }
+
             // Map CreateJobDto to Job entity
             var job = new Job
             {
@@ -229,28 +268,40 @@ namespace API.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            _context.Jobs.Add(job);
-            await _context.SaveChangesAsync(); // Saves job and generates its Id
+            await using var transaction = await _context.Database.BeginTransactionAsync();
 
-            // Add JobSkills if provided
-            if (dto.Skills != null && dto.Skills.Any())
+            try
             {
-                // Filter out non-existent skills
-                var validSkillIds = await _context.Skills
-                    .Where(s => dto.Skills.Contains(s.Id))
-                    .Select(s => s.Id)
-                    .ToListAsync();
+                _context.Jobs.Add(job);
+                await _context.SaveChangesAsync(); // Saves job and generates its Id
 
-                foreach (var skillId in validSkillIds)
+                // Add JobSkills if provided
+                if (dto.Skills != null && dto.Skills.Any())
                 {
-                    _context.JobSkills.Add(new JobSkill
+                    // Filter out non-existent skills
+                    var validSkillIds = await _context.Skills
+                        .Where(s => dto.Skills.Distinct().ToList().Contains(s.Id))
+                        .Select(s => s.Id)
+                        .ToListAsync();
+
+                    foreach (var skillId in validSkillIds)
                     {
-                        JobId = job.Id,
-                        SkillId = skillId
-                    });
+                        _context.JobSkills.Add(new JobSkill
+                        {
+                            JobId = job.Id,
+                            SkillId = skillId
+                        });
+                    }
+
+                    await _context.SaveChangesAsync();
                 }
 
-                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
 
             // Fetch the fully populated job to return
@@ -262,7 +313,7 @@ namespace API.Controllers
                     .ThenInclude(js => js.Skill)
                 .FirstOrDefaultAsync(j => j.Id == job.Id);
 
-            var resultDto = _mapper.Map<JobDto>(createdJob);
+            var resultDto = _mapper.Map<JobDTO>(createdJob);
 
             return CreatedAtAction(nameof(GetJob), new { id = job.Id }, resultDto);
         }

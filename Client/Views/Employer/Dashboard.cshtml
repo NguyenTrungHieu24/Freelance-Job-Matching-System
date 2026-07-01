@@ -1,7 +1,640 @@
+﻿@using BusinessObjects.Enums
 @model Client.Models.Employer.EmployerDashboard
+
 @{
     ViewBag.Title = "Employer Dashboard";
     Layout = "_Layout";
 }
 
-<h2>Employer Dashboard</h2>
+<style>
+    .dashboard-container {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .stat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.03);
+        transition: all .3s ease;
+        border: 1px solid rgba(0,0,0,.05);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,.08);
+        }
+
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.jobs::before {
+            background: linear-gradient(to bottom,#3b82f6,#60a5fa);
+        }
+
+        .stat-card.active::before {
+            background: linear-gradient(to bottom,#10b981,#34d399);
+        }
+
+        .stat-card.application::before {
+            background: linear-gradient(to bottom,#8b5cf6,#a78bfa);
+        }
+
+        .stat-card.pending::before {
+            background: linear-gradient(to bottom,#f59e0b,#fbbf24);
+        }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+    }
+
+        .stat-icon.jobs {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .stat-icon.active {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .stat-icon.application {
+            background: #ede9fe;
+            color: #8b5cf6;
+        }
+
+        .stat-icon.pending {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 12px;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .section-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid rgba(0,0,0,.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,.03);
+        height: 100%;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #1e293b;
+    }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 80px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        color: #334155;
+        transition: all .25s ease;
+        font-weight: 600;
+        background: #fff;
+    }
+
+        .quick-action:hover {
+            background: #f8fafc;
+            color: #0d6efd;
+            border-color: #0d6efd;
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+
+    .app-item,
+    .job-item {
+        padding: 16px 0;
+        border-bottom: 1px solid #f1f5f9;
+        transition: .2s;
+    }
+
+        .app-item:last-child,
+        .job-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .app-item:hover,
+        .job-item:hover {
+            background: #f8fafc;
+            margin: 0 -16px;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container py-5 dashboard-container">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Employer Dashboard
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage your jobs and review candidate applications.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-controller="Employer"
+               asp-action="CreateJob"
+               class="btn btn-primary px-4">
+
+                <i class="bi bi-plus-circle me-2"></i>
+                Post Job
+            </a>
+
+            <a asp-controller="Employer"
+               asp-action="Applications"
+               class="btn btn-outline-primary px-4">
+
+                <i class="bi bi-people me-2"></i>
+                Review Applications
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="stat-card jobs">
+
+                <div class="stat-icon jobs">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+
+                <div class="stat-value">
+                    @Model.TotalJobs
+                </div>
+
+                <div class="stat-label">
+                    Total Jobs
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card active">
+
+                <div class="stat-icon active">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+
+                <div class="stat-value">
+                    @Model.ActiveJobs
+                </div>
+
+                <div class="stat-label">
+                    Active Jobs
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card application">
+
+                <div class="stat-icon application">
+                    <i class="bi bi-people"></i>
+                </div>
+
+                <div class="stat-value">
+                    @Model.TotalApplications
+                </div>
+
+                <div class="stat-label">
+                    Total Applications
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card pending">
+
+                <div class="stat-icon pending">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+
+                <div class="stat-value">
+                    @Model.PendingApplications
+                </div>
+
+                <div class="stat-label">
+                    Pending Reviews
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-card mb-5">
+
+        <div class="section-title">
+            <i class="bi bi-lightning-charge-fill text-warning"></i>
+            Quick Actions
+        </div>
+
+        <div class="row g-3">
+
+            <div class="col-md-3">
+
+                <a asp-controller="Employer"
+                   asp-action="CreateJob"
+                   class="quick-action">
+
+                    <i class="bi bi-plus-circle fs-4"></i>
+
+                    <span>
+                        Post Job
+                    </span>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a asp-controller="Employer"
+                   asp-action="Jobs"
+                   class="quick-action">
+
+                    <i class="bi bi-briefcase fs-4"></i>
+
+                    <span>
+                        Manage Jobs
+                    </span>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a asp-controller="Employer"
+                   asp-action="Applications"
+                   class="quick-action">
+
+                    <i class="bi bi-person-check fs-4"></i>
+
+                    <span>
+                        Review Applications
+                    </span>
+
+                </a>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a asp-controller="Employer"
+                   asp-action="Profile"
+                   class="quick-action">
+
+                    <i class="bi bi-building fs-4"></i>
+
+                    <span>
+                        Company Profile
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Jobs + Latest Applications -->
+    <div class="row g-4">
+        <!-- Recent Jobs -->
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    <i class="bi bi-briefcase text-primary"></i>
+                    Recent Jobs
+                </div>
+
+                @if (Model.RecentJobs != null && Model.RecentJobs.Any())
+                {
+                    <div class="list-wrapper">
+
+                        @foreach (var job in Model.RecentJobs)
+                        {
+                            <div class="job-item">
+
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+
+                                    <div>
+
+                                        <a asp-controller="Employer"
+                                           asp-action="JobDetail"
+                                           asp-route-id="@job.Id"
+                                           class="text-decoration-none fw-bold text-dark fs-5">
+
+                                            @job.Title
+
+                                        </a>
+
+                                        <div class="text-muted small mt-2">
+
+                                            <i class="bi bi-people me-1"></i>
+                                            @job.ApplicationCount Applications
+
+                                            <span class="mx-2">•</span>
+
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            Deadline:
+                                            @(job.Deadline?.ToString("dd MMM yyyy") ?? "N/A")
+
+                                        </div>
+
+                                    </div>
+
+                                    @if (job.IsActive)
+                                    {
+                                        <span class="badge-status bg-success text-white">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status bg-secondary text-white">
+                                            Closed
+                                        </span>
+                                    }
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(job.Location))
+                                {
+                                    <div class="text-muted small">
+
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        @job.Location
+
+                                    </div>
+                                }
+
+                                @if (job.Skills != null && job.Skills.Any())
+                                {
+                                    <div class="d-flex flex-wrap gap-2 mt-3">
+
+                                        @foreach (var skill in job.Skills.Take(4))
+                                        {
+                                            <span class="badge bg-light text-dark border">
+                                                @skill
+                                            </span>
+                                        }
+
+                                        @if (job.Skills.Count > 4)
+                                        {
+                                            <span class="badge bg-light text-dark border">
+                                                +@(job.Skills.Count - 4)
+                                            </span>
+                                        }
+
+                                    </div>
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="mt-4 text-center">
+
+                        <a asp-controller="Employer"
+                           asp-action="Jobs"
+                           class="text-decoration-none fw-500 text-primary">
+
+                            View All Jobs
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+
+                        <img src="/image/empty-state.svg"
+                             alt="No jobs"
+                             style="height:100px;opacity:.5"
+                             class="mb-3"
+                             onerror="this.style.display='none'" />
+
+                        <h6 class="fw-semibold">
+                            No jobs posted yet
+                        </h6>
+
+                        <p class="text-muted mb-3">
+                            Start hiring by posting your first job.
+                        </p>
+
+                        <a asp-controller="Employer"
+                           asp-action="CreateJob"
+                           class="btn btn-primary">
+
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Post Your First Job
+
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+        <!-- Latest Applications -->
+        <div class="col-lg-6">
+
+            <div class="section-card">
+
+                <div class="section-title">
+                    <i class="bi bi-people-fill text-success"></i>
+                    Latest Applications
+                </div>
+
+                @if (Model.RecentApplications != null && Model.RecentApplications.Any())
+                {
+                    <div class="list-wrapper">
+
+                        @foreach (var app in Model.RecentApplications)
+                        {
+                            <div class="app-item">
+
+                                <div class="d-flex justify-content-between align-items-start">
+
+                                    <div>
+
+                                        <a asp-controller="Employer"
+                                           asp-action="ApplicationDetail"
+                                           asp-route-id="@app.Id"
+                                           class="text-decoration-none fw-bold text-dark">
+
+                                            @app.CandidateName
+
+                                        </a>
+
+                                        <div class="text-muted small mt-1">
+
+                                            <i class="bi bi-briefcase me-1"></i>
+                                            Applied for
+                                            <strong>@app.JobTitle</strong>
+
+                                        </div>
+
+                                        <div class="text-muted small mt-1">
+
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            @app.AppliedAt.ToString("dd MMM yyyy HH:mm")
+
+                                        </div>
+
+                                    </div>
+
+                                    <div>
+
+                                        @if (app.Status == ApplicationStatus.PENDING)
+                                        {
+                                            <span class="badge-status bg-warning text-dark">
+                                                Pending
+                                            </span>
+                                        }
+                                        else if (app.Status == ApplicationStatus.ACCEPTED)
+                                        {
+                                            <span class="badge-status bg-success text-white">
+                                                Accepted
+                                            </span>
+                                        }
+                                        else if (app.Status == ApplicationStatus.REJECTED)
+                                        {
+                                            <span class="badge-status bg-danger text-white">
+                                                Rejected
+                                            </span>
+                                        }
+                                        else if (app.Status == ApplicationStatus.CANCELLED)
+                                        {
+                                            <span class="badge-status bg-secondary text-white">
+                                                Cancelled
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <div class="mt-4 text-center">
+
+                        <a asp-controller="Employer"
+                           asp-action="Applications"
+                           class="text-decoration-none fw-500 text-primary">
+
+                            View All Applications
+                            <i class="bi bi-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+
+                        <img src="/image/empty-state.svg"
+                             alt="No applications"
+                             style="height:100px;opacity:.5"
+                             class="mb-3"
+                             onerror="this.style.display='none'" />
+
+                        <h6 class="fw-semibold">
+                            No applications yet
+                        </h6>
+
+                        <p class="text-muted mb-0">
+                            Applications from candidates will appear here once they apply.
+                        </p>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

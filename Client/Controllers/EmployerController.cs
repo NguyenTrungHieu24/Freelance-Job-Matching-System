@@ -14,7 +14,19 @@ public class EmployerController : BaseController
     }
 
     [HttpGet("dashboard")]
-    public IActionResult Dashboard() => View();
+    public async Task<IActionResult> Dashboard()
+    {
+        try
+        {
+            var data = await GetAsync<EmployerDashboard>("api/employer/dashboard");
+            return View(data);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Cannot load dashboard: " + ex.Message;
+            return View(new EmployerDashboard());
+        }
+    }
 
     [HttpGet("personal-info")]
     public async Task<IActionResult> PersonalInfo()
@@ -141,4 +153,57 @@ public class EmployerController : BaseController
     }
 
 
+    [HttpGet("jobs/create")]
+    public async Task<IActionResult> CreateJob()
+    {
+        try
+        {
+            var vm = new CreateJobViewModel
+            {
+                Deadline = DateTime.Today.AddDays(7),
+                Categories = await GetAsync<List<CategoryDTO>>("api/categories"),
+                Skills = await GetAsync<List<SkillDTO>>("api/skills/all")
+            };
+
+            return View(vm);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(MyJobs));
+        }
+    }
+
+    [HttpPost("jobs/create")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateJob(CreateJobViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+
+            return View(model);
+        }
+
+        await PostAsync<CreateJobDto, JobDTO>("api/jobs", model);
+
+        return RedirectToAction(nameof(MyJobs));
+    }
+
+    [HttpGet("jobs")]
+    public async Task<IActionResult> MyJobs()
+    {
+        try
+        {
+            var jobs = await GetAsync<List<JobDTO>>("api/jobs/my");
+
+            return View(jobs);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return View(new List<JobDTO>());
+        }
+    }
 }
