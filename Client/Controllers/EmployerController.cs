@@ -82,21 +82,21 @@ public class EmployerController : BaseController
             }
             var dto = new UpdateEmployerProfileDto
             {
-                FullName = model.Employer.FullName ,
+                FullName = model.Employer.FullName,
                 CompanyName = model.Employer.CompanyName,
                 Description = model.Employer.Description,
                 Email = model.Employer.Email,
                 Phone = model.Employer.Phone,
                 Address = model.Employer.Address,
             };
-                
+
             var success = await PutAsync("api/employer/personal-info", dto);
             if (success)
             {
                 TempData["Success"] = "Update personal settings successfully";
                 return RedirectToAction("PersonalInfo", "Employer");
             }
-                
+
             TempData["Error"] = "Error updating settings";
             return RedirectToAction("PersonalInfo", "Employer");
         }
@@ -104,6 +104,60 @@ public class EmployerController : BaseController
         {
             TempData["Error"] = ex.Message;
             return RedirectToAction("PersonalInfo", "Employer");
+        }
+    }
+
+    [HttpGet("jobs/create")]
+    public async Task<IActionResult> CreateJob()
+    {
+        try
+        {
+            var vm = new CreateJobViewModel
+            {
+                Deadline = DateTime.Today.AddDays(7),
+                Categories = await GetAsync<List<CategoryDTO>>("api/categories"),
+                Skills = await GetAsync<List<SkillDTO>>("api/skills/all")
+            };
+
+            return View(vm);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return RedirectToAction(nameof(MyJobs));
+        }
+    }
+
+    [HttpPost("jobs/create")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateJob(CreateJobViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+
+            return View(model);
+        }
+
+        await PostAsync<CreateJobDto, JobDTO>("api/jobs", model);
+
+        return RedirectToAction(nameof(MyJobs));
+    }
+
+    [HttpGet("jobs")]
+    public async Task<IActionResult> MyJobs()
+    {
+        try
+        {
+            var jobs = await GetAsync<List<JobDTO>>("api/jobs/my");
+
+            return View(jobs);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = ex.Message;
+            return View(new List<JobDTO>());
         }
     }
 }
