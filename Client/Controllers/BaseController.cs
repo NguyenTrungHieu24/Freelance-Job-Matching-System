@@ -73,7 +73,6 @@ namespace Client.Controllers
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PutAsync(endpoint, content);
-
             return response.IsSuccessStatusCode;
         }
 

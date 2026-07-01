@@ -145,5 +145,46 @@ namespace Client.Controllers
 
             return queryParams;
         }
+
+        [HttpPost]
+        [Route("close")]
+        public async Task<IActionResult> CloseJob([FromQuery] int id)
+        {
+            try
+            {
+                var result = await PostAsync<string, ApiResult<bool>>($"api/jobs/close/{id}", null);
+
+                if (!result.Success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResult<bool>.Fail(ex.Message));
+            }
+        }
+
+
+        [HttpPost]
+        [Route("open")]
+        public async Task<IActionResult> OpenJob([FromQuery] int id)
+        {
+            try
+            {
+                var result = await PostAsync<string, ApiResult<bool>>($"api/jobs/open/{id}", null);
+
+                if (!result.Success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResult<bool>.Fail(ex.Message));
+            }
+        }
     }
 }

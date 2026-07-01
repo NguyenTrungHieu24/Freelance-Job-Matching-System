@@ -6,6 +6,7 @@ using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using BusinessObjects.Models;
+using LinqKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +44,21 @@ namespace API.Controllers
 
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
-                var tokens = filter.Keyword.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                var tokens = filter.Keyword
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                query = query.Where(x => tokens.Any(y => x.Title.Contains(y) || x.Description.Contains(y)));
+                var predicate = PredicateBuilder.New<Job>(false);
+
+                foreach (var t in tokens)
+                {
+                    var token = t;
+
+                    predicate = predicate.Or(x =>
+                        x.Title.Contains(token) ||
+                        x.Description.Contains(token));
+                }
+
+                query = query.Where(predicate);
             }
 
             if (filter.Status.HasValue)
@@ -165,34 +178,10 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("my")]
-        [Authorize(Roles = "EMPLOYER")]
-        public async Task<ActionResult<List<JobDTO>>> GetMyJobs()
-        {
-            var userId = _user.UserId;
-
-            var employer = await _context.EmployerProfiles
-                .FirstOrDefaultAsync(x => x.AccountId == userId);
-
-            if (employer == null)
-                return BadRequest("Employer profile not found.");
-
-            var jobs = await _context.Jobs
-                .Include(x => x.Category)
-                .Include(x => x.JobSkills)
-                    .ThenInclude(x => x.Skill)
-                .Include(x => x.Applications)
-                .Where(x => x.EmployerProfileId == employer.Id)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToListAsync();
-
-            return Ok(_mapper.Map<List<JobDTO>>(jobs));
-        }
-
         // GET: api/jobs/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<JobDto>> GetJob(int id)
+        public async Task<ActionResult<JobDTO>> GetJob(int id)
         {
             var job = await _context.Jobs
                 .Include(j => j.Category)
@@ -208,7 +197,7 @@ namespace API.Controllers
                 return NotFound(new { message = "Job not found" });
             }
 
-            var dto = _mapper.Map<JobDto>(job);
+            var dto = _mapper.Map<JobDTO>(job);
             return Ok(dto);
         }
 
@@ -350,11 +339,6 @@ namespace API.Controllers
                 return BadRequest(new { message = "Invalid CategoryId" });
             }
 
-            // Parse and validate Status
-            if (!Enum.TryParse<JobStatus>(dto.Status.Trim(), true, out var newStatus) || newStatus == JobStatus.DELETED)
-            {
-                return BadRequest(new { message = "Invalid job status value" });
-            }
 
             // Update Job fields
             job.Title = dto.Title.Trim();
@@ -362,28 +346,33 @@ namespace API.Controllers
             job.Budget = dto.Budget;
             job.CategoryId = dto.CategoryId;
             job.Deadline = dto.Deadline;
-            job.Status = newStatus;
 
             // Update Skills
-            var existingSkills = _context.JobSkills.Where(js => js.JobId == job.Id);
-            _context.JobSkills.RemoveRange(existingSkills);
+            var currentSkills = await _context.JobSkills
+                                            .Where(x => x.JobId == job.Id)
+                                            .Select(x => x.SkillId)
+                                            .ToListAsync();
 
-            if (dto.Skills != null && dto.Skills.Any())
+            var newSkills = dto.Skills.Distinct().ToList();
+
+            var toRemove = currentSkills.Except(newSkills);
+            var toAdd = newSkills.Except(currentSkills);
+
+            // remove
+            var removeEntities = await _context.JobSkills
+                .Where(x => x.JobId == job.Id && toRemove.Contains(x.SkillId))
+                .ToListAsync();
+
+            _context.JobSkills.RemoveRange(removeEntities);
+
+            // add
+            foreach (var skillId in toAdd)
             {
-                // Filter out non-existent skills
-                var validSkillIds = await _context.Skills
-                    .Where(s => dto.Skills.Contains(s.Id))
-                    .Select(s => s.Id)
-                    .ToListAsync();
-
-                foreach (var skillId in validSkillIds)
+                _context.JobSkills.Add(new JobSkill
                 {
-                    _context.JobSkills.Add(new JobSkill
-                    {
-                        JobId = job.Id,
-                        SkillId = skillId
-                    });
-                }
+                    JobId = job.Id,
+                    SkillId = skillId
+                });
             }
 
             await _context.SaveChangesAsync();
@@ -440,5 +429,56 @@ namespace API.Controllers
             }
         }
 
+
+        [HttpPost("close/{id}")]
+        public async Task<IActionResult> Close(int id)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.EmployerProfile)
+                    .ThenInclude(e => e.Account)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.EmployerProfile.AccountId != _user.UserId && _user.Role.ToLower() != "admin")
+            {
+                return Ok(ApiResult<bool>.Fail("Unauthorized"));
+            }
+
+            job.Status = JobStatus.CLOSED;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+        }
+
+
+        [HttpPost("open/{id}")]
+        public async Task<IActionResult> Open(int id)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.EmployerProfile)
+                    .ThenInclude(e => e.Account)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.EmployerProfile.AccountId != _user.UserId && _user.Role.ToLower() != "admin")
+            {
+                return Ok(ApiResult<bool>.Fail("Unauthorized"));
+            }
+
+            job.Status = JobStatus.ACTIVE;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+        }
     }
 }

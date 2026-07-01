@@ -1,0 +1,160 @@
+﻿@model Client.Models.Jobs.JobDetailViewModel
+
+@{
+    ViewBag.Title = "Job Details";
+    Layout = "_Layout";
+}
+
+@{
+    ViewBag.Title = "Job Details";
+    Layout = "_Layout";
+}
+
+<div class="container py-4" style="max-width: 1100px;">
+
+    <!-- HEADER -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-2">@Model.Title</h2>
+
+        <div class="text-muted small d-flex gap-3 flex-wrap">
+
+            <span>
+                <i class="fa fa-building me-1"></i>
+                @Model.EmployerName
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-folder me-1"></i>
+                @Model.CategoryName
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-users me-1"></i>
+                @Model.ApplicationsCount applicants
+            </span>
+
+            <span>•</span>
+
+            <span>
+                <i class="fa fa-circle me-1"></i>
+                @Model.Status
+            </span>
+
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-lg-8">
+
+            <!-- DESCRIPTION -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">Job Description</h5>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div style="line-height:1.7;">
+                            @Html.Raw(Model.Description)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">
+                            No description provided.
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <!-- SKILLS -->
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">Required Skills</h5>
+
+                    @if (Model.Skills.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var skill in Model.Skills)
+                            {
+                                <span class="badge bg-light text-dark border">
+                                    @skill
+                                </span>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">No skills specified.</div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="col-lg-4">
+
+            <!-- JOB OVERVIEW -->
+            <div class="card border-0 shadow-sm mb-3 sticky-top" style="top:20px;">
+                <div class="card-body p-4">
+
+                    <h5 class="fw-semibold mb-3">Job Overview</h5>
+
+                    <!-- Budget -->
+                    <div class="mb-3">
+                        <div class="text-muted small">Budget</div>
+                        <div class="fw-bold text-success fs-5">
+                            $@Model.Budget
+                        </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="mb-3">
+                        <div class="text-muted small">Deadline</div>
+                        <div class="fw-semibold">
+                            @(Model.Deadline?.ToString("dd MMM yyyy") ?? "No deadline")
+                        </div>
+                    </div>
+
+                    <!-- Created -->
+                    <div class="mb-3">
+                        <div class="text-muted small">Posted</div>
+                        <div class="fw-semibold">
+                            @Model.CreatedAt.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- ACTIONS -->
+                    <div class="d-grid gap-2">
+
+                        <button class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#applyModal">
+
+                            Apply Now
+                        </button>
+
+                        <button class="btn btn-outline-secondary">
+                            Save Job
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

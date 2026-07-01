@@ -1,6 +1,6 @@
-﻿@using BusinessObjects.DTOs
-@using BusinessObjects.Enums
-@model List<JobDTO>
+﻿@using BusinessObjects.Enums
+@using Client.Models.Jobs
+@model ListJobsModel
 
 @{
     ViewBag.Title = "My Jobs";
@@ -31,8 +31,93 @@
         </a>
 
     </div>
+    <div class="d-flex justify-content-between">
+        <div class="w-100">
+            <form method="get" class="card p-3 mb-4 shadow-sm">
+                <div class="row g-3">
 
-    @if (!Model.Any())
+                    <div class="col-md-3">
+                        <input asp-for="Filter.Keyword"
+                               class="form-control"
+                               placeholder="Search Job title..." />
+                    </div>
+
+                    <div class="col-md-3">
+                        <input asp-for="Filter.EmployerKeyword"
+                               class="form-control"
+                               placeholder="Search Employer..." />
+                    </div>
+
+                    <div class="col-md-2">
+                        <select asp-for="Filter.Status"
+                                class="form-select">
+                            <option value="">All Status</option>
+
+                            @foreach (JobStatus status in Enum.GetValues(typeof(JobStatus)))
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select asp-for="Filter.SkillIds"
+                                asp-items="ViewBag.Skills"
+                                class="form-select js-select-skills" multiple="true">
+                            <option value="">All Skills</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <input asp-for="Filter.MinBudget"
+                               type="number"
+                               class="form-control"
+                               placeholder="Min Budget" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <input asp-for="Filter.MaxBudget"
+                               type="number"
+                               class="form-control"
+                               placeholder="Max Budget" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <input asp-for="Filter.CreatedFrom"
+                               type="date"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <input asp-for="Filter.CreatedTo"
+                               type="date"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-check">
+                            <select asp-for="Filter.Temperature" class="form-select">
+                                <option value="">All temperature</option>
+
+                                @foreach (JobTemperature item in Enum.GetValues(typeof(JobTemperature)))
+                                {
+                                    <option value="@item">@(item) Jobs</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-1 d-grid">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Jobs.Items.Any())
     {
         <div class="card">
 
@@ -61,7 +146,8 @@
     {
         <div class="card">
 
-            <div class="table-responsive">
+            <div>
+                @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
 
                 <table class="table table-hover align-middle mb-0">
 
@@ -81,7 +167,7 @@
 
                     <tbody>
 
-                        @foreach (var job in Model)
+                        @foreach (var job in Model.Jobs.Items)
                         {
                             <tr>
 
@@ -124,13 +210,37 @@
 
                                 <td>
 
-                                    <a asp-action="JobDetail"
-                                       asp-route-id="@job.Id"
-                                       class="btn btn-sm btn-outline-primary">
+                                    @{
+                                        var is_open = job.Status == JobStatus.ACTIVE;
+                                        var actions = new List<ActionItemModel> {
+                                                        new() {
+                                                        Title = "View details",
+                                                        Icon = "bi-eye",
+                                                        Url = Url.Action("JobDetails", new { id = job.Id })
+                                                        },
+                                                        new() {
+                                                        Title = "Edit",
+                                                        Icon = "bi-pencil",
+                                                        Url = Url.Action("EditJob", new { id = job.Id })
+                                                        },
+                                                        new() {
+                                                        Title = is_open ? "Close job" : "Open job",
+                                                        Icon = is_open ? "bi-lock" : "bi-unlock",
+                                                        AjaxUrl = Url.Action(is_open ? "CloseJob" : "OpenJob", "Jobs", new { id = job.Id }),
+                                                        ConfirmMessage = (is_open ? "Close" : "Open") + " this job?",
+                                                        ExtraMessage = "Frelancer "+ (is_open ? "can" : "can't") + " see this jobs!",
+                                                        Handle = "location.reload();"
+                                                        },
+                                                        new() {
+                                                        Title = "Delete",
+                                                        Icon = "bi-trash",
+                                                        CssClass = "text-danger",
+                                                        OnClick = $"deleteItem({job.Id})"
+                                                        }
+                                                        };
+                                    }
 
-                                        View
-
-                                    </a>
+                                    @await Component.InvokeAsync("ActionDropdown", new { actions = actions })
 
                                 </td>
 
@@ -147,3 +257,15 @@
     }
 
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            $(".js-select-skills").select2({
+                placeholder: 'Select skills',
+                multiple: true,
+                theme: "classic"
+            });
+        });
+    </script>
+}
