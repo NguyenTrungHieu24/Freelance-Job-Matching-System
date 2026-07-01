@@ -1,4 +1,4 @@
-using API.Helper;
+﻿using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
@@ -8,7 +8,7 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using BusinessObjects.Enums;
 namespace API.Controllers;
 
 [Route("api/employer")]
@@ -114,6 +114,81 @@ public class EmployerController : BaseController
         await _context.SaveChangesAsync();
         return Ok(new { message = "Logo upload successfully" });
     }
+
+
+
+
+    // GET: api/employer/applications
+    [HttpGet("applications")]
+    public async Task<IActionResult> GetApplications()
+    {
+        var userId = _user.UserId;
+
+        // Lay thong tin Profile Employer cua User hien tai
+        var employer = await _context.EmployerProfiles
+            .FirstOrDefaultAsync(e => e.AccountId == userId);
+
+        if (employer == null)
+            return BadRequest(new { message = "Employer profile not found." });
+
+        // Truy van tat ca application gui den Job cua Employer nay
+        var applications = await _context.Applications
+            .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
+                .ThenInclude(f => f.Account)
+            .Where(a => a.Job.EmployerProfileId == employer.Id)
+            .OrderByDescending(a => a.AppliedAt)
+            .Select(a => new EmployerApplicationDto
+            {
+                Id = a.Id,
+                JobId = a.JobId,
+                JobTitle = a.Job.Title,
+                FreelancerProfileId = a.FreelancerProfileId,
+                FreelancerName = a.FreelancerProfile.Account.FullName,
+                CoverLetter = a.CoverLetter,
+                Status = a.Status.ToString(),
+                AppliedAt = a.AppliedAt
+            })
+            .ToListAsync();
+
+        return Ok(applications);
+    }
+
+    // PUT: api/employer/applications/{id}/status
+    [HttpPut("applications/{id}/status")]
+    public async Task<IActionResult> UpdateApplicationStatus(int id, [FromQuery] ApplicationStatus status)
+    {
+        var userId = _user.UserId;
+
+        // Kiem tra trang thai Duyet (ACCEPTED hoac REJECTED)
+        if (status != ApplicationStatus.ACCEPTED && status != ApplicationStatus.REJECTED)
+        {
+            return BadRequest(new { message = "Trạng thái duyệt không hợp lệ." });
+        }
+
+        // Tim Application va Employer
+        var application = await _context.Applications
+            .Include(a => a.Job)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (application == null)
+            return NotFound(new { message = "Đơn ứng tuyển không tồn tại." });
+
+        // Xac thuc Job co phai cua Employer dang login khong
+        var employer = await _context.EmployerProfiles.FirstOrDefaultAsync(e => e.AccountId == userId);
+        if (employer == null || application.Job.EmployerProfileId != employer.Id)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền duyệt đơn này." });
+        }
+
+        // Update trang thai
+        application.Status = status;
+        _context.Applications.Update(application);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {status}" });
+    }
+
 
     [HttpGet("dashboard")]
     public async Task<IActionResult> GetDashboard()

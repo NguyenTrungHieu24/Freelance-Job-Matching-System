@@ -1,4 +1,4 @@
-using BusinessObjects.DTOs;
+﻿using BusinessObjects.DTOs;
 using Client.Models.Employer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -106,6 +106,52 @@ public class EmployerController : BaseController
             return RedirectToAction("PersonalInfo", "Employer");
         }
     }
+
+
+    // GET: /employer/applications
+    [HttpGet("applications")]
+    public async Task<IActionResult> Applications()
+    {
+        try
+        {
+            // Goi API lay ds don Apply
+            var list = await GetAsync<List<EmployerApplicationDto>>("api/employer/applications");
+            return View(list ?? new List<EmployerApplicationDto>());
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Không thể tải danh sách đơn ứng tuyển: " + ex.Message;
+            return View(new List<EmployerApplicationDto>());
+        }
+    }
+
+    // POST: /employer/applications/approve
+    [HttpPost("applications/approve")]
+    public async Task<IActionResult> Approve(int id, string status)
+    {
+        try
+        {
+            // Goi api cap nhat trang thai ung tuyen
+            // status truyen len: ACCEPTED = 2 hoac REJECTED = 3
+            var url = $"api/employer/applications/{id}/status?status={status}";
+            var success = await PutAsync<object>(url, new { });
+
+            if (success)
+            {
+                TempData["Success"] = status == "2" ? "Đã duyệt nhận ứng viên thành công!" : "Đã từ chối đơn ứng tuyển.";
+            }
+            else
+            {
+                TempData["Error"] = "Cập nhật trạng thái đơn thất bại.";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
+    }
+
 
     [HttpGet("jobs/create")]
     public async Task<IActionResult> CreateJob()
