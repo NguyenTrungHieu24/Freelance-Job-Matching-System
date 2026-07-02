@@ -70,7 +70,12 @@
                             </div>
                         }
                         <div>
-                            <div class="fw-bold">@Model.Job.EmployerName</div>
+                            <div class="fw-bold">
+                                @Model.Job.EmployerName
+                                <a href="javascript:void(0)" class="text-danger ms-2 text-decoration-none" style="font-size: 0.85em;" onclick="openReportModal(@Model.Job.EmployerProfileId)" title="Report this Employer">
+                                    <i class="bi bi-flag-fill"></i> Report
+                                </a>
+                            </div>
                             <div class="text-muted small">@Model.Job.CompanyName</div>
                         </div>
                     </div>
@@ -115,6 +120,8 @@
         </div>
     </div>
 </div>
+
+<partial name="_ReportEmployerModal" />
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

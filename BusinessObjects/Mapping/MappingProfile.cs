@@ -90,6 +90,14 @@ namespace BusinessObjects.Mapping
                     src.Job.EmployerProfile != null ? src.Job.EmployerProfile.CompanyName : ""))
                 .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => 
                     src.Job.EmployerProfile != null ? src.Job.EmployerProfile.Logo : ""));
+            CreateMap<Report, ReportDto>()
+                .ForMember(dest => dest.ReporterName, opt => opt.MapFrom(src => 
+                    src.Reporter != null ? src.Reporter.FullName : ""))
+                .ForMember(dest => dest.ReportedUserName, opt => opt.MapFrom(src => 
+                    src.ReportedUser != null ? src.ReportedUser.FullName : ""))
+                .ForMember(dest => dest.ResolverName, opt => opt.MapFrom(src => 
+                    src.Resolver != null ? src.Resolver.FullName : ""));
+
         }
     }
 }

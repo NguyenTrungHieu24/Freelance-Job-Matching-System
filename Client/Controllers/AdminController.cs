@@ -1,5 +1,6 @@
-﻿using BusinessObjects.Common;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
+using BusinessObjects.Enums;
 using Client.Models.Admin;
 using Client.Models.Skills;
 using Microsoft.AspNetCore.Mvc;
@@ -80,6 +81,54 @@ namespace Client.Controllers
             var data = await GetAsync<List<RecentJobItem>>("api/admin/dashboard/recent-jobs");
 
             return Json(data);
+        }
+
+        [HttpGet("report-list")]
+        public async Task<IActionResult> ReportList([FromQuery]ReportStatus? status, [FromQuery] int page = 1)
+        {
+            try
+            {
+                int pageSize = 10;
+                var queryParams = new List<KeyValuePair<string, string>>();
+                if (status.HasValue)
+                {
+                    queryParams.Add(new("status", ((int)status.Value).ToString()));
+                }
+                queryParams.Add(new("page", page.ToString()));
+                queryParams.Add(new("pageSize", pageSize.ToString()));
+
+                var url = QueryHelpers.AddQueryString("api/admin/reports", queryParams);
+                var data = await GetAsync<PaginateResult<ReportDto>>(url);
+                ViewData["StatusFilter"] = status;
+                return View(data ?? new PaginateResult<ReportDto>());
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = "Cannot load report list: " + e.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+        [HttpPost("reports/{id}/status")]
+        public async Task<IActionResult> UpdateReportStatus(int id, int newStatus, string returnUrl)
+        {
+            try
+            {
+                var isSuccess = await PutAsync($"api/admin/reports/{id}/status", newStatus);
+                if (isSuccess)
+                {
+                    TempData["Success"] = "Report status updated successfully.";
+                }
+                else
+                {
+                    TempData["Error"] = "Failed to update report status.";
+                }
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = "An error occurred: " + e.Message;
+            }
+
+            return Redirect(returnUrl ?? "/admin/report-list");
         }
     }
 }

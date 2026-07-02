@@ -1,0 +1,159 @@
+@using BusinessObjects.Enums
+@using BusinessObjects.DTOs
+@model BusinessObjects.Common.PaginateResult<ReportDto>
+@{
+    ViewData["Title"] = "Manage Reports";
+    Layout = "_Layout"; 
+    var currentStatus = ViewData["StatusFilter"] as ReportStatus?;
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Manage Reports</h2>
+            <p class="text-muted mb-0">
+                View and resolve user reports
+            </p>
+        </div>
+        
+        <div class="btn-group" role="group">
+            <a href="/admin/report-list" class="btn btn-sm @(currentStatus == null ? "btn-primary" : "btn-outline-primary")">All</a>
+            <a href="/admin/report-list?status=@((int)ReportStatus.PENDING)" class="btn btn-sm @(currentStatus == ReportStatus.PENDING ? "btn-primary" : "btn-outline-primary")">Pending</a>
+            <a href="/admin/report-list?status=@((int)ReportStatus.REVIEWING)" class="btn btn-sm @(currentStatus == ReportStatus.REVIEWING ? "btn-primary" : "btn-outline-primary")">Reviewing</a>
+            <a href="/admin/report-list?status=@((int)ReportStatus.RESOLVED)" class="btn btn-sm @(currentStatus == ReportStatus.RESOLVED ? "btn-primary" : "btn-outline-primary")">Resolved</a>
+            <a href="/admin/report-list?status=@((int)ReportStatus.REJECTED)" class="btn btn-sm @(currentStatus == ReportStatus.REJECTED ? "btn-primary" : "btn-outline-primary")">Rejected</a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-check-circle mr-2"></i> @TempData["Success"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["Error"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+    <div class="mt-4">
+        @if (Model != null && Model.Items != null && Model.Items.Any())
+        {
+            foreach (var report in Model.Items)
+            {
+                <div class="card mb-3 border-0 shadow-sm" style="border-radius: 8px; border: 1px solid #f0f0f0 !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap">
+                            <div class="d-flex gap-3 align-items-center">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border: 1px solid #eee;">
+                                    <i class="fas fa-flag text-danger"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-1">
+                                        <span class="text-decoration-none fw-bold" style="color: #0F172A;">Reported User: @report.ReportedUserName</span>
+                                    </h5>
+                                    <p class="text-muted mb-0 small">
+                                        <i class="fas fa-user mr-1"></i> Reporter: @report.ReporterName • Created on @report.CreatedOn.ToString("dd/MM/yyyy HH:mm")
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-right mt-2 mt-sm-0">
+                                @if (report.Status == ReportStatus.PENDING)
+                                {
+                                    <span class="badge badge-warning px-3 py-2" style="font-size: 12px; border-radius: 20px;">Pending</span>
+                                }
+                                else if (report.Status == ReportStatus.REVIEWING)
+                                {
+                                    <span class="badge badge-info px-3 py-2" style="font-size: 12px; border-radius: 20px;">Reviewing</span>
+                                }
+                                else if (report.Status == ReportStatus.RESOLVED)
+                                {
+                                    <span class="badge badge-success px-3 py-2" style="font-size: 12px; border-radius: 20px;">Resolved</span>
+                                }
+                                else if (report.Status == ReportStatus.REJECTED)
+                                {
+                                    <span class="badge badge-danger px-3 py-2" style="font-size: 12px; border-radius: 20px;">Rejected</span>
+                                }
+                            </div>
+                        </div>
+                        <hr class="my-3" style="border-color: #f1f5f9;">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <div class="mb-2 mb-sm-0">
+                                <strong>Reason:</strong> @report.Reason
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="modal" data-target="#reportModal-@report.Id">
+                                    <i class="fas fa-eye mr-1"></i> View Details & Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal for this report -->
+                <div class="modal fade" id="reportModal-@report.Id" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content border-0 shadow-lg">
+                            <div class="modal-header bg-light">
+                                <h5 class="modal-title fw-bold">Report Details #@report.Id</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <p><strong>Reporter:</strong> @report.ReporterName</p>
+                                <p><strong>Reported User:</strong> @report.ReportedUserName</p>
+                                <p><strong>Reason:</strong> @report.Reason</p>
+                                <p><strong>Description:</strong> @(string.IsNullOrEmpty(report.Description) ? "N/A" : report.Description)</p>
+                                <p><strong>Created At:</strong> @report.CreatedOn.ToString("dd/MM/yyyy HH:mm")</p>
+                                @if (report.ResolvedAt.HasValue)
+                                {
+                                    <p><strong>Resolved At:</strong> @report.ResolvedAt.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                                    <p><strong>Resolved By:</strong> @(report.ResolverName ?? "N/A")</p>
+                                }
+                                
+                                <hr />
+                                <form action="/admin/reports/@report.Id/status" method="post">
+                                    <div class="form-group mb-3">
+                                        <label class="font-weight-bold">Update Status:</label>
+                                        <select class="form-control" name="newStatus">
+                                            <option value="1" selected="@(report.Status == ReportStatus.PENDING)">Pending</option>
+                                            <option value="2" selected="@(report.Status == ReportStatus.REVIEWING)">Reviewing</option>
+                                            <option value="3" selected="@(report.Status == ReportStatus.RESOLVED)">Resolved</option>
+                                            <option value="4" selected="@(report.Status == ReportStatus.REJECTED)">Rejected</option>
+                                        </select>
+                                    </div>
+                                    <div class="text-right">
+                                        <input type="hidden" name="returnUrl" value="/admin/report-list@(currentStatus.HasValue ? "?status=" + (int)currentStatus : "")" />
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        <button type="button" class="btn btn-secondary ml-2" data-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <div class="mt-4">
+                @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model)
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info py-4 text-center">
+                <i class="fas fa-info-circle fa-2x d-block mb-2"></i>
+                There are no reports matching the selected status.
+            </div>
+        }
+    </div>
+</div>

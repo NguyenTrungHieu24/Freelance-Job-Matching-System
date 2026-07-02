@@ -20,21 +20,17 @@
                 <div class="progress position-absolute w-100" style="top: 15px; height: 3px; z-index: 1;">
                     <div class="progress-bar bg-success" role="progressbar" style="width: @((Model.ProgressStage - 1) * 33)%"></div>
                 </div>
-
+                
                 <div class="position-relative" style="z-index: 2;">
                     <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 1 ? "btn-success" : "btn-secondary")">1</div>
-                    <div class="mt-1"><small>Applied</small></div>
-                </div>
-                <div class="position-relative" style="z-index: 2;">
-                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 2 ? "btn-success" : "btn-secondary")">2</div>
                     <div class="mt-1"><small>In Progress</small></div>
                 </div>
                 <div class="position-relative" style="z-index: 2;">
-                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 3 ? "btn-success" : "btn-secondary")">3</div>
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 2 ? "btn-success" : "btn-secondary")">2</div>
                     <div class="mt-1"><small>Awaiting Payment</small></div>
                 </div>
                 <div class="position-relative" style="z-index: 2;">
-                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 4 ? "btn-success" : "btn-secondary")">4</div>
+                    <div class="btn btn-sm rounded-circle @(Model.ProgressStage >= 3 ? "btn-success" : "btn-secondary")">3</div>
                     <div class="mt-1"><small>Review</small></div>
                 </div>
             </div>
@@ -45,11 +41,11 @@
         }
         
         <div class="mt-4 text-end">
-            <a href="/jobs/details/@Model.JobId" class="btn btn-outline-primary btn-sm">View Job Details</a>
+            <a href="/freelancer/jobs/@Model.JobId" class="btn btn-outline-primary btn-sm">View Job Details</a>
             
             @if (Model.ProgressStage == 3)
             {
-                <span class="text-warning ms-3">⏳ Waiting for Employer's payment...</span>
+                <span class="text-warning ms-3">Waiting for Employer's payment...</span>
             }
             @if (Model.ProgressStage == 4 && !Model.IsReviewed)
             {
