@@ -66,6 +66,7 @@ public class FreelancerJobDTO
     public string EmployerLogo { get; set; } = string.Empty;
     public int PostedJobCount { get; set; } = 0;
     public bool IsApplied { get; set; } = false;
+    public JobStatus JobStatus { get; set; } 
     public ApplicationStatus? ApplyStatus { get; set; }
     public int ApplicationsCount { get; set; } = 0;
 }

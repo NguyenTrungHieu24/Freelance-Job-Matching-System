@@ -296,6 +296,7 @@ namespace API.Controllers
                     EmployerName = e.EmployerProfile.Account.FullName,
                     EmployerLogo = e.EmployerProfile.Logo,
                     CompanyName = e.EmployerProfile.CompanyName,
+                    JobStatus = e.Status,
                     ApplicationsCount = e.Applications.Where(a => a.JobId == e.Id).Count(),
                 })
                 .ToListAsync();
@@ -346,6 +347,7 @@ namespace API.Controllers
                 EmployerLogo = job.EmployerProfile?.Logo ?? "",
                 PostedJobCount = employerPostedJobsCount,
                 IsApplied = application != null,
+                JobStatus = job.Status,
                 ApplyStatus = application?.Status,
                 ApplicationsCount = job.Applications.Count
             };

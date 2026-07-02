@@ -125,7 +125,7 @@
                     <div class="job-card">
                         <div class="job-card-header">
                             <div class="job-info">
-                                <h2 class="job-title">@job.Title</h2>
+                                <a href="@Url.Action("JobDetail", "Freelancer", new { id = job.Id })" class="job-title">@job.Title</a>
                                 <p class="job-desc">@(job.Description?.Length > 150 ? job.Description.Substring(0, 150) + "..." : job.Description)</p>
                                 <div class="job-tags" style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
                                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
