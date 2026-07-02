@@ -1,0 +1,175 @@
+﻿@using Client.Models.Employer
+@model CreateJobViewModel
+
+@{
+    ViewBag.Title = "Post New Job";
+    Layout = "_Layout";
+}
+
+<div class="container py-4" style="max-width: 900px;">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1">
+            @(ViewBag.IsEdit == true ? "Edit Job" : "Post a New Job")
+        </h2>
+
+        <p class="text-muted mb-0">
+            @(ViewBag.IsEdit == true
+                        ? "Update job details to attract better candidates."
+                        : "Describe your job clearly to attract the right candidates.")
+        </p>
+    </div>
+
+    <form asp-action="@(ViewBag.IsEdit == true ? "EditJob" : "CreateJob")"
+          asp-route-id="@(ViewBag.JobId)"
+          method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- BASIC INFO -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-3">Basic Information</h5>
+
+                <!-- Title -->
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-medium"></label>
+                    <input asp-for="Title"
+                           class="form-control form-control-lg"
+                           placeholder="e.g. Senior ASP.NET Developer" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="row g-3">
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label asp-for="CategoryId" class="form-label fw-medium">Category</label>
+
+                        <select asp-for="CategoryId" class="form-select category-select">
+                            <option value="">Select category</option>
+                            @foreach (var item in Model.Categories)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Budget -->
+                    <div class="col-md-3">
+                        <label asp-for="Budget" class="form-label fw-medium"></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Budget" class="form-control" placeholder="1000 - 5000" />
+                        </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <div class="col-md-3">
+                        <label asp-for="Deadline" class="form-label fw-medium"></label>
+                        <input asp-for="Deadline" type="date" class="form-control" />
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-3">Job Description</h5>
+
+                <div class="mb-2 text-muted small">
+                    Describe responsibilities, requirements, and benefits clearly.
+                </div>
+
+                <textarea asp-for="Description"
+                          rows="8"
+                          class="form-control"
+                          placeholder="Write detailed job description..."></textarea>
+
+            </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+
+                <h5 class="fw-semibold mb-3">Required Skills</h5>
+
+                <select asp-for="SkillIds"
+                        multiple
+                        class="form-select skill-select">
+
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <option value="@skill.Id">@skill.Name</option>
+                    }
+
+                </select>
+
+                <div class="form-text mt-2">
+                    Select multiple skills that best match this job.
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTION -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+
+            <a asp-action="MyJobs" class="btn btn-light px-4">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn btn-primary px-5">
+
+                <i class="fa fa-rocket me-2"></i>
+
+                @(ViewBag.IsEdit == true ? "Update Job" : "Publish Job")
+
+            </button>
+
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $('.category-select').val('@Model.CategoryId').select2({
+            width: '100%',
+            placeholder: 'Select category'
+        });
+        
+        $('.skill-select').val(@Html.Raw(Json.Serialize(Model.SkillIds))).trigger('change');
+
+        $('.skill-select').select2({
+            width: '100%',
+            placeholder: 'Select required skills'
+        });
+    </script>
+    <script src="https://cdn.tiny.cloud/1/j5lkh3arb6mc610jp6lveocbd31njtd87nnjnm0rhdtnrjr2/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script>
+        tinymce.init({
+                    selector: 'textarea[name="Description"]',
+                    height: 400,
+                    setup: function (editor) {
+                        editor.on('init', function () {
+                            editor.setContent(`@Html.Raw(Model.Description)`);
+                        });
+                    },
+                    menubar: false,
+                    plugins: [
+                        'lists link image table code help wordcount'
+                    ],
+                    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link table | code',
+                });
+    </script>
+}

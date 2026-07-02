@@ -21,6 +21,12 @@ namespace BusinessObjects.DTOs
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = null!;
         public List<SkillDTO> Skills { get; set; } = new();
+        public string? EmployerCompanyName { get; set; }
+        public string? EmployerDescription { get; set; }
+        public string? EmployerEmail { get; set; }
+        public string? EmployerPhone { get; set; }
+        public string? EmployerAddress { get; set; }
+        public string? EmployerLogo { get; set; }
     }
 
     public class CreateJobDto
@@ -59,9 +65,6 @@ namespace BusinessObjects.DTOs
         public int CategoryId { get; set; }
 
         public DateTime? Deadline { get; set; }
-
-        [Required(ErrorMessage = "Status is required")]
-        public string Status { get; set; } = null!;
 
         public List<int> Skills { get; set; } = new();
     }
@@ -104,6 +107,7 @@ namespace BusinessObjects.DTOs
         public int ApplicationsCount { get; set; } = 0;
 
         public List<string> Skills { get; set; } = [];
+        public List<ApplicationHistoryDto> Applications { get; set; } = [];
     }
 
     public class FilterJobDTO

@@ -135,31 +135,32 @@
 
                             <td>
                                 @{
-                                    var actions = new List<ActionItemModel> {
-                                                new() {
+                                    var actions =
+                                        new List<ActionItemModel> {
+                                            new() {
                                                 Title = "View details",
                                                 Icon = "bi-eye",
                                                 Url = Url.Action("Detail", new { id = item.Id })
-                                                },
-                                                new() {
+                                            },
+                                            new() {
                                                 Title = "Edit",
                                                 Icon = "bi-pencil",
                                                 Url = Url.Action("Edit", new { id = item.Id })
-                                                },
-                                                new() {
+                                            },
+                                            new() {
                                                 Title = item.Status == 1 ? "Deactivate" : "Active",
                                                 Icon = item.Status == 1 ? "bi-lock" : "bi-unlock",
-                                                AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "active", new { id = item.Id }),
+                                                AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "active", "Jobs", new { id = item.Id }),
                                                 ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Active") + " this user?",
                                                 ExtraMessage = "This user "+ (item.Status == 1 ? "can" : "can't") + " login to system!"
-                                                },
-                                                new() {
+                                            },
+                                            new() {
                                                 Title = "Delete",
                                                 Icon = "bi-trash",
                                                 CssClass = "text-danger",
                                                 OnClick = $"deleteItem({item.Id})"
-                                                }
-                                                };
+                                            }
+                                        };
                                 }
 
                                 @await Component.InvokeAsync("ActionDropdown", new { actions = actions })

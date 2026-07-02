@@ -36,16 +36,21 @@ namespace BusinessObjects.Mapping
                 .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => 
                     src.JobSkills != null && src.JobSkills.Any()
                         ? src.JobSkills.Select(js => js.Skill).ToList() 
-                        : new List<Skill>()));
-            CreateMap<Job, JobDto>()
-                .ForMember(
-                    dest => dest.EmployerName,
-                    opt => opt.MapFrom(src =>
-                        src.EmployerProfile.Account.FullName))
-                .ForMember(
-                    dest => dest.CategoryName,
-                    opt => opt.MapFrom(src =>
-                        src.Category.Name));
+                        : new List<Skill>()))
+                .ForMember(dest => dest.EmployerCompanyName, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null ? src.EmployerProfile.CompanyName : ""))
+                .ForMember(dest => dest.EmployerDescription, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null ? src.EmployerProfile.Description : ""))
+                .ForMember(dest => dest.EmployerEmail, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null && !string.IsNullOrEmpty(src.EmployerProfile.Email)
+                        ? src.EmployerProfile.Email 
+                        : (src.EmployerProfile != null && src.EmployerProfile.Account != null ? src.EmployerProfile.Account.Email : "")))
+                .ForMember(dest => dest.EmployerPhone, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null ? src.EmployerProfile.Phone : ""))
+                .ForMember(dest => dest.EmployerAddress, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null ? src.EmployerProfile.Address : ""))
+                .ForMember(dest => dest.EmployerLogo, opt => opt.MapFrom(src => 
+                    src.EmployerProfile != null ? src.EmployerProfile.Logo : ""));
 
             CreateMap<Job, JobDTO>()
                 .ForMember(
@@ -59,7 +64,7 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Applications.Count))
                 .ForMember(
                     d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Job.Title)));
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)));
 
             CreateMap<User, UserDto>()
                 .ForMember(

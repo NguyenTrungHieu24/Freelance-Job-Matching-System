@@ -1,7 +1,88 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<li class="nav-item">
+    <a class="nav-link text-white fw-bold" href="/employer/applications">
+        <i class="bi bi-file-earmark-person me-1"></i> Duyệt đơn ứng tuyển
+    </a>
+</li>
+﻿@await Html.PartialAsync("Nav/_Nav",
+new List<NavViewModel>
+{
+    new()
+    {
+        Controller = "Employer",
+        Action = "Dashboard",
+        Title = "Dashboard",
+        Icon = "fa-home"
+    },
 
+    new()
+    {
+        Title = "Jobs",
+        Icon = "fa-briefcase",
+        Children = new()
+        {
+            new()
+            {
+                Controller = "Employer",
+                Action = "CreateJob",
+                Title = "Post New Job"
+            },
+            new()
+            {
+                Controller = "Employer",
+                Action = "MyJobs",
+                Title = "My Jobs"
+            },
+            new()
+            {
+                Controller = "Employer",
+                Action = "Applications",
+                Title = "Applications"
+            }
+        }
+    },
 
+    new()
+    {
+        Controller = "Contracts",
+        Action = "Index",
+        Title = "Contracts",
+        Icon = "fa-file-signature"
+    },
+
+    new()
+    {
+        Title = "Analytics",
+        Icon = "fa-chart-line",
+        Children = new()
+        {
+            new()
+            {
+                Controller = "Statistics",
+                Action = "Revenue",
+                Title = "Revenue"
+            },
+            new()
+            {
+                Controller = "Statistics",
+                Action = "JobsOverview",
+                Title = "Job Performance"
+            }
+        }
+    },
+
+    new()
+    {
+        Controller = "Messages",
+        Action = "Index",
+        Title = "Messages",
+        Icon = "fa-envelope"
+    },
+
+    new()
+    {
+        Controller = "Employer",
+        Action = "Profile",
+        Title = "Company Profile",
+        Icon = "fa-building"
+    }
+})
