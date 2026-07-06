@@ -1,3 +1,4 @@
+@using BusinessObjects.Enums
 @model Client.Models.Freelancer.FreelancerJobDetailViewModel
 @{
     ViewData["Title"] = Model.Job.Title;
@@ -51,8 +52,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Right Column: Employer Info & Application Form -->
+        
         <div class="col-md-4">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -70,7 +70,12 @@
                             </div>
                         }
                         <div>
-                            <div class="fw-bold">@Model.Job.EmployerName</div>
+                            <div class="fw-bold">
+                                @Model.Job.EmployerName
+                                <a href="javascript:void(0)" class="text-danger ms-2 text-decoration-none" style="font-size: 0.85em;" onclick="openReportModal(@Model.Job.EmployerProfileId)" title="Report this Employer">
+                                    <i class="bi bi-flag-fill"></i> Report
+                                </a>
+                            </div>
                             <div class="text-muted small">@Model.Job.CompanyName</div>
                         </div>
                     </div>
@@ -87,6 +92,13 @@
                             <i class="bi bi-info-circle-fill me-2"></i>
                             You have already applied for this job. <br />
                             <strong>Status:</strong> @Model.Job.ApplyStatus.ToString()
+                        </div>
+                    }
+                    else if (Model.Job.JobStatus == JobStatus.CLOSED || Model.Job.JobStatus == JobStatus.DELETED)
+                    {
+                        <div class="alert alert-info text-center mt-3">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            This job has closed or deleted<br />
                         </div>
                     }
                     else
@@ -108,6 +120,8 @@
         </div>
     </div>
 </div>
+
+<partial name="Components/_ReportEmployerModal" />
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

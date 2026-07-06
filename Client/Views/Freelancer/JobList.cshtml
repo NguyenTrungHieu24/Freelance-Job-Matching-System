@@ -125,7 +125,7 @@
                     <div class="job-card">
                         <div class="job-card-header">
                             <div class="job-info">
-                                <h2 class="job-title">@job.Title</h2>
+                                <a href="@Url.Action("JobDetail", "Freelancer", new { id = job.Id })" class="job-title">@job.Title</a>
                                 <p class="job-desc">@(job.Description?.Length > 150 ? job.Description.Substring(0, 150) + "..." : job.Description)</p>
                                 <div class="job-tags" style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
                                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -164,7 +164,12 @@
                                      alt="Logo" class="employer-avatar" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" />
                                 <div class="employer-details">
                                     <span class="company-name" style="font-weight: 500; color: #111827;">Company: @job.CompanyName</span>
-                                    <span class="employer-name" style="font-size: 13px; color: #4b5563;">Posted by: @job.EmployerName</span>
+                                    <span class="employer-name" style="font-size: 13px; color: #4b5563;">
+                                        Posted by: @job.EmployerName
+                                        <a href="javascript:void(0)" class="text-danger ms-2 text-decoration-none" onclick="openReportModal(@job.EmployerProfileId)" title="Report this Employer">
+                                            <i class="bi bi-flag-fill"></i> Report
+                                        </a>
+                                    </span>
                                     <span class="applications" style="font-size: 13px;">Submitted applications: @job.ApplicationsCount</span>
                                 </div>
                             </div>
@@ -183,3 +188,5 @@
         </main>
     </div>
 </form>
+
+<partial name="Components/_ReportEmployerModal" />

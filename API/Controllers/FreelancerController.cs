@@ -213,6 +213,9 @@ namespace API.Controllers
         [HttpGet("jobs")]
         public async Task<IActionResult> GetJobs([FromQuery] FreelancerFilterJobDTO filter)
         {
+            var userId = _user.UserId;
+            var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
+
             var query = _context.Jobs
                 .Include(j => j.Category)
                 .Include(j => j.JobSkills).ThenInclude(s => s.Skill)
@@ -220,6 +223,11 @@ namespace API.Controllers
                 .Include(j => j.EmployerProfile).ThenInclude(e => e.Account)
                 .Where(j => j.Status != JobStatus.DELETED && j.Status == JobStatus.ACTIVE)
                 .AsQueryable();
+
+            if (profile != null)
+            {
+                query = query.Where(j => !j.Applications.Any(a => a.FreelancerProfileId == profile.Id));
+            }
             
             if (!string.IsNullOrWhiteSpace(filter.Keyword))
             {
@@ -296,6 +304,7 @@ namespace API.Controllers
                     EmployerName = e.EmployerProfile.Account.FullName,
                     EmployerLogo = e.EmployerProfile.Logo,
                     CompanyName = e.EmployerProfile.CompanyName,
+                    JobStatus = e.Status,
                     ApplicationsCount = e.Applications.Where(a => a.JobId == e.Id).Count(),
                 })
                 .ToListAsync();
@@ -346,6 +355,7 @@ namespace API.Controllers
                 EmployerLogo = job.EmployerProfile?.Logo ?? "",
                 PostedJobCount = employerPostedJobsCount,
                 IsApplied = application != null,
+                JobStatus = job.Status,
                 ApplyStatus = application?.Status,
                 ApplicationsCount = job.Applications.Count
             };
@@ -558,16 +568,14 @@ namespace API.Controllers
 
                 if (a.Status == ApplicationStatus.CANCELLED || a.Status == ApplicationStatus.REJECTED)
                     dto.ProgressStage = -1;
-                else if(a.Status == ApplicationStatus.PENDING)
-                    dto.ProgressStage = 1;
                 else if(a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.ACTIVE)
-                    dto.ProgressStage = 2;
+                    dto.ProgressStage = 1;
                 else if (a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.CLOSED)
                 {
                     if(payment == null || payment.Status == PaymentStatus.PENDING)
-                        dto.ProgressStage = 3;
+                        dto.ProgressStage = 2;
                     else if (payment.Status == PaymentStatus.PAID)
-                        dto.ProgressStage = 4;
+                        dto.ProgressStage = 3;
                 }
                 myJobs.Add(dto);
             }
