@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Enums;
+using BusinessObjects.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +19,8 @@ namespace BusinessObjects.Models
         public int FreelancerProfileId { get; set; }
 
         public string CoverLetter { get; set; }
+
+        public string? CvUrl { get; set; }
 
         public ApplicationStatus Status { get; set; }
 

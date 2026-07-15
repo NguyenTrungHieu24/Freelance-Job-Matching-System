@@ -1,4 +1,4 @@
-﻿using API.Services.Auth;
+using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common.Admin;
@@ -136,14 +136,17 @@ namespace API.Controllers
         {
             var fromDate = GetFromDate(range);
 
-            // TODO:
-            // Replace bằng bảng Payments thật sau này
+            var paidPayments = _context.Payments
+                .Where(p => p.Status == BusinessObjects.Enums.PaymentStatus.PAID);
 
-            decimal totalRevenue = 0;
+            decimal totalRevenue = await paidPayments
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
 
-            decimal revenueInRange = 0;
+            decimal revenueInRange = await paidPayments
+                .Where(p => p.PaidAt >= fromDate)
+                .SumAsync(p => (decimal?)p.Amount) ?? 0;
 
-            int totalTransactions = 0;
+            int totalTransactions = await paidPayments.CountAsync();
 
             return Ok(new RevenueStats
             {

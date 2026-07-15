@@ -22,6 +22,7 @@
                         <th>Ngày nộp</th>
                         <th>Trạng thái</th>
                         <th>Thư giới thiệu</th>
+                        <th>CV</th>
                         <th class="text-end pe-4">Hành động</th>
                     </tr>
                 </thead>
@@ -32,7 +33,12 @@
                         {
                             <tr>
                                 <td class="ps-4">
-                                    <div class="fw-bold text-primary">@app.FreelancerName</div>
+                                    <div class="fw-bold text-primary">
+                                        @app.FreelancerName
+                                        <a href="javascript:void(0)" class="text-danger ms-2 small fw-normal" onclick="openReportModal(@app.FreelancerAccountId)" title="Report this Freelancer">
+                                            <i class="bi bi-flag-fill"> Report</i>
+                                        </a>
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="fw-semibold">@app.JobTitle</div>
@@ -54,9 +60,21 @@
                                 </td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-secondary" 
-                                            onclick="showCoverLetter('@app.FreelancerName', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(app.CoverLetter))')">
+                                            onclick="showCoverLetter('@app.FreelancerName', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(app.CoverLetter))', '@(app.CvUrl ?? "")')">
                                         <i class="bi bi-eye"></i> Xem thư
                                     </button>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(app.CvUrl))
+                                    {
+                                        <a href="@app.CvUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-file-earmark-arrow-down"></i> Tải CV
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Không có</span>
+                                    }
                                 </td>
                                 <td class="text-end pe-4">
                                     @if (app.Status == "PENDING")
@@ -76,10 +94,16 @@
                                             </button>
                                         </form>
                                     }
-                                    else
-                                    {
-                                        <span class="text-muted small">Đã xử lý</span>
-                                    }
+                                     else
+                                     {
+                                         <span class="text-muted small">Đã xử lý</span>
+                                         @if (app.Status == "ACCEPTED")
+                                         {
+                                             <button type="button" class="btn btn-sm btn-primary ms-2" onclick="openReviewModal(@app.FreelancerAccountId)">
+                                                 <i class="bi bi-star-fill"></i> Đánh giá
+                                             </button>
+                                         }
+                                     }
                                 </td>
                             </tr>
                         }
@@ -87,7 +111,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
+                            <td colspan="7" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
                                 Chưa có đơn ứng tuyển nào được nộp cho các dự án của bạn.
                             </td>
@@ -107,7 +131,17 @@
                 <h5 class="modal-title fw-bold" id="modalTitle">Thư giới thiệu</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="modalBody" style="white-space: pre-line; line-height: 1.6;">
+            <div class="modal-body">
+                <div id="modalCvLink" class="mb-3 d-none">
+                    <label class="fw-bold text-muted small mb-1">CV đính kèm:</label>
+                    <div>
+                        <a id="modalCvAnchor" href="#" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-file-earmark-arrow-down me-1"></i> Tải CV
+                        </a>
+                    </div>
+                </div>
+                <label class="fw-bold text-muted small mb-1">Thư giới thiệu:</label>
+                <div id="modalBody" style="white-space: pre-line; line-height: 1.6;"></div>
             </div>
         </div>
     </div>
@@ -115,11 +149,24 @@
 
 @section Scripts {
     <script>
-        function showCoverLetter(name, content) {
-            document.getElementById('modalTitle').innerText = 'Thư giới thiệu của ' + name;
+        function showCoverLetter(name, content, cvUrl) {
+            document.getElementById('modalTitle').innerText = 'Hồ sơ ứng tuyển của ' + name;
             document.getElementById('modalBody').innerText = content;
+
+            var cvLinkDiv = document.getElementById('modalCvLink');
+            var cvAnchor = document.getElementById('modalCvAnchor');
+            if (cvUrl && cvUrl.trim() !== '') {
+                cvAnchor.href = cvUrl;
+                cvLinkDiv.classList.remove('d-none');
+            } else {
+                cvLinkDiv.classList.add('d-none');
+            }
+
             var myModal = new bootstrap.Modal(document.getElementById('coverLetterModal'));
             myModal.show();
         }
     </script>
 }
+
+<partial name="Components/_ReportFreelancerModal" />
+<partial name="Components/_ReviewModal" />

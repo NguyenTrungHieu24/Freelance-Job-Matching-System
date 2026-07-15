@@ -2,6 +2,7 @@ using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using Client.Models.Employer;
 using Client.Models.Jobs;
+using Client.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -355,6 +356,42 @@ public class EmployerController : BaseController
         }
     }
 
+    [HttpGet("change-password")]
+    public IActionResult ChangePassword()
+    {
+        return View(new ChangePasswordViewModel());
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        try
+        {
+            var success = await PutAsync("api/auth/change-password", new
+            {
+                OldPassword = model.OldPassword,
+                NewPassword = model.NewPassword,
+                ConfirmPassword = model.ConfirmPassword
+            });
+
+            if (success)
+            {
+                TempData["Success"] = "Password changed successfully!";
+                return RedirectToAction("ChangePassword");
+            }
+
+            TempData["Error"] = "Failed to change password";
+            return RedirectToAction("ChangePassword");
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = e.Message;
+            return RedirectToAction("ChangePassword");
+        }
+    }
+
     private static List<KeyValuePair<string, string>> BuildQueryParams(FilterJobDTO filter)
     {
         var queryParams = new List<KeyValuePair<string, string>>();
@@ -414,5 +451,35 @@ public class EmployerController : BaseController
         queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
 
         return queryParams;
+    }
+
+    [HttpPost("report-freelancer")]
+    public async Task<IActionResult> ReportFreelancer(CreateReportDto dto)
+    {
+        try
+        {
+            await PostAsync<CreateReportDto, object>("api/employer/report", dto);
+            TempData["Success"] = "Report submitted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Failed to submit report: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
+    }
+
+    [HttpPost("submit-review")]
+    public async Task<IActionResult> SubmitReview(CreateReviewDto dto)
+    {
+        try
+        {
+            await PostAsync<CreateReviewDto, object>("api/employer/review", dto);
+            TempData["Success"] = "Review submitted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Failed to submit review: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
     }
 }

@@ -364,7 +364,7 @@ namespace API.Controllers
         }
 
         [HttpPost("jobs/apply")]
-        public async Task<IActionResult> ApplyJob([FromBody] CreateApplicationDto dto)
+        public async Task<IActionResult> ApplyJob([FromForm] CreateApplicationDto dto, IFormFile? cvFile)
         {
             var userId = _user.UserId;
             var profile = await _context.FreelancerProfiles.FirstOrDefaultAsync(p => p.AccountId == userId);
@@ -379,16 +379,56 @@ namespace API.Controllers
             if (existingApplication)
                 return BadRequest("You have already applied for this job.");
 
+            string? cvUrl = null;
+            if (cvFile != null && cvFile.Length > 0)
+            {
+                if (!FileValidateHelper.IsCvFileValid(cvFile))
+                    return BadRequest("Invalid CV file. Only PDF, DOC, DOCX files are allowed.");
+
+                if (cvFile.Length > 5 * 1024 * 1024)
+                    return BadRequest("CV file size is too large (max 5MB).");
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(cvFile.FileName).ToLower()}";
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cv", fileName);
+
+                var dir = Path.GetDirectoryName(path);
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir!);
+
+                using (var stream = System.IO.File.Create(path))
+                {
+                    await cvFile.CopyToAsync(stream);
+                }
+
+                var request = HttpContext.Request;
+                cvUrl = $"{request.Scheme}://{request.Host}/uploads/cv/{fileName}";
+            }
+
             var application = new Application
             {
                 JobId = dto.JobId,
                 FreelancerProfileId = profile.Id,
                 CoverLetter = dto.CoverLetter,
+                CvUrl = cvUrl,
                 Status = ApplicationStatus.PENDING,
                 AppliedAt = DateTime.Now
             };
 
             _context.Applications.Add(application);
+            
+            var user = await _context.Users.FindAsync(userId);
+            var employer = await _context.EmployerProfiles.FindAsync(job.EmployerProfileId);
+            if (user != null && employer != null)
+            {
+                var notification = new Notification
+                {
+                    AccountId = employer.AccountId,
+                    Content = $"Freelancer {user.FullName} has applied for your job: '{job.Title}'.",
+                    IsRead = false,
+                    CreatedAt = DateTime.Now
+                };
+                _context.Notifications.Add(notification);
+            }
+
             await _context.SaveChangesAsync();
 
             return Ok(true);
@@ -599,6 +639,20 @@ namespace API.Controllers
             _context.Reports.Add(report);
             await _context.SaveChangesAsync();
             return Ok(new { messsage = "Report submitted successfully" });
+        }
+
+        [HttpGet("reviews")]
+        public async Task<IActionResult> GetReviews()
+        {
+            var userId = _user.UserId;
+            var reviews = await _context.Reviews
+                .Include(r => r.Reviewer)
+                .Where(r => r.RevieweeId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            var dto = _mapper.Map<List<ReviewDto>>(reviews);
+            return Ok(dto);
         }
     }
 }

@@ -18,9 +18,44 @@ namespace Client.Controllers
         }
 
         [Route("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(FilterJobDTO filter, [FromQuery] int? page)
         {
-            return View();
+            try
+            {
+                if (page.HasValue)
+                {
+                    filter.Page = page.Value;
+                }
+                filter.Page = filter.Page <= 0 ? 1 : filter.Page;
+
+                var queries = BuildQueryParams(filter);
+                var url = QueryHelpers.AddQueryString("api/jobs", queries);
+
+                var jobsTask = GetAsync<PaginateResult<JobDTO>>(url);
+                var skillsTask = GetAsync<List<SkillDTO>>("api/skills/all");
+                var categoriesTask = GetAsync<List<CategoryDTO>>("api/categories");
+
+                await Task.WhenAll(jobsTask, skillsTask, categoriesTask);
+
+                ViewBag.Category = categoriesTask.Result;
+                ViewBag.Skills = skillsTask.Result;
+
+                return View(new ListJobsModel
+                {
+                    Filter = filter,
+                    Jobs = jobsTask.Result ?? new PaginateResult<JobDTO>()
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Cannot load jobs: {ex.Message}";
+
+                return View(new ListJobsModel
+                {
+                    Filter = filter,
+                    Jobs = new PaginateResult<JobDTO>()
+                });
+            }
         }
 
 

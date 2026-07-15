@@ -64,7 +64,13 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Applications.Count))
                 .ForMember(
                     d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)));
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)))
+                .ForMember(
+                    d => d.CompanyName,
+                    o => o.MapFrom(s => s.EmployerProfile.CompanyName))
+                .ForMember(
+                    d => d.EmployerLogo,
+                    o => o.MapFrom(s => s.EmployerProfile.Logo));
 
             CreateMap<User, UserDto>()
                 .ForMember(
@@ -98,6 +104,11 @@ namespace BusinessObjects.Mapping
                 .ForMember(dest => dest.ResolverName, opt => opt.MapFrom(src => 
                     src.Resolver != null ? src.Resolver.FullName : ""));
 
+            CreateMap<Review, ReviewDto>()
+                .ForMember(dest => dest.ReviewerName, opt => opt.MapFrom(src => 
+                    src.Reviewer != null ? src.Reviewer.FullName : ""))
+                .ForMember(dest => dest.RevieweeName, opt => opt.MapFrom(src => 
+                    src.Reviewee != null ? src.Reviewee.FullName : ""));
         }
     }
 }
