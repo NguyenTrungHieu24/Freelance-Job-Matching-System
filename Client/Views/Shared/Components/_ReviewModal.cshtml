@@ -1,0 +1,75 @@
+<div class="modal fade" id="reviewModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Review Freelancer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="/employer/submit-review" method="post">
+          <div class="modal-body">
+            <input type="hidden" id="reviewFreelancerId" name="RevieweeId" />
+            <div class="mb-3">
+                <label class="form-label fw-bold">Rating</label>
+                <div class="rating-stars d-flex gap-2 fs-3 text-warning cursor-pointer">
+                    <i class="bi bi-star" data-value="1"></i>
+                    <i class="bi bi-star" data-value="2"></i>
+                    <i class="bi bi-star" data-value="3"></i>
+                    <i class="bi bi-star" data-value="4"></i>
+                    <i class="bi bi-star" data-value="5"></i>
+                </div>
+                <input type="hidden" id="reviewRatingInput" name="Rating" value="5" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Detailed Feedback</label>
+                <textarea class="form-control" name="Comment" rows="4" placeholder="Write your experience working with this freelancer..." required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+    .rating-stars i {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const stars = document.querySelectorAll(".rating-stars i");
+        const ratingInput = document.getElementById("reviewRatingInput");
+
+        function setStars(val) {
+            stars.forEach(star => {
+                const value = parseInt(star.getAttribute("data-value"));
+                if (value <= val) {
+                    star.classList.replace("bi-star", "bi-star-fill");
+                } else {
+                    star.classList.replace("bi-star-fill", "bi-star");
+                }
+            });
+            ratingInput.value = val;
+        }
+
+        // Initialize with default rating
+        setStars(5);
+
+        stars.forEach(star => {
+            star.addEventListener("click", function() {
+                const val = parseInt(this.getAttribute("data-value"));
+                setStars(val);
+            });
+        });
+    });
+
+    function openReviewModal(freelancerAccountId) {
+        document.getElementById('reviewFreelancerId').value = freelancerAccountId;
+        var myModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        myModal.show();
+    }
+</script>

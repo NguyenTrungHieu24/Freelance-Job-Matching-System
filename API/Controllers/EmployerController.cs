@@ -1,4 +1,4 @@
-﻿using API.Helper;
+using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
@@ -144,8 +144,10 @@ public class EmployerController : BaseController
                 JobId = a.JobId,
                 JobTitle = a.Job.Title,
                 FreelancerProfileId = a.FreelancerProfileId,
+                FreelancerAccountId = a.FreelancerProfile.AccountId,
                 FreelancerName = a.FreelancerProfile.Account.FullName,
                 CoverLetter = a.CoverLetter,
+                CvUrl = a.CvUrl,
                 Status = a.Status.ToString(),
                 AppliedAt = a.AppliedAt
             })
@@ -184,6 +186,21 @@ public class EmployerController : BaseController
         // Update trang thai
         application.Status = status;
         _context.Applications.Update(application);
+
+        var freelancerProfile = await _context.FreelancerProfiles.FindAsync(application.FreelancerProfileId);
+        if (freelancerProfile != null)
+        {
+            var statusText = status == ApplicationStatus.ACCEPTED ? "accepted" : "rejected";
+            var notification = new Notification
+            {
+                AccountId = freelancerProfile.AccountId,
+                Content = $"Your application for the job '{application.Job.Title}' has been {statusText}.",
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            };
+            _context.Notifications.Add(notification);
+        }
+
         await _context.SaveChangesAsync();
 
         return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {status}" });
@@ -272,5 +289,49 @@ public class EmployerController : BaseController
         };
 
         return Ok(dto);
+    }
+
+    [HttpPost("report")]
+    public async Task<IActionResult> CreateReport([FromBody] CreateReportDto dto)
+    {
+        var reporterId = _user.UserId;
+        var report = new Report
+        {
+            ReporterId = reporterId,
+            ReportedUserId = dto.ReportUserId,
+            Reason = dto.Reason,
+            Description = dto.Description,
+            Status = ReportStatus.PENDING,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Reports.Add(report);
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Report submitted successfully" });
+    }
+
+    [HttpPost("review")]
+    public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto dto)
+    {
+        var reviewerId = _user.UserId;
+        var existingReview = await _context.Reviews
+            .FirstOrDefaultAsync(r => r.ReviewerId == reviewerId && r.RevieweeId == dto.RevieweeId);
+
+        if (existingReview != null)
+        {
+            return BadRequest(new { message = "You have already reviewed this freelancer." });
+        }
+
+        var review = new Review
+        {
+            ReviewerId = reviewerId,
+            RevieweeId = dto.RevieweeId,
+            Rating = dto.Rating,
+            Comment = dto.Comment,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.Reviews.Add(review);
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Review submitted successfully" });
     }
 }

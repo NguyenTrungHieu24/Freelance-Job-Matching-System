@@ -71,11 +71,23 @@
                     </div>
                 }
 
-                <div class="tl-nav-dropdown-wrap ml-3">
-                    <button class="tl-icon-btn" type="button" aria-label="Notification">
+                <div class="tl-nav-dropdown-wrap ml-3" id="notificationDropdownWrap">
+                    <button class="tl-icon-btn" type="button" aria-label="Notification" id="notificationBellBtn">
                         <img src="~/image/notification.png" alt="Notification" class="tl-icon-img" />
-                        <span class="tl-bell-dot"></span>
+                        <span class="tl-bell-dot d-none" id="notificationBadge"></span>
                     </button>
+                    @if (CurrentUser.IsAuthenticated)
+                    {
+                        <div class="tl-nav-dropdown tl-nav-dropdown--right" style="width: 320px; max-height: 400px; overflow-y: auto; padding: 0;" id="notificationDropdownList">
+                            <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                                <span class="fw-bold text-dark" style="font-size: 0.95rem;">Notifications</span>
+                                <a href="javascript:void(0)" class="text-primary text-decoration-none small" id="markAllReadBtn" style="font-size: 0.8rem;">Mark all read</a>
+                            </div>
+                            <div id="notificationItemsContainer" class="list-group list-group-flush">
+                                <div class="text-center p-4 text-muted small">Loading notifications...</div>
+                            </div>
+                        </div>
+                    }
                 </div>
 
 
@@ -228,5 +240,86 @@
 
     @RenderSection("Scripts", required: false)
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const bellBtn = document.getElementById("notificationBellBtn");
+            const badge = document.getElementById("notificationBadge");
+            const container = document.getElementById("notificationItemsContainer");
+            const markAllBtn = document.getElementById("markAllReadBtn");
+
+            const isAuthenticated = @(CurrentUser.IsAuthenticated ? "true" : "false");
+            if (!isAuthenticated) return;
+
+            async function loadNotifications() {
+                try {
+                    const response = await fetch("/notifications");
+                    if (!response.ok) return;
+                    const data = await response.json();
+                    
+                    if (!container) return;
+                    container.innerHTML = "";
+                    let unreadCount = 0;
+
+                    if (data.length === 0) {
+                        container.innerHTML = `<div class="text-center p-4 text-muted small">Không có thông báo nào.</div>`;
+                        if (badge) badge.classList.add("d-none");
+                        return;
+                    }
+
+                    data.forEach(n => {
+                        if (!n.isRead) unreadCount++;
+                        
+                        const item = document.createElement("a");
+                        item.href = "javascript:void(0)";
+                        item.className = `list-group-item list-group-item-action p-3 border-bottom d-flex flex-column gap-1 ${n.isRead ? "" : "bg-light"}`;
+                        item.style.fontSize = "0.85rem";
+                        item.style.borderLeft = n.isRead ? "none" : "3px solid #f05a1a";
+                        
+                        const date = new Date(n.createdAt);
+                        const formattedDate = date.toLocaleString("vi-VN", { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+
+                        item.innerHTML = `
+                            <div class="${n.isRead ? "text-secondary" : "text-dark fw-semibold"}">${n.content}</div>
+                            <div class="text-muted" style="font-size: 0.72rem;">${formattedDate}</div>
+                        `;
+
+                        item.addEventListener("click", async function() {
+                            if (!n.isRead) {
+                                const res = await fetch(`/notifications/${n.id}/read`, { method: "POST" });
+                                if (res.ok) {
+                                    loadNotifications();
+                                }
+                            }
+                        });
+
+                        container.appendChild(item);
+                    });
+
+                    if (badge) {
+                        if (unreadCount > 0) {
+                            badge.classList.remove("d-none");
+                        } else {
+                            badge.classList.add("d-none");
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading notifications:", err);
+                }
+            }
+
+            loadNotifications();
+            setInterval(loadNotifications, 30000);
+
+            if (markAllBtn) {
+                markAllBtn.addEventListener("click", async function(e) {
+                    e.stopPropagation();
+                    const res = await fetch("/notifications/read-all", { method: "POST" });
+                    if (res.ok) {
+                        loadNotifications();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1023,14 +1023,7 @@
                         <h2>Dự Án Mới Nhất</h2>
                         <p>Cập nhật liên tục — hàng trăm dự án mới mỗi ngày</p>
                     </div>
-                    @if (CurrentUser.IsAuthenticated)
-                    {
-                        <a href="/freelancer/jobs" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
-                    }
-                    else
-                    {
-                        <a href="/auth/login" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
-                    }
+                    <a href="/jobs" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
                 </div>
 
                 <div class="fv-job-grid">

@@ -355,7 +355,36 @@ public class FreelancerController : BaseController
 
         try
         {
-            var success = await PostAsync<CreateApplicationDto, bool>($"api/freelancer/jobs/apply", model.ApplicationForm);
+            // Client-side validation for CV file
+            if (model.CvFile != null && model.CvFile.Length > 0)
+            {
+                if (model.CvFile.Length > 5 * 1024 * 1024)
+                {
+                    TempData["Error"] = "CV file size is too large (max 5MB).";
+                    return RedirectToAction("JobDetail", new { id = model.ApplicationForm.JobId });
+                }
+
+                var extension = Path.GetExtension(model.CvFile.FileName).ToLower();
+                var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
+                if (!allowedExtensions.Contains(extension))
+                {
+                    TempData["Error"] = "Only PDF, DOC, DOCX files are supported.";
+                    return RedirectToAction("JobDetail", new { id = model.ApplicationForm.JobId });
+                }
+            }
+
+            var formFields = new Dictionary<string, string>
+            {
+                { "JobId", model.ApplicationForm.JobId.ToString() },
+                { "CoverLetter", model.ApplicationForm.CoverLetter ?? "" }
+            };
+
+            var success = await PostMultipartFormAsync<bool>(
+                "api/freelancer/jobs/apply",
+                formFields,
+                model.CvFile
+            );
+
             if (success)
             {
                 TempData["Success"] = "Applied successfully!";
@@ -441,5 +470,20 @@ public class FreelancerController : BaseController
             TempData["Error"] = "Cannot load your jobs: "+e.Message;
             return View(new List<MyJobDto>());
         }
+    }
+
+    [HttpPost("report-employer")]
+    public async Task<IActionResult> ReportEmployer(CreateReportDto dto)
+    {
+        try
+        {
+            await PostAsync<CreateReportDto, object>("api/freelancer/report", dto);
+            TempData["Success"] = "Report submitted successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Failed to submit report: " + ex.Message;
+        }
+        return RedirectToAction("MyJobs");
     }
 }

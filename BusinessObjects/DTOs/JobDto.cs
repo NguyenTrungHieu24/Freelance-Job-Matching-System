@@ -13,14 +13,14 @@ namespace BusinessObjects.DTOs
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Budget { get; set; }
-        public string Status { get; set; } = null!;
+        public JobStatus Status { get; set; }
         public DateTime? Deadline { get; set; }
         public DateTime CreatedAt { get; set; }
         public int EmployerProfileId { get; set; }
         public string EmployerName { get; set; } = null!;
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = null!;
-        public List<SkillDTO> Skills { get; set; } = new();
+        public List<string> Skills { get; set; } = new();
         public string? EmployerCompanyName { get; set; }
         public string? EmployerDescription { get; set; }
         public string? EmployerEmail { get; set; }
@@ -108,6 +108,8 @@ namespace BusinessObjects.DTOs
 
         public List<string> Skills { get; set; } = [];
         public List<ApplicationHistoryDto> Applications { get; set; } = [];
+        public string CompanyName { get; set; } = string.Empty;
+        public string EmployerLogo { get; set; } = string.Empty;
     }
 
     public class FilterJobDTO
