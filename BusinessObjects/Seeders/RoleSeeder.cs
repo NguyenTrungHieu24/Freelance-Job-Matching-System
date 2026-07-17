@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Enums;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 
 namespace BusinessObjects.Seeders
@@ -7,10 +7,10 @@ namespace BusinessObjects.Seeders
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            if (context.Roles.Any())
-                return;
+            var existingRoleIds = context.Roles.Select(r => r.Id).ToList();
 
-            var Roles = Enum.GetValues<RoleEnum>()
+            var newRoles = Enum.GetValues<RoleEnum>()
+                .Where(r => !existingRoleIds.Contains((int)r))
                 .Select(Role => new Role
                 {
                     Id = (int)Role,
@@ -18,9 +18,11 @@ namespace BusinessObjects.Seeders
                 })
                 .ToList();
 
-            context.Roles.AddRange(Roles);
-
-            await context.SaveChangesAsync();
+            if (newRoles.Any())
+            {
+                context.Roles.AddRange(newRoles);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

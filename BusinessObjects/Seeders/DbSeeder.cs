@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,8 @@ namespace BusinessObjects.Seeders
                 await CategorySeeder.SeedAsync(context);
 
                 await JobSeeder.SeedAsync(context);
+
+                await WalletSeeder.SeedAsync(context);
             }
             catch (Exception ex)
             {
