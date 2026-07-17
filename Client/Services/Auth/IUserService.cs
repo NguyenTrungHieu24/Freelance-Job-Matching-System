@@ -1,4 +1,4 @@
-﻿using Client.Models.Auth;
+using Client.Models.Auth;
 using System.Security.Claims;
 
 namespace Client.Services.Auth
@@ -13,5 +13,6 @@ namespace Client.Services.Auth
         bool IsFreelancer { get; }
         bool IsEmployer { get; }
         bool IsGuest { get; }
+        bool IsFinanceManager { get; }
     }
 }

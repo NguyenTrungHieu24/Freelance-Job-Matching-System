@@ -145,6 +145,9 @@ builder.Services.AddAuthorization(options =>
             nameof(RoleEnum.ADMIN),
             nameof(RoleEnum.EMPLOYER)
         ));
+
+    options.AddPolicy("FinanceOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.FINANCE_MANAGER)));
 });
 
 builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));

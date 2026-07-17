@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using BusinessObjects.Enums;
 using Client.Models.Auth;
 
@@ -30,5 +30,7 @@ namespace Client.Services.Auth
         public bool IsEmployer => User?.IsInRole(nameof(RoleEnum.EMPLOYER)) ?? false;
 
         public bool IsGuest => !IsAuthenticated;
+
+        public bool IsFinanceManager => User?.IsInRole(nameof(RoleEnum.FINANCE_MANAGER)) ?? false;
     }
 }

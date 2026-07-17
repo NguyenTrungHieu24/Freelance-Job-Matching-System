@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Enums;
+using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +30,7 @@ namespace BusinessObjects
 
         public DbSet<JobSkill> JobSkills { get; set; }
         public DbSet<Report> Reports { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -96,6 +97,14 @@ namespace BusinessObjects
                 .WithMany()
                 .HasForeignKey(x => x.ResolvedBy)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Wallet>()
+                .Property(w => w.Balance)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Wallet>()
+                .HasIndex(w => w.UserId)
+                .IsUnique();
         }
     }
 }

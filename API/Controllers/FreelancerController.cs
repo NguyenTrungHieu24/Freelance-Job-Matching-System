@@ -379,6 +379,8 @@ namespace API.Controllers
             if (existingApplication)
                 return BadRequest("You have already applied for this job.");
 
+
+            //Xac thuc CV phia backend
             string? cvUrl = null;
             if (cvFile != null && cvFile.Length > 0)
             {

@@ -76,6 +76,18 @@ namespace API.Controllers
                     break;
             }
 
+            // Tạo ví ảo cho Employer/Freelancer mới
+            if (account.RoleId == (int)RoleEnum.EMPLOYER
+                || account.RoleId == (int)RoleEnum.FREELANCER)
+            {
+                _context.Wallets.Add(new Wallet
+                {
+                    UserId = account.Id,
+                    Balance = 0
+                });
+                await _context.SaveChangesAsync();
+            }
+
             await _context.Entry(account)
                 .Reference(x => x.Role)
                 .LoadAsync();
