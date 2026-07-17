@@ -355,7 +355,7 @@ public class FreelancerController : BaseController
 
         try
         {
-            // Client-side validation for CV file
+            //Xac thuc phia Client-side de upload CV
             if (model.CvFile != null && model.CvFile.Length > 0)
             {
                 if (model.CvFile.Length > 5 * 1024 * 1024)
