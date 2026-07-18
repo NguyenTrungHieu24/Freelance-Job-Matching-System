@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -20,5 +20,8 @@ namespace BusinessObjects.Enums
 
         [Description("Guest")]
         GUEST = 4,
+
+        [Description("Finance Manager")]
+        FINANCE_MANAGER = 5,
     }
 }

@@ -1,4 +1,4 @@
-﻿using API.Helper;
+using API.Helper;
 using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
@@ -182,11 +182,32 @@ public class EmployerController : BaseController
         }
 
         // Update trang thai
-        application.Status = status;
+        if (status == ApplicationStatus.ACCEPTED)
+        {
+            application.Status = ApplicationStatus.IN_PROGRESS;
+            application.Job.Status = JobStatus.IN_PROGRESS;
+
+            // Reject other pending applications for this job
+            var otherPending = await _context.Applications
+                .Where(a => a.JobId == application.JobId
+                         && a.Id != application.Id
+                         && a.Status == ApplicationStatus.PENDING)
+                .ToListAsync();
+
+            foreach (var other in otherPending)
+            {
+                other.Status = ApplicationStatus.REJECTED;
+            }
+        }
+        else
+        {
+            application.Status = status;
+        }
+
         _context.Applications.Update(application);
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {status}" });
+        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {application.Status}" });
     }
 
 
@@ -272,5 +293,119 @@ public class EmployerController : BaseController
         };
 
         return Ok(dto);
+    }
+
+    /// <summary>
+    /// Employer xác nhận hoàn thành Job → Thanh toán tự động
+    /// </summary>
+    [HttpPost("applications/{id}/complete")]
+    public async Task<IActionResult> CompleteApplication(int id)
+    {
+        var userId = _user.UserId;
+        var feeSettings = HttpContext.RequestServices
+            .GetRequiredService<Microsoft.Extensions.Options.IOptions<BusinessObjects.Common.ServiceFeeSettings>>().Value;
+
+        var application = await _context.Applications
+            .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (application == null)
+            return NotFound("Application not found");
+
+        // Verify ownership
+        var employer = await _context.EmployerProfiles
+            .FirstOrDefaultAsync(e => e.AccountId == userId);
+        if (employer == null || application.Job.EmployerProfileId != employer.Id)
+            return Forbid();
+
+        // Verify status
+        if (application.Status != ApplicationStatus.IN_PROGRESS)
+            return BadRequest("Only IN_PROGRESS applications can be completed");
+
+        var budget = application.Job.Budget;
+        var commission = budget * feeSettings.CommissionPercent / 100;
+        var freelancerReceives = budget - commission;
+
+        // Check employer wallet
+        var employerWallet = await _context.Wallets
+            .FirstOrDefaultAsync(w => w.UserId == userId);
+        if (employerWallet == null || employerWallet.Balance < budget)
+            return BadRequest($"Số dư ví không đủ. Cần {budget:N0} VNĐ");
+
+        // Check freelancer wallet
+        var freelancerWallet = await _context.Wallets
+            .FirstOrDefaultAsync(w => w.UserId == application.FreelancerProfile.AccountId);
+        if (freelancerWallet == null)
+            return BadRequest("Freelancer wallet not found");
+
+        // --- THANH TOÁN ---
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            // 1. Trừ ví Employer
+            employerWallet.Balance -= budget;
+            employerWallet.UpdatedAt = DateTime.Now;
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = employerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.JOB_PAYMENT,
+                Amount = -budget,
+                BalanceAfter = employerWallet.Balance,
+                Description = $"Thanh toán Job: {application.Job.Title}"
+            });
+
+            // 2. Cộng ví Freelancer (sau khi trừ hoa hồng)
+            freelancerWallet.Balance += freelancerReceives;
+            freelancerWallet.UpdatedAt = DateTime.Now;
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = freelancerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.JOB_EARNING,
+                Amount = freelancerReceives,
+                BalanceAfter = freelancerWallet.Balance,
+                Description = $"Thu nhập Job: {application.Job.Title} (đã trừ {feeSettings.CommissionPercent}% hoa hồng)"
+            });
+
+            // 3. Ghi nhận hoa hồng hệ thống
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = freelancerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.COMMISSION_FEE,
+                Amount = -commission,
+                BalanceAfter = freelancerWallet.Balance,
+                Description = $"Phí hoa hồng {feeSettings.CommissionPercent}%: {application.Job.Title}"
+            });
+
+            // 4. Cập nhật trạng thái
+            application.Status = ApplicationStatus.COMPLETED;
+            application.Job.Status = JobStatus.COMPLETED;
+
+            // 5. Thông báo cho Freelancer
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Job \"{application.Job.Title}\" đã hoàn thành! Bạn nhận được {freelancerReceives:N0} VNĐ (sau phí {feeSettings.CommissionPercent}%)."
+            });
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                message = "Job completed & payment processed!",
+                budget,
+                commission,
+                freelancerReceives
+            });
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

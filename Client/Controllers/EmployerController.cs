@@ -156,6 +156,22 @@ public class EmployerController : BaseController
         return RedirectToAction("Applications");
     }
 
+    // POST: /employer/applications/complete
+    [HttpPost("applications/complete")]
+    public async Task<IActionResult> Complete(int id)
+    {
+        try
+        {
+            var success = await PostAsync<object, object>($"api/employer/applications/{id}/complete", new { });
+            TempData["Success"] = "Xác nhận hoàn thành job và thanh toán thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Thanh toán thất bại: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
+    }
+
 
     [HttpGet("jobs/create")]
     public async Task<IActionResult> CreateJob()
@@ -190,9 +206,35 @@ public class EmployerController : BaseController
             return View("JobForm", model);
         }
 
-        await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
+        try
+        {
+            await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
+            TempData["Success"] = "Đăng tin tuyển dụng thành công!";
+            return RedirectToAction(nameof(MyJobs));
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = ex.Message;
+            try
+            {
+                using (var doc = System.Text.Json.JsonDocument.Parse(ex.Message))
+                {
+                    if (doc.RootElement.TryGetProperty("message", out var msgProp))
+                    {
+                        errorMessage = msgProp.GetString() ?? ex.Message;
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore JSON parsing errors
+            }
 
-        return RedirectToAction(nameof(MyJobs));
+            ModelState.AddModelError(string.Empty, errorMessage);
+            model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+            return View("JobForm", model);
+        }
     }
 
     [HttpGet("jobs")]

@@ -43,9 +43,13 @@
                                     {
                                         <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Đang chờ</span>
                                     }
-                                    else if (app.Status == "ACCEPTED")
+                                    else if (app.Status == "ACCEPTED" || app.Status == "IN_PROGRESS")
                                     {
-                                        <span class="badge bg-success px-3 py-2 rounded-pill">Đã nhận</span>
+                                        <span class="badge bg-info px-3 py-2 rounded-pill">Đang thực hiện</span>
+                                    }
+                                    else if (app.Status == "COMPLETED")
+                                    {
+                                        <span class="badge bg-success px-3 py-2 rounded-pill">Hoàn thành</span>
                                     }
                                     else
                                     {
@@ -76,9 +80,19 @@
                                             </button>
                                         </form>
                                     }
+                                    else if (app.Status == "ACCEPTED" || app.Status == "IN_PROGRESS")
+                                    {
+                                        <form asp-action="Complete" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@app.Id" />
+                                            <button type="submit" class="btn btn-sm btn-primary"
+                                                    onclick="return confirm('Xác nhận hoàn thành dự án? Tiền từ ví của bạn sẽ được chuyển cho Freelancer (sau khi khấu trừ 10% hoa hồng hệ thống).')">
+                                                <i class="bi bi-check-circle"></i> Hoàn thành
+                                            </button>
+                                        </form>
+                                    }
                                     else
                                     {
-                                        <span class="text-muted small">Đã xử lý</span>
+                                        <span class="text-muted small">Đã hoàn tất</span>
                                     }
                                 </td>
                             </tr>

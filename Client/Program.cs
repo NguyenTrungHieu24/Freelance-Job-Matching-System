@@ -43,6 +43,9 @@ builder.Services.AddAuthorization(options =>
             nameof(RoleEnum.ADMIN),
             nameof(RoleEnum.EMPLOYER)
         ));
+
+    options.AddPolicy("FinanceOnly", policy =>
+        policy.RequireRole(nameof(RoleEnum.FINANCE_MANAGER)));
 });
 
 var app = builder.Build();

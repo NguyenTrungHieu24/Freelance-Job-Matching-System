@@ -1,0 +1,5 @@
+@await Html.PartialAsync("Nav/_Nav",
+    new List<NavViewModel>{
+        new () { Controller = "Finance", Action = "Wallets", Title = "Wallet Management" },
+    }
+)

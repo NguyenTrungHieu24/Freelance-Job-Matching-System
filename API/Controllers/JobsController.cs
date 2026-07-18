@@ -244,6 +244,18 @@ namespace API.Controllers
                 return BadRequest("Deadline must be in the future.");
             }
 
+            // Check wallet balance for Job Posting Fee
+            var feeSettings = HttpContext.RequestServices
+                .GetRequiredService<Microsoft.Extensions.Options.IOptions<BusinessObjects.Common.ServiceFeeSettings>>().Value;
+
+            var wallet = await _context.Wallets
+                .FirstOrDefaultAsync(w => w.UserId == userId);
+
+            if (wallet == null || wallet.Balance < feeSettings.JobPostingFee)
+            {
+                return BadRequest(new { message = $"Số dư ví không đủ để đăng tin. Cần ít nhất {feeSettings.JobPostingFee:N0} VNĐ." });
+            }
+
             // Map CreateJobDto to Job entity
             var job = new Job
             {
@@ -263,6 +275,22 @@ namespace API.Controllers
             {
                 _context.Jobs.Add(job);
                 await _context.SaveChangesAsync(); // Saves job and generates its Id
+
+                // Deduct job posting fee
+                wallet.Balance -= feeSettings.JobPostingFee;
+                wallet.UpdatedAt = DateTime.Now;
+
+                _context.Transactions.Add(new Transaction
+                {
+                    WalletId = wallet.Id,
+                    JobId = job.Id,
+                    Type = TransactionType.JOB_POSTING_FEE,
+                    Amount = -feeSettings.JobPostingFee,
+                    BalanceAfter = wallet.Balance,
+                    Description = $"Phí đăng tin: {job.Title}"
+                });
+
+                await _context.SaveChangesAsync();
 
                 // Add JobSkills if provided
                 if (dto.Skills != null && dto.Skills.Any())
