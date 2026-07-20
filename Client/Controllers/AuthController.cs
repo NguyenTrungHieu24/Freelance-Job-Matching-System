@@ -99,7 +99,7 @@ namespace Client.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.Error = e.Message;
+                ViewBag.Error = ParseErrorMessage(e.Message);
                 return View(model);
             }
         }
@@ -120,7 +120,7 @@ namespace Client.Controllers
 
             if (model.Password != model.ConfirmPassword)
             {
-                ViewBag.Error = "Password not match.";
+                ViewBag.Error = "Mật khẩu xác nhận không khớp.";
                 return View(model);
             }
 
@@ -142,7 +142,7 @@ namespace Client.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
+                ViewBag.Error = ParseErrorMessage(ex.Message);
                 return View(model);
             }
         }

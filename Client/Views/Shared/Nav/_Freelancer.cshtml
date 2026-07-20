@@ -1,13 +1,13 @@
 @await Html.PartialAsync("Nav/_Nav",
     new List<NavViewModel>{
-        new(){Controller = "Freelancer", Action = "Dashboard", Title = "Dashboard"},
-        new(){Controller = "Freelancer", Action = "JobList", Title = "Job Search"},
-        new(){Title = "Job Management", Icon = "fa-briefcase",
+        new(){Controller = "Freelancer", Action = "Dashboard", Title = "Bảng điều khiển"},
+        new(){Controller = "Freelancer", Action = "JobList", Title = "Tìm việc làm"},
+        new(){Title = "Quản lý công việc", Icon = "fa-briefcase",
             Children = new() {
-                new(){ Controller = "Freelancer", Action = "MyJobs", Title = "My Jobs"},
-                new(){ Controller = "Freelancer", Action = "Applications", Title = "Applications"},
+                new(){ Controller = "Freelancer", Action = "MyJobs", Title = "Việc của tôi"},
+                new(){ Controller = "Freelancer", Action = "Applications", Title = "Đơn ứng tuyển"},
             }
         },
-        new(){Controller = "Freelancer", Action = "Statistical", Title = "Statistical"},
+        new(){Controller = "Freelancer", Action = "Statistical", Title = "Thống kê"},
     }
 )

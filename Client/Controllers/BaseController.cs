@@ -157,9 +157,74 @@ namespace Client.Controllers
         }
         catch (Exception e)
         {
-            TempData["Error"] = e.Message;
+            TempData["Error"] = ParseErrorMessage(e.Message);
             return RedirectToAction("ChangePassword");
         }
     }
+
+        protected string ParseErrorMessage(string rawError)
+        {
+            if (string.IsNullOrWhiteSpace(rawError))
+                return "Đã xảy ra lỗi không xác định.";
+
+            if (!rawError.Trim().StartsWith("{"))
+                return rawError;
+
+            try
+            {
+                using var doc = JsonDocument.Parse(rawError);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("errors", out var errorsProp) && errorsProp.ValueKind == JsonValueKind.Object)
+                {
+                    var sb = new StringBuilder();
+                    foreach (var prop in errorsProp.EnumerateObject())
+                    {
+                        if (prop.Value.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var item in prop.Value.EnumerateArray())
+                            {
+                                var msg = item.GetString();
+                                if (!string.IsNullOrEmpty(msg))
+                                {
+                                    if (msg.Contains("Password must be at least 6 characters"))
+                                        msg = "Mật khẩu phải chứa ít nhất 6 ký tự.";
+                                    else if (msg.Contains("Email already exists") || msg.Contains("Email already in use"))
+                                        msg = "Địa chỉ email đã tồn tại hoặc đang được sử dụng.";
+                                    
+                                    sb.AppendLine(msg);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var msg = prop.Value.GetString();
+                            if (!string.IsNullOrEmpty(msg))
+                            {
+                                sb.AppendLine(msg);
+                            }
+                        }
+                    }
+                    if (sb.Length > 0)
+                        return sb.ToString().Trim();
+                }
+
+                if (root.TryGetProperty("message", out var messageProp))
+                {
+                    return messageProp.GetString() ?? "Đã xảy ra lỗi.";
+                }
+
+                if (root.TryGetProperty("title", out var titleProp))
+                {
+                    return titleProp.GetString() ?? "Đã xảy ra lỗi.";
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+
+            return rawError;
+        }
     }
 }

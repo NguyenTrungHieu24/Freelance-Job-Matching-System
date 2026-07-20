@@ -462,6 +462,7 @@ public class EmployerController : BaseController
                 PaymentMethod = "Wallet",
                 TransactionCode = Guid.NewGuid().ToString("N"),
                 Status = PaymentStatus.PAID,
+                CheckoutUrl = "internal-wallet",
                 PaidAt = DateTime.Now,
                 CreatedAt = DateTime.Now
             };
