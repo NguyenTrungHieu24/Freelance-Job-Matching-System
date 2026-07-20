@@ -1,3 +1,4 @@
+using Client.Models.Auth;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
@@ -128,5 +129,37 @@ namespace Client.Controllers
 
             return await response.Content.ReadFromJsonAsync<TResponse>();
         }
+
+
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        try
+        {
+            var success = await PutAsync("api/auth/change-password", new
+            {
+                OldPassword = model.OldPassword,
+                NewPassword = model.NewPassword,
+                ConfirmPassword = model.ConfirmPassword
+            });
+
+            if (success)
+            {
+                TempData["Success"] = "Password changed successfully!";
+                return RedirectToAction("ChangePassword");
+            }
+
+            TempData["Error"] = "Failed to change password";
+            return RedirectToAction("ChangePassword");
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = e.Message;
+            return RedirectToAction("ChangePassword");
+        }
+    }
     }
 }
