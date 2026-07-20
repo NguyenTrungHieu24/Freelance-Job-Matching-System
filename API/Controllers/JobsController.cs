@@ -506,7 +506,30 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+            return Ok(ApiResult<bool>.Ok(true, $"Open job({job.Title}) successfully!"));
+        }
+
+        [HttpPost("admin/toggle-status/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> AdminToggleStatus(int id)
+        {
+            var job = await _context.Jobs.FirstOrDefaultAsync(x => x.Id == id);
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.Status == JobStatus.DELETED)
+            {
+                job.Status = JobStatus.ACTIVE;
+            }
+            else
+            {
+                job.Status = JobStatus.DELETED;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(ApiResult<bool>.Ok(true, $"Toggled job status to {job.Status} successfully!"));
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using API.Services.Auth;
+using API.Services.Auth;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BusinessObjects;
@@ -137,7 +137,23 @@ namespace API.Controllers
 
             return Ok(ApiResult<bool>.Ok(true, "Deactivate user successfully!"));
         }
+
+        [HttpPost("activate/{id}")]
+        public async Task<IActionResult> Activate(int id)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (user == null)
+            {
+                return Ok(ApiResult<bool>.Fail("User not found"));
+            }
+
+            user.IsActive = true;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(ApiResult<bool>.Ok(true, "Activate user successfully!"));
+        }
     }
-
-
 }

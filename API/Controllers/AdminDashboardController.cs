@@ -1,8 +1,9 @@
-﻿using API.Services.Auth;
+using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common.Admin;
 using BusinessObjects.Enums;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -136,14 +137,17 @@ namespace API.Controllers
         {
             var fromDate = GetFromDate(range);
 
-            // TODO:
-            // Replace bằng bảng Payments thật sau này
+            // System revenue consists of commissions and job posting fees (stored as negative amounts, so negate them)
+            var totalRevenue = await _context.Transactions
+                .Where(t => t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE)
+                .SumAsync(t => -t.Amount);
 
-            decimal totalRevenue = 0;
+            var revenueInRange = await _context.Transactions
+                .Where(t => (t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE) && t.CreatedAt >= fromDate)
+                .SumAsync(t => -t.Amount);
 
-            decimal revenueInRange = 0;
-
-            int totalTransactions = 0;
+            var totalTransactions = await _context.Transactions
+                .CountAsync(t => t.CreatedAt >= fromDate);
 
             return Ok(new RevenueStats
             {

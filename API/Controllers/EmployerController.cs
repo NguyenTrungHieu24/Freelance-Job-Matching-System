@@ -8,7 +8,6 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BusinessObjects.Enums;
 namespace API.Controllers;
 
 [Route("api/employer")]
@@ -51,6 +50,40 @@ public class EmployerController : BaseController
             Address = user.EmployerProfile?.Address,
             Logo = user.EmployerProfile?.Logo ?? ""
         };
+        return Ok(dto);
+    }
+
+    [HttpGet("freelancer-profile/{id}")]
+    public async Task<IActionResult> GetFreelancerProfile(int id)
+    {
+        var profile = await _context.FreelancerProfiles
+            .Include(p => p.Account)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (profile == null)
+            return NotFound("Freelancer profile not found");
+
+        var dto = new FreelancerCvDto
+        {
+            ProfileId = profile.Id,
+            Title = profile.Title,
+            Bio = profile.Bio,
+            CVUrl = profile.CVUrl,
+            PortfolioUrl = profile.PortfolioUrl,
+            PortfolioDescription = profile.PortfolioDescription
+        };
+
+        var skillIds = await _context.FreelancerSkills
+            .Where(fs => fs.FreelancerProfileId == profile.Id)
+            .Select(fs => fs.SkillId)
+            .ToListAsync();
+
+        var skills = await _context.Skills
+            .Where(s => skillIds.Contains(s.Id))
+            .ToListAsync();
+
+        dto.Skills = _mapper.Map<List<SkillDTO>>(skills);
+
         return Ok(dto);
     }
 
@@ -147,7 +180,8 @@ public class EmployerController : BaseController
                 FreelancerName = a.FreelancerProfile.Account.FullName,
                 CoverLetter = a.CoverLetter,
                 Status = a.Status.ToString(),
-                AppliedAt = a.AppliedAt
+                AppliedAt = a.AppliedAt,
+                IsReviewed = _context.Reviews.Any(r => r.ReviewerId == _user.UserId && r.RevieweeId == a.FreelancerProfile.AccountId)
             })
             .ToListAsync();
 
@@ -169,6 +203,7 @@ public class EmployerController : BaseController
         // Tim Application va Employer
         var application = await _context.Applications
             .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (application == null)
@@ -187,8 +222,16 @@ public class EmployerController : BaseController
             application.Status = ApplicationStatus.IN_PROGRESS;
             application.Job.Status = JobStatus.IN_PROGRESS;
 
+            // Notify accepted Freelancer
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã được chấp nhận!"
+            });
+
             // Reject other pending applications for this job
             var otherPending = await _context.Applications
+                .Include(a => a.FreelancerProfile)
                 .Where(a => a.JobId == application.JobId
                          && a.Id != application.Id
                          && a.Status == ApplicationStatus.PENDING)
@@ -197,11 +240,21 @@ public class EmployerController : BaseController
             foreach (var other in otherPending)
             {
                 other.Status = ApplicationStatus.REJECTED;
+                _context.Notifications.Add(new Notification
+                {
+                    AccountId = other.FreelancerProfile.AccountId,
+                    Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+                });
             }
         }
         else
         {
             application.Status = status;
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+            });
         }
 
         _context.Applications.Update(application);
@@ -383,6 +436,19 @@ public class EmployerController : BaseController
             // 4. Cập nhật trạng thái
             application.Status = ApplicationStatus.COMPLETED;
             application.Job.Status = JobStatus.COMPLETED;
+
+            // Create a Payment record
+            var payment = new Payment
+            {
+                ApplicationId = application.Id,
+                Amount = budget,
+                PaymentMethod = "Wallet",
+                TransactionCode = Guid.NewGuid().ToString("N"),
+                Status = PaymentStatus.PAID,
+                PaidAt = DateTime.Now,
+                CreatedAt = DateTime.Now
+            };
+            _context.Payments.Add(payment);
 
             // 5. Thông báo cho Freelancer
             _context.Notifications.Add(new Notification
