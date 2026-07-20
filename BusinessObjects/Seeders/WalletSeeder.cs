@@ -11,6 +11,18 @@ namespace BusinessObjects.Seeders
     {
         public static async Task SeedAsync(AppDbContext context)
         {
+            // Ensure FINANCE_MANAGER role exists in the Roles table
+            var roleExists = await context.Roles.AnyAsync(r => r.Id == (int)RoleEnum.FINANCE_MANAGER);
+            if (!roleExists)
+            {
+                context.Roles.Add(new Role 
+                { 
+                    Id = (int)RoleEnum.FINANCE_MANAGER, 
+                    Name = RoleEnum.FINANCE_MANAGER.ToString() 
+                });
+                await context.SaveChangesAsync();
+            }
+
             // 1. Seed tài khoản Finance Manager nếu chưa có
             var fmExists = await context.Users
                 .AnyAsync(u => u.Email == "finance@toplancer.vn");

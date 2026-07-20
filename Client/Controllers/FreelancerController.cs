@@ -472,17 +472,17 @@ public class FreelancerController : BaseController
         }
     }
 
-    [HttpPost("report-employer")]
-    public async Task<IActionResult> ReportEmployer(CreateReportDto dto)
+    [HttpPost("reviews/create")]
+    public async Task<IActionResult> CreateReview(CreateReviewDto dto)
     {
         try
         {
-            await PostAsync<CreateReportDto, object>("api/freelancer/report", dto);
-            TempData["Success"] = "Report submitted successfully!";
+            var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
+            TempData["Success"] = "Đánh giá nhà tuyển dụng thành công!";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Failed to submit report: " + ex.Message;
+            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
         }
         return RedirectToAction("MyJobs");
     }

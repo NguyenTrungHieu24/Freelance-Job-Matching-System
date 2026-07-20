@@ -1,0 +1,96 @@
+@model BusinessObjects.DTOs.FreelancerCvDto
+
+@{
+    ViewBag.Title = "Candidate Work Profile";
+    Layout = "_Layout";
+}
+
+<div class="container py-5">
+    <div class="mb-4">
+        <a href="/employer/applications" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Trở lại danh sách đơn ứng tuyển
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card-header bg-dark text-white p-4">
+            <div class="d-flex align-items-center gap-3">
+                <div>
+                    <h3 class="fw-bold mb-1">@Model.Title</h3>
+                    <p class="text-light opacity-75 mb-0"><i class="bi bi-person-fill"></i> Freelancer Hồ Sơ Năng Lực</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- Left Details (8 cols) -->
+                <div class="col-lg-8">
+                    <!-- Bio Section -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-file-earmark-person"></i> Giới thiệu bản thân</h5>
+                        <p class="text-muted" style="white-space: pre-line; line-height: 1.7;">
+                            @(!string.IsNullOrEmpty(Model.Bio) ? Model.Bio : "Freelancer chưa cập nhật phần giới thiệu.")
+                        </p>
+                    </div>
+
+                    <!-- Portfolio Description -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-journal-album"></i> Mô tả Portfolio / Kinh nghiệm</h5>
+                        <p class="text-muted" style="white-space: pre-line; line-height: 1.7;">
+                            @(!string.IsNullOrEmpty(Model.PortfolioDescription) ? Model.PortfolioDescription : "Không có mô tả chi tiết dự án.")
+                        </p>
+                    </div>
+
+                    <!-- Portfolio Link -->
+                    @if (!string.IsNullOrEmpty(Model.PortfolioUrl))
+                    {
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-link-45deg"></i> Đường dẫn Portfolio cá nhân</h5>
+                            <a href="@Model.PortfolioUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-box-arrow-up-right"></i> Xem Portfolio ngoài
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Sidebar (4 cols) -->
+                <div class="col-lg-4">
+                    <!-- Skills Section -->
+                    <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-tag-fill text-primary"></i> Kỹ năng</h5>
+                        @if (Model.Skills != null && Model.Skills.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var skill in Model.Skills)
+                                {
+                                    <span class="badge bg-white text-dark border px-3 py-2 rounded-2">@skill.Name</span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Chưa cập nhật kỹ năng.</span>
+                        }
+                    </div>
+
+                    <!-- CV Section -->
+                    <div class="card bg-light border-0 p-3 rounded-3 text-center">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-file-pdf-fill text-danger"></i> Sơ yếu lý lịch (CV)</h5>
+                        @if (!string.IsNullOrEmpty(Model.CVUrl))
+                        {
+                            <p class="text-muted small">Hồ sơ CV của ứng viên đã được tải lên.</p>
+                            <a href="@Model.CVUrl" target="_blank" class="btn btn-danger w-100 py-2">
+                                <i class="bi bi-cloud-arrow-down-fill"></i> Tải xuống CV
+                            </a>
+                        }
+                        else
+                        {
+                            <p class="text-muted small mb-0">Ứng viên chưa tải lên file CV.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

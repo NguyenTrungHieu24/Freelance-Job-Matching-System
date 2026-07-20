@@ -152,7 +152,8 @@
                                                 Icon = item.Status == 1 ? "bi-lock" : "bi-unlock",
                                                 AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "activate", "Users", new { id = item.Id }),
                                                 ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Activate") + " this user?",
-                                                ExtraMessage = "This user "+ (item.Status == 1 ? "can" : "can't") + " login to system!"
+                                                ExtraMessage = "This user "+ (item.Status == 1 ? "will be deactivated" : "will be activated") + "!",
+                                                Handle = "reloadPage"
                                             },
                                             new() {
                                                 Title = "Delete",

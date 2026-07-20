@@ -31,6 +31,7 @@ namespace BusinessObjects
         public DbSet<JobSkill> JobSkills { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -105,6 +106,14 @@ namespace BusinessObjects
             modelBuilder.Entity<Wallet>()
                 .HasIndex(w => w.UserId)
                 .IsUnique();
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Amount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.BalanceAfter)
+                .HasPrecision(18, 2);
         }
     }
 }

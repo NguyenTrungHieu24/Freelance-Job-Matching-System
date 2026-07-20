@@ -3,6 +3,7 @@ using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Common.Admin;
 using BusinessObjects.Enums;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -136,17 +137,17 @@ namespace API.Controllers
         {
             var fromDate = GetFromDate(range);
 
-            var paidPayments = _context.Payments
-                .Where(p => p.Status == BusinessObjects.Enums.PaymentStatus.PAID);
+            // System revenue consists of commissions and job posting fees (stored as negative amounts, so negate them)
+            var totalRevenue = await _context.Transactions
+                .Where(t => t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE)
+                .SumAsync(t => -t.Amount);
 
-            decimal totalRevenue = await paidPayments
-                .SumAsync(p => (decimal?)p.Amount) ?? 0;
+            var revenueInRange = await _context.Transactions
+                .Where(t => (t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE) && t.CreatedAt >= fromDate)
+                .SumAsync(t => -t.Amount);
 
-            decimal revenueInRange = await paidPayments
-                .Where(p => p.PaidAt >= fromDate)
-                .SumAsync(p => (decimal?)p.Amount) ?? 0;
-
-            int totalTransactions = await paidPayments.CountAsync();
+            var totalTransactions = await _context.Transactions
+                .CountAsync(t => t.CreatedAt >= fromDate);
 
             return Ok(new RevenueStats
             {

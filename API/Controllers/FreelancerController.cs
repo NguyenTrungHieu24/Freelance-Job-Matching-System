@@ -588,8 +588,9 @@ namespace API.Controllers
                 var isReviewed = false;
                 if (employerId > 0)
                 {
+                    // Check if Freelancer (userId) has reviewed the Employer (employerId)
                     isReviewed = await _context.Reviews.AnyAsync(r =>
-                        r.ReviewerId == employerId && r.RevieweeId == userId);
+                        r.ReviewerId == userId && r.RevieweeId == employerId);
                 }
 
                 var dto = new MyJobDto
@@ -609,15 +610,19 @@ namespace API.Controllers
                 };
 
                 if (a.Status == ApplicationStatus.CANCELLED || a.Status == ApplicationStatus.REJECTED)
-                    dto.ProgressStage = -1;
-                else if(a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.ACTIVE)
-                    dto.ProgressStage = 1;
-                else if (a.Status == ApplicationStatus.ACCEPTED && a.Job.Status == JobStatus.CLOSED)
                 {
-                    if(payment == null || payment.Status == PaymentStatus.PENDING)
-                        dto.ProgressStage = 2;
-                    else if (payment.Status == PaymentStatus.PAID)
-                        dto.ProgressStage = 3;
+                    dto.ProgressStage = -1;
+                }
+                else if (a.Status == ApplicationStatus.IN_PROGRESS)
+                {
+                    dto.ProgressStage = 1;
+                }
+                else if (a.Status == ApplicationStatus.COMPLETED)
+                {
+                    if (payment == null || payment.Status != PaymentStatus.PAID)
+                        dto.ProgressStage = 3; // Completed but awaiting payment
+                    else
+                        dto.ProgressStage = 4; // Completed & Paid (Awaiting Review / Done)
                 }
                 myJobs.Add(dto);
             }

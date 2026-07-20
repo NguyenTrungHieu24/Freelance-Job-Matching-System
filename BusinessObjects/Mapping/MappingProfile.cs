@@ -106,9 +106,7 @@ namespace BusinessObjects.Mapping
 
             CreateMap<Review, ReviewDto>()
                 .ForMember(dest => dest.ReviewerName, opt => opt.MapFrom(src => 
-                    src.Reviewer != null ? src.Reviewer.FullName : ""))
-                .ForMember(dest => dest.RevieweeName, opt => opt.MapFrom(src => 
-                    src.Reviewee != null ? src.Reviewee.FullName : ""));
+                    src.Reviewer != null ? src.Reviewer.FullName : ""));
         }
     }
 }

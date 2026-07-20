@@ -3,6 +3,7 @@ using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using Client.Models.Admin;
 using Client.Models.Skills;
+using Client.Models.Jobs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -129,6 +130,68 @@ namespace Client.Controllers
             }
 
             return Redirect(returnUrl ?? "/admin/report-list");
+        }
+
+        [HttpGet("jobs")]
+        public async Task<IActionResult> Jobs(FilterJobDTO filter, [FromQuery] int? page)
+        {
+            try
+            {
+                if (page.HasValue)
+                {
+                    filter.Page = page.Value;
+                }
+                filter.Page = filter.Page <= 0 ? 1 : filter.Page;
+                filter.PageSize = 10;
+
+                var queryParams = new List<KeyValuePair<string, string>>
+                {
+                    new("page", filter.Page.ToString()),
+                    new("pageSize", filter.PageSize.ToString())
+                };
+
+                if (!string.IsNullOrWhiteSpace(filter.Keyword))
+                {
+                    queryParams.Add(new("keyword", filter.Keyword));
+                }
+
+                var url = QueryHelpers.AddQueryString("api/jobs", queryParams);
+                var data = await GetAsync<PaginateResult<JobDTO>>(url);
+
+                return View(new ListJobsModel
+                {
+                    Filter = filter,
+                    Jobs = data ?? new PaginateResult<JobDTO>()
+                });
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Cannot load jobs: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        [HttpPost("jobs/toggle-status/{id}")]
+        public async Task<IActionResult> ToggleJobStatus(int id, string returnUrl)
+        {
+            try
+            {
+                var isSuccess = await PostAsync<string, ApiResult<bool>>($"api/jobs/admin/toggle-status/{id}", null);
+                if (isSuccess.Success)
+                {
+                    TempData["Success"] = "Đã cập nhật trạng thái tin tuyển dụng!";
+                }
+                else
+                {
+                    TempData["Error"] = "Thao tác thất bại: " + isSuccess.Message;
+                }
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = "Đã xảy ra lỗi: " + e.Message;
+            }
+
+            return Redirect(returnUrl ?? "/admin/jobs");
         }
     }
 }

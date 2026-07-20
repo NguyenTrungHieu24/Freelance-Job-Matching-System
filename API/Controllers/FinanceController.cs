@@ -84,10 +84,20 @@ namespace API.Controllers
                     Balance = 0
                 };
                 _context.Wallets.Add(user.Wallet);
+                await _context.SaveChangesAsync();
             }
 
             user.Wallet.Balance += dto.Amount;
             user.Wallet.UpdatedAt = DateTime.Now;
+
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = user.Wallet.Id,
+                Type = TransactionType.DEPOSIT,
+                Amount = dto.Amount,
+                BalanceAfter = user.Wallet.Balance,
+                Description = dto.Description ?? "Nạp tiền từ Finance Manager"
+            });
 
             await _context.SaveChangesAsync();
 
@@ -115,6 +125,15 @@ namespace API.Controllers
 
             user.Wallet.Balance -= dto.Amount;
             user.Wallet.UpdatedAt = DateTime.Now;
+
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = user.Wallet.Id,
+                Type = TransactionType.WITHDRAW,
+                Amount = -dto.Amount,
+                BalanceAfter = user.Wallet.Balance,
+                Description = dto.Description ?? "Rút tiền từ Finance Manager"
+            });
 
             await _context.SaveChangesAsync();
 

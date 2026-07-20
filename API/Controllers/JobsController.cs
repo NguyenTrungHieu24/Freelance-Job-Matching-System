@@ -244,6 +244,18 @@ namespace API.Controllers
                 return BadRequest("Deadline must be in the future.");
             }
 
+            // Check wallet balance for Job Posting Fee
+            var feeSettings = HttpContext.RequestServices
+                .GetRequiredService<Microsoft.Extensions.Options.IOptions<BusinessObjects.Common.ServiceFeeSettings>>().Value;
+
+            var wallet = await _context.Wallets
+                .FirstOrDefaultAsync(w => w.UserId == userId);
+
+            if (wallet == null || wallet.Balance < feeSettings.JobPostingFee)
+            {
+                return BadRequest(new { message = $"Số dư ví không đủ để đăng tin. Cần ít nhất {feeSettings.JobPostingFee:N0} VNĐ." });
+            }
+
             // Map CreateJobDto to Job entity
             var job = new Job
             {
@@ -263,6 +275,22 @@ namespace API.Controllers
             {
                 _context.Jobs.Add(job);
                 await _context.SaveChangesAsync(); // Saves job and generates its Id
+
+                // Deduct job posting fee
+                wallet.Balance -= feeSettings.JobPostingFee;
+                wallet.UpdatedAt = DateTime.Now;
+
+                _context.Transactions.Add(new Transaction
+                {
+                    WalletId = wallet.Id,
+                    JobId = job.Id,
+                    Type = TransactionType.JOB_POSTING_FEE,
+                    Amount = -feeSettings.JobPostingFee,
+                    BalanceAfter = wallet.Balance,
+                    Description = $"Phí đăng tin: {job.Title}"
+                });
+
+                await _context.SaveChangesAsync();
 
                 // Add JobSkills if provided
                 if (dto.Skills != null && dto.Skills.Any())
@@ -478,7 +506,30 @@ namespace API.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(ApiResult<bool>.Ok(true, $"Close job({job.Title}) successfully!"));
+            return Ok(ApiResult<bool>.Ok(true, $"Open job({job.Title}) successfully!"));
+        }
+
+        [HttpPost("admin/toggle-status/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> AdminToggleStatus(int id)
+        {
+            var job = await _context.Jobs.FirstOrDefaultAsync(x => x.Id == id);
+            if (job == null)
+            {
+                return Ok(ApiResult<bool>.Fail("Job not found"));
+            }
+
+            if (job.Status == JobStatus.DELETED)
+            {
+                job.Status = JobStatus.ACTIVE;
+            }
+            else
+            {
+                job.Status = JobStatus.DELETED;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(ApiResult<bool>.Ok(true, $"Toggled job status to {job.Status} successfully!"));
         }
     }
 }

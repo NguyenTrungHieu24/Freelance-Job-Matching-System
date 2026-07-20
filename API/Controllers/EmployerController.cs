@@ -8,7 +8,6 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BusinessObjects.Enums;
 namespace API.Controllers;
 
 [Route("api/employer")]
@@ -51,6 +50,40 @@ public class EmployerController : BaseController
             Address = user.EmployerProfile?.Address,
             Logo = user.EmployerProfile?.Logo ?? ""
         };
+        return Ok(dto);
+    }
+
+    [HttpGet("freelancer-profile/{id}")]
+    public async Task<IActionResult> GetFreelancerProfile(int id)
+    {
+        var profile = await _context.FreelancerProfiles
+            .Include(p => p.Account)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (profile == null)
+            return NotFound("Freelancer profile not found");
+
+        var dto = new FreelancerCvDto
+        {
+            ProfileId = profile.Id,
+            Title = profile.Title,
+            Bio = profile.Bio,
+            CVUrl = profile.CVUrl,
+            PortfolioUrl = profile.PortfolioUrl,
+            PortfolioDescription = profile.PortfolioDescription
+        };
+
+        var skillIds = await _context.FreelancerSkills
+            .Where(fs => fs.FreelancerProfileId == profile.Id)
+            .Select(fs => fs.SkillId)
+            .ToListAsync();
+
+        var skills = await _context.Skills
+            .Where(s => skillIds.Contains(s.Id))
+            .ToListAsync();
+
+        dto.Skills = _mapper.Map<List<SkillDTO>>(skills);
+
         return Ok(dto);
     }
 
@@ -149,7 +182,8 @@ public class EmployerController : BaseController
                 CoverLetter = a.CoverLetter,
                 CvUrl = a.CvUrl,
                 Status = a.Status.ToString(),
-                AppliedAt = a.AppliedAt
+                AppliedAt = a.AppliedAt,
+                IsReviewed = _context.Reviews.Any(r => r.ReviewerId == _user.UserId && r.RevieweeId == a.FreelancerProfile.AccountId)
             })
             .ToListAsync();
 
@@ -171,6 +205,7 @@ public class EmployerController : BaseController
         // Tim Application va Employer
         var application = await _context.Applications
             .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (application == null)
@@ -184,7 +219,46 @@ public class EmployerController : BaseController
         }
 
         // Update trang thai
-        application.Status = status;
+        if (status == ApplicationStatus.ACCEPTED)
+        {
+            application.Status = ApplicationStatus.IN_PROGRESS;
+            application.Job.Status = JobStatus.IN_PROGRESS;
+
+            // Notify accepted Freelancer
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã được chấp nhận!"
+            });
+
+            // Reject other pending applications for this job
+            var otherPending = await _context.Applications
+                .Include(a => a.FreelancerProfile)
+                .Where(a => a.JobId == application.JobId
+                         && a.Id != application.Id
+                         && a.Status == ApplicationStatus.PENDING)
+                .ToListAsync();
+
+            foreach (var other in otherPending)
+            {
+                other.Status = ApplicationStatus.REJECTED;
+                _context.Notifications.Add(new Notification
+                {
+                    AccountId = other.FreelancerProfile.AccountId,
+                    Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+                });
+            }
+        }
+        else
+        {
+            application.Status = status;
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+            });
+        }
+
         _context.Applications.Update(application);
 
         var freelancerProfile = await _context.FreelancerProfiles.FindAsync(application.FreelancerProfileId);
@@ -203,7 +277,7 @@ public class EmployerController : BaseController
 
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {status}" });
+        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {application.Status}" });
     }
 
 
@@ -291,47 +365,130 @@ public class EmployerController : BaseController
         return Ok(dto);
     }
 
-    [HttpPost("report")]
-    public async Task<IActionResult> CreateReport([FromBody] CreateReportDto dto)
+    /// <summary>
+    /// Employer xác nhận hoàn thành Job → Thanh toán tự động
+    /// </summary>
+    [HttpPost("applications/{id}/complete")]
+    public async Task<IActionResult> CompleteApplication(int id)
     {
-        var reporterId = _user.UserId;
-        var report = new Report
-        {
-            ReporterId = reporterId,
-            ReportedUserId = dto.ReportUserId,
-            Reason = dto.Reason,
-            Description = dto.Description,
-            Status = ReportStatus.PENDING,
-            CreatedAt = DateTime.UtcNow
-        };
-        _context.Reports.Add(report);
-        await _context.SaveChangesAsync();
-        return Ok(new { message = "Report submitted successfully" });
-    }
+        var userId = _user.UserId;
+        var feeSettings = HttpContext.RequestServices
+            .GetRequiredService<Microsoft.Extensions.Options.IOptions<BusinessObjects.Common.ServiceFeeSettings>>().Value;
 
-    [HttpPost("review")]
-    public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto dto)
-    {
-        var reviewerId = _user.UserId;
-        var existingReview = await _context.Reviews
-            .FirstOrDefaultAsync(r => r.ReviewerId == reviewerId && r.RevieweeId == dto.RevieweeId);
+        var application = await _context.Applications
+            .Include(a => a.Job)
+            .Include(a => a.FreelancerProfile)
+            .FirstOrDefaultAsync(a => a.Id == id);
 
-        if (existingReview != null)
+        if (application == null)
+            return NotFound("Application not found");
+
+        // Verify ownership
+        var employer = await _context.EmployerProfiles
+            .FirstOrDefaultAsync(e => e.AccountId == userId);
+        if (employer == null || application.Job.EmployerProfileId != employer.Id)
+            return Forbid();
+
+        // Verify status
+        if (application.Status != ApplicationStatus.IN_PROGRESS)
+            return BadRequest("Only IN_PROGRESS applications can be completed");
+
+        var budget = application.Job.Budget;
+        var commission = budget * feeSettings.CommissionPercent / 100;
+        var freelancerReceives = budget - commission;
+
+        // Check employer wallet
+        var employerWallet = await _context.Wallets
+            .FirstOrDefaultAsync(w => w.UserId == userId);
+        if (employerWallet == null || employerWallet.Balance < budget)
+            return BadRequest($"Số dư ví không đủ. Cần {budget:N0} VNĐ");
+
+        // Check freelancer wallet
+        var freelancerWallet = await _context.Wallets
+            .FirstOrDefaultAsync(w => w.UserId == application.FreelancerProfile.AccountId);
+        if (freelancerWallet == null)
+            return BadRequest("Freelancer wallet not found");
+
+        // --- THANH TOÁN ---
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
         {
-            return BadRequest(new { message = "You have already reviewed this freelancer." });
+            // 1. Trừ ví Employer
+            employerWallet.Balance -= budget;
+            employerWallet.UpdatedAt = DateTime.Now;
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = employerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.JOB_PAYMENT,
+                Amount = -budget,
+                BalanceAfter = employerWallet.Balance,
+                Description = $"Thanh toán Job: {application.Job.Title}"
+            });
+
+            // 2. Cộng ví Freelancer (sau khi trừ hoa hồng)
+            freelancerWallet.Balance += freelancerReceives;
+            freelancerWallet.UpdatedAt = DateTime.Now;
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = freelancerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.JOB_EARNING,
+                Amount = freelancerReceives,
+                BalanceAfter = freelancerWallet.Balance,
+                Description = $"Thu nhập Job: {application.Job.Title} (đã trừ {feeSettings.CommissionPercent}% hoa hồng)"
+            });
+
+            // 3. Ghi nhận hoa hồng hệ thống
+            _context.Transactions.Add(new Transaction
+            {
+                WalletId = freelancerWallet.Id,
+                JobId = application.JobId,
+                Type = TransactionType.COMMISSION_FEE,
+                Amount = -commission,
+                BalanceAfter = freelancerWallet.Balance,
+                Description = $"Phí hoa hồng {feeSettings.CommissionPercent}%: {application.Job.Title}"
+            });
+
+            // 4. Cập nhật trạng thái
+            application.Status = ApplicationStatus.COMPLETED;
+            application.Job.Status = JobStatus.COMPLETED;
+
+            // Create a Payment record
+            var payment = new Payment
+            {
+                ApplicationId = application.Id,
+                Amount = budget,
+                PaymentMethod = "Wallet",
+                TransactionCode = Guid.NewGuid().ToString("N"),
+                Status = PaymentStatus.PAID,
+                PaidAt = DateTime.Now,
+                CreatedAt = DateTime.Now
+            };
+            _context.Payments.Add(payment);
+
+            // 5. Thông báo cho Freelancer
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = application.FreelancerProfile.AccountId,
+                Content = $"Job \"{application.Job.Title}\" đã hoàn thành! Bạn nhận được {freelancerReceives:N0} VNĐ (sau phí {feeSettings.CommissionPercent}%)."
+            });
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                message = "Job completed & payment processed!",
+                budget,
+                commission,
+                freelancerReceives
+            });
         }
-
-        var review = new Review
+        catch
         {
-            ReviewerId = reviewerId,
-            RevieweeId = dto.RevieweeId,
-            Rating = dto.Rating,
-            Comment = dto.Comment,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.Reviews.Add(review);
-        await _context.SaveChangesAsync();
-        return Ok(new { message = "Review submitted successfully" });
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

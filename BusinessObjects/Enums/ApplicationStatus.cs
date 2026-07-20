@@ -12,5 +12,7 @@ namespace BusinessObjects.Enums
         ACCEPTED = 2,
         REJECTED = 3,
         CANCELLED = 4,
+        IN_PROGRESS = 5,
+        COMPLETED = 6,
     }
 }

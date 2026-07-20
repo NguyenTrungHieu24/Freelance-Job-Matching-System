@@ -10,6 +10,8 @@ namespace BusinessObjects.Enums
     {
         ACTIVE = 1,
         CLOSED = 2,
-        DELETED = 3
+        DELETED = 3,
+        IN_PROGRESS = 4,
+        COMPLETED = 5
     }
 }

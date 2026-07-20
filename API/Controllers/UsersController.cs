@@ -156,6 +156,4 @@ namespace API.Controllers
             return Ok(ApiResult<bool>.Ok(true, "Activate user successfully!"));
         }
     }
-
-
 }

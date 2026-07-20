@@ -151,6 +151,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.Configure<PayOSSettings>(builder.Configuration.GetSection("PayOS"));
+builder.Services.Configure<BusinessObjects.Common.ServiceFeeSettings>(builder.Configuration.GetSection("ServiceFee"));
 
 builder.Services.AddSingleton<PayOSClient>(x =>
 {

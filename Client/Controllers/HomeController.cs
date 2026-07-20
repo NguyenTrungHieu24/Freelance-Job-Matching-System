@@ -34,6 +34,34 @@ namespace Client.Controllers
             return View();
         }
 
+        [HttpGet("notifications/list")]
+        public async Task<IActionResult> GetNotifications()
+        {
+            try
+            {
+                var list = await GetAsync<object>("api/notifications");
+                return Json(list);
+            }
+            catch
+            {
+                return Json(new List<object>());
+            }
+        }
+
+        [HttpPost("notifications/read/{id}")]
+        public async Task<IActionResult> MarkNotificationRead(int id)
+        {
+            try
+            {
+                var success = await PutAsync<object>($"api/notifications/{id}/read", new { });
+                return Json(new { success });
+            }
+            catch
+            {
+                return Json(new { success = false });
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -157,6 +157,22 @@ public class EmployerController : BaseController
         return RedirectToAction("Applications");
     }
 
+    // POST: /employer/applications/complete
+    [HttpPost("applications/complete")]
+    public async Task<IActionResult> Complete(int id)
+    {
+        try
+        {
+            var success = await PostAsync<object, object>($"api/employer/applications/{id}/complete", new { });
+            TempData["Success"] = "Xác nhận hoàn thành job và thanh toán thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Thanh toán thất bại: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
+    }
+
 
     [HttpGet("jobs/create")]
     public async Task<IActionResult> CreateJob()
@@ -191,9 +207,35 @@ public class EmployerController : BaseController
             return View("JobForm", model);
         }
 
-        await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
+        try
+        {
+            await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
+            TempData["Success"] = "Đăng tin tuyển dụng thành công!";
+            return RedirectToAction(nameof(MyJobs));
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = ex.Message;
+            try
+            {
+                using (var doc = System.Text.Json.JsonDocument.Parse(ex.Message))
+                {
+                    if (doc.RootElement.TryGetProperty("message", out var msgProp))
+                    {
+                        errorMessage = msgProp.GetString() ?? ex.Message;
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore JSON parsing errors
+            }
 
-        return RedirectToAction(nameof(MyJobs));
+            ModelState.AddModelError(string.Empty, errorMessage);
+            model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+            model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+            return View("JobForm", model);
+        }
     }
 
     [HttpGet("jobs")]
@@ -453,33 +495,69 @@ public class EmployerController : BaseController
         return queryParams;
     }
 
-    [HttpPost("report-freelancer")]
-    public async Task<IActionResult> ReportFreelancer(CreateReportDto dto)
+    [HttpGet("freelancer-profile/{id}")]
+    public async Task<IActionResult> FreelancerProfile(int id)
     {
         try
         {
-            await PostAsync<CreateReportDto, object>("api/employer/report", dto);
-            TempData["Success"] = "Report submitted successfully!";
+            var profile = await GetAsync<FreelancerCvDto>($"api/employer/freelancer-profile/{id}");
+            return View(profile);
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Failed to submit report: " + ex.Message;
+            TempData["Error"] = "Không thể tải hồ sơ ứng viên: " + ex.Message;
+            return RedirectToAction("Applications");
+        }
+    }
+
+    [HttpPost("reviews/create")]
+    public async Task<IActionResult> CreateReview(CreateReviewDto dto)
+    {
+        try
+        {
+            var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
+            TempData["Success"] = "Đánh giá ứng viên thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
         }
         return RedirectToAction("Applications");
     }
 
-    [HttpPost("submit-review")]
-    public async Task<IActionResult> SubmitReview(CreateReviewDto dto)
+    [HttpGet("change-password")]
+    public IActionResult ChangePassword()
     {
+        return View(new ChangePasswordViewModel());
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
         try
         {
-            await PostAsync<CreateReviewDto, object>("api/employer/review", dto);
-            TempData["Success"] = "Review submitted successfully!";
+            var success = await PutAsync("api/auth/change-password", new
+            {
+                OldPassword = model.OldPassword,
+                NewPassword = model.NewPassword,
+                ConfirmPassword = model.ConfirmPassword
+            });
+
+            if (success)
+            {
+                TempData["Success"] = "Password changed successfully!";
+                return RedirectToAction("ChangePassword");
+            }
+
+            TempData["Error"] = "Failed to change password";
+            return RedirectToAction("ChangePassword");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            TempData["Error"] = "Failed to submit review: " + ex.Message;
+            TempData["Error"] = e.Message;
+            return RedirectToAction("ChangePassword");
         }
-        return RedirectToAction("Applications");
     }
 }

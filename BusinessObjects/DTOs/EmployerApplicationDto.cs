@@ -12,5 +12,6 @@ namespace BusinessObjects.DTOs
         public string? CvUrl { get; set; }
         public string Status { get; set; } = null!; // Pending, Accepted, Rejected
         public DateTime AppliedAt { get; set; }
+        public bool IsReviewed { get; set; }
     }
 }
