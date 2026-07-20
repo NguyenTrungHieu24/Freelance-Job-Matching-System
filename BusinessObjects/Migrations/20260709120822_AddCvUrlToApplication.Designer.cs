@@ -4,6 +4,7 @@ using BusinessObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709120822_AddCvUrlToApplication")]
+    partial class AddCvUrlToApplication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -379,9 +382,6 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
@@ -436,47 +436,6 @@ namespace BusinessObjects.Migrations
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Models.Transaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("BalanceAfter")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WalletId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobId");
-
-                    b.HasIndex("WalletId");
-
-                    b.ToTable("Transactions");
-                });
-
             modelBuilder.Entity("BusinessObjects.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -525,35 +484,6 @@ namespace BusinessObjects.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Models.Wallet", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Balance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Application", b =>
@@ -721,23 +651,6 @@ namespace BusinessObjects.Migrations
                     b.Navigation("Reviewer");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Models.Transaction", b =>
-                {
-                    b.HasOne("BusinessObjects.Models.Job", "Job")
-                        .WithMany()
-                        .HasForeignKey("JobId");
-
-                    b.HasOne("BusinessObjects.Models.Wallet", "Wallet")
-                        .WithMany()
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Job");
-
-                    b.Navigation("Wallet");
-                });
-
             modelBuilder.Entity("BusinessObjects.Models.User", b =>
                 {
                     b.HasOne("BusinessObjects.Models.Role", "Role")
@@ -747,17 +660,6 @@ namespace BusinessObjects.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Models.Wallet", b =>
-                {
-                    b.HasOne("BusinessObjects.Models.User", "User")
-                        .WithOne("Wallet")
-                        .HasForeignKey("BusinessObjects.Models.Wallet", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObjects.Models.Job", b =>
@@ -776,9 +678,6 @@ namespace BusinessObjects.Migrations
                         .IsRequired();
 
                     b.Navigation("Notifications");
-
-                    b.Navigation("Wallet")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

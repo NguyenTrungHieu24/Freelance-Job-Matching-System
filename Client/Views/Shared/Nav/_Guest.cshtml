@@ -1,6 +1,6 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
+@await Html.PartialAsync("Nav/_Nav",
+    new List<NavViewModel>{
+        new(){Controller = "Home", Action = "Index", Title = "Home"},
+        new(){Controller = "Jobs", Action = "Index", Title = "Find Jobs"},
+    }
+)

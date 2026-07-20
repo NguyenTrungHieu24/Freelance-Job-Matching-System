@@ -177,8 +177,10 @@ public class EmployerController : BaseController
                 JobId = a.JobId,
                 JobTitle = a.Job.Title,
                 FreelancerProfileId = a.FreelancerProfileId,
+                FreelancerAccountId = a.FreelancerProfile.AccountId,
                 FreelancerName = a.FreelancerProfile.Account.FullName,
                 CoverLetter = a.CoverLetter,
+                CvUrl = a.CvUrl,
                 Status = a.Status.ToString(),
                 AppliedAt = a.AppliedAt,
                 IsReviewed = _context.Reviews.Any(r => r.ReviewerId == _user.UserId && r.RevieweeId == a.FreelancerProfile.AccountId)
@@ -258,6 +260,21 @@ public class EmployerController : BaseController
         }
 
         _context.Applications.Update(application);
+
+        var freelancerProfile = await _context.FreelancerProfiles.FindAsync(application.FreelancerProfileId);
+        if (freelancerProfile != null)
+        {
+            var statusText = status == ApplicationStatus.ACCEPTED ? "accepted" : "rejected";
+            var notification = new Notification
+            {
+                AccountId = freelancerProfile.AccountId,
+                Content = $"Your application for the job '{application.Job.Title}' has been {statusText}.",
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            };
+            _context.Notifications.Add(notification);
+        }
+
         await _context.SaveChangesAsync();
 
         return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {application.Status}" });

@@ -1,0 +1,360 @@
+@using BusinessObjects.DTOs
+@using BusinessObjects.Enums
+@model Client.Models.Jobs.ListJobsModel
+
+@{
+    ViewData["Title"] = "Công việc Freelance";
+    Layout = "_Layout";
+    
+    var category = ViewBag.Category as List<CategoryDTO>;
+    var skill = ViewBag.Skills as List<SkillDTO>;
+}
+
+@section Styles {
+    <style>
+        .jobs-hero {
+            background: linear-gradient(135deg, #1a2e4a 0%, #253b5e 100%);
+            padding: 40px 0;
+            color: white;
+            margin-bottom: 30px;
+            border-radius: 16px;
+        }
+
+        .search-bar-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 6px;
+            display: flex;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .search-bar-input {
+            border: none;
+            outline: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            flex-grow: 1;
+            border-radius: 8px;
+        }
+
+        .search-bar-btn {
+            background: #f05a1a;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: 700;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .search-bar-btn:hover {
+            background: #d4440c;
+        }
+
+        .jobs-container {
+            max-width: 1220px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 3fr 9fr;
+            gap: 30px;
+        }
+
+        .filter-sidebar {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            height: fit-content;
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 20px;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .filter-section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 14px;
+        }
+
+        .filter-checkbox-list {
+            max-height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .filter-checkbox-item input {
+            cursor: pointer;
+            accent-color: #f05a1a;
+        }
+
+        .job-card-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+
+        .job-card-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+
+        .job-card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .job-card-title:hover {
+            color: #f05a1a;
+        }
+
+        .budget-badge {
+            background: #fff1ec;
+            color: #f05a1a;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .tag-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .skill-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .employer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+        }
+
+        @@media (max-width: 991px) {
+            .jobs-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="container my-4">
+    <!-- Hero Header -->
+    <div class="jobs-hero text-center">
+        <h2 class="fw-bold mb-3" style="color: #ffffff">Khám phá công việc tốt nhất dành cho bạn</h2>
+        <p class="opacity-75 mb-4 text-white">Tìm kiếm việc làm freelancer tự do nhanh chóng và chất lượng nhất</p>
+        
+        <form method="get" asp-action="Index" asp-controller="Jobs">
+            <div class="search-bar-wrap">
+                <input type="text" asp-for="Filter.Keyword" class="search-bar-input" placeholder="Tìm kiếm công việc, kỹ năng..." />
+                <button type="submit" class="search-bar-btn">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <form method="get" asp-action="Index" asp-controller="Jobs" id="filterForm">
+        <!-- Preserve main search keyword -->
+        <input type="hidden" name="Filter.Keyword" value="@Model.Filter.Keyword" />
+
+        <div class="jobs-container">
+            <!-- Sidebar Filter -->
+            <aside class="filter-sidebar">
+                <!-- Category Filter -->
+                <div class="filter-section">
+                    <h4 class="filter-section-title">Danh mục</h4>
+                    <select asp-for="Filter.CategoryId" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <option value="">Tất cả danh mục</option>
+                        @if (category != null)
+                        {
+                            foreach (var cat in category)
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Budget Filter -->
+                <div class="filter-section">
+                    <h4 class="filter-section-title">Ngân sách (VND)</h4>
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="number" asp-for="Filter.MinBudget" class="form-control form-control-sm" placeholder="Từ..." min="0" />
+                        <span class="text-muted">-</span>
+                        <input type="number" asp-for="Filter.MaxBudget" class="form-control form-control-sm" placeholder="Đến..." />
+                    </div>
+                </div>
+
+                <!-- Skills Filter -->
+                <div class="filter-section">
+                    <h4 class="filter-section-title">Kỹ năng</h4>
+                    <div class="filter-checkbox-list">
+                        @if (skill != null)
+                        {
+                            foreach (var s in skill)
+                            {
+                                bool isChecked = Model.Filter.SkillIds != null && Model.Filter.SkillIds.Contains(s.Id);
+                                <label class="filter-checkbox-item">
+                                    <input type="checkbox" name="Filter.SkillIds" value="@s.Id" @(isChecked ? "checked" : "") onchange="document.getElementById('filterForm').submit()">
+                                    <span>@s.Name</span>
+                                </label>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <!-- Temperature / Trạng thái cạnh tranh -->
+                <div class="filter-section">
+                    <h4 class="filter-section-title">Cạnh tranh</h4>
+                    <div class="d-flex flex-column gap-2">
+                        <label class="filter-checkbox-item">
+                            <input type="radio" name="Filter.Temperature" value="" @(Model.Filter.Temperature == null ? "checked" : "") onchange="document.getElementById('filterForm').submit()">
+                            <span>Tất cả</span>
+                        </label>
+                        <label class="filter-checkbox-item">
+                            <input type="radio" name="Filter.Temperature" value="1" @(Model.Filter.Temperature == JobTemperature.Cool ? "checked" : "") onchange="document.getElementById('filterForm').submit()">
+                            <span>Cool (Ít ứng viên)</span>
+                        </label>
+                        <label class="filter-checkbox-item">
+                            <input type="radio" name="Filter.Temperature" value="2" @(Model.Filter.Temperature == JobTemperature.Warm ? "checked" : "") onchange="document.getElementById('filterForm').submit()">
+                            <span>Warm (Vừa phải)</span>
+                        </label>
+                        <label class="filter-checkbox-item">
+                            <input type="radio" name="Filter.Temperature" value="3" @(Model.Filter.Temperature == JobTemperature.Hot ? "checked" : "") onchange="document.getElementById('filterForm').submit()">
+                            <span>Hot (Cực nhiều)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <button type="submit" class="btn btn-primary btn-sm w-100 mb-2" style="background-color: #f05a1a; border-color: #f05a1a;">Lọc kết quả</button>
+                <a href="/jobs" class="btn btn-outline-secondary btn-sm w-100 text-center">Xóa lọc</a>
+            </aside>
+
+            <!-- Jobs List -->
+            <main>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-dark mb-0">Công việc đang tuyển dụng</h4>
+                    <span class="text-muted small">Tổng số: @Model.Jobs.TotalItems</span>
+                </div>
+
+                @if (Model.Jobs.Items != null && Model.Jobs.Items.Any())
+                {
+                    foreach (var job in Model.Jobs.Items)
+                    {
+                        int appCount = job.ApplicationsCount;
+                        string tempLabel = appCount < 2 ? "Ít cạnh tranh" : appCount < 8 ? "Cạnh tranh trung bình" : "Cạnh tranh cao";
+                        string tempColor = appCount < 2 ? "#1D4ED8" : appCount < 8 ? "#92400E" : "#991B1B";
+                        string tempBg    = appCount < 2 ? "#EFF6FF" : appCount < 8 ? "#FFFBEB" : "#FEF2F2";
+
+                        <div class="job-card-item">
+                            <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                                <div style="flex: 1;">
+                                    <a href="/jobs/detail/@job.Id" class="job-card-title d-block mb-2">@job.Title</a>
+                                    
+                                    <p class="text-muted mb-3" style="font-size: 0.92rem; line-height: 1.6;">
+                                        @(job.Description?.Length > 180 ? job.Description.Substring(0, 180) + "..." : job.Description)
+                                    </p>
+
+                                    <div class="d-flex gap-2 flex-wrap align-items-center mb-3">
+                                        <span class="tag-badge">Danh mục: @job.CategoryName</span>
+                                        <span style="font-size:0.78rem; font-weight:700; padding:4px 10px; border-radius:6px; background:@tempBg; color:@tempColor;">
+                                            @tempLabel
+                                        </span>
+                                    </div>
+
+                                    @if (job.Skills != null && job.Skills.Any())
+                                    {
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <span class="text-muted small fw-bold">Yêu cầu:</span>
+                                            @foreach (var s in job.Skills)
+                                            {
+                                                <span class="skill-badge">@s</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="text-md-end text-start">
+                                    <span class="budget-badge d-inline-block mb-2">@job.Budget.ToString("N0") VND</span>
+                                    @if (job.Deadline.HasValue)
+                                    {
+                                        <div class="text-muted small">Hạn nộp: @job.Deadline.Value.ToString("dd/MM/yyyy")</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <hr class="my-3 text-black-50" style="opacity: 0.1;" />
+
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@(string.IsNullOrEmpty(job.EmployerLogo) ? "/image/user.png" : job.EmployerLogo)" alt="Employer Logo" class="employer-logo" />
+                                    <div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.88rem;">@job.CompanyName</div>
+                                        <div class="text-muted small">Đăng bởi: @job.EmployerName</div>
+                                    </div>
+                                </div>
+                                <a href="/jobs/detail/@job.Id" class="btn btn-outline-primary btn-sm rounded-pill px-4">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Pagination -->
+                    @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
+                }
+                else
+                {
+                    <div class="alert alert-info py-4 text-center rounded-3">
+                        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                        Không tìm thấy công việc nào phù hợp với bộ lọc của bạn.
+                    </div>
+                }
+            </main>
+        </div>
+    </form>
+</div>

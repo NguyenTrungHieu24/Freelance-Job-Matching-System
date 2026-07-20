@@ -103,9 +103,19 @@
                     }
                     else
                     {
-                        <form asp-action="ApplyJob" asp-controller="Freelancer" method="post">
+                        <form asp-action="ApplyJob" asp-controller="Freelancer" method="post" enctype="multipart/form-data">
                             <input type="hidden" asp-for="ApplicationForm.JobId" />
                             
+                            <!-- Upload CV Section -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-file-earmark-arrow-up me-1"></i> Upload CV
+                                    <span class="text-muted fw-normal" style="font-size: 0.8em;">(Optional)</span>
+                                </label>
+                                <input type="file" name="CvFile" class="form-control" accept=".pdf,.doc,.docx" />
+                                <div class="form-text">PDF, DOC, DOCX — Tối đa 5MB</div>
+                            </div>
+
                             <div class="mb-3">
                                 <label asp-for="ApplicationForm.CoverLetter" class="form-label fw-bold">Cover letter</label>
                                 <textarea asp-for="ApplicationForm.CoverLetter" class="form-control" rows="5" placeholder="Write your cover letter here..." required></textarea>

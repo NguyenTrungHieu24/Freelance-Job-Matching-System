@@ -99,5 +99,34 @@ namespace Client.Controllers
     
             return response.IsSuccessStatusCode;
         }
+
+        protected async Task<TResponse?> PostMultipartFormAsync<TResponse>(string endpoint, Dictionary<string, string> formFields, IFormFile? file = null, string fileFieldName = "cvFile")
+        {
+            var client = CreateClient();
+            using var content = new MultipartFormDataContent();
+
+            foreach (var field in formFields)
+            {
+                content.Add(new StringContent(field.Value ?? ""), field.Key);
+            }
+
+            if (file != null && file.Length > 0)
+            {
+                var fileStream = file.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType ?? "application/octet-stream");
+                content.Add(streamContent, fileFieldName, file.FileName);
+            }
+
+            var response = await client.PostAsync(endpoint, content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+
+            return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
     }
 }
