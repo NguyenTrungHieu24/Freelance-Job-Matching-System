@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -21,6 +21,8 @@ namespace BusinessObjects.Models
         public int Rating { get; set; }
 
         public string Comment { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("ReviewerId")]
         public User Reviewer { get; set; }

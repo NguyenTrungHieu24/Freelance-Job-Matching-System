@@ -140,7 +140,7 @@
 
             /* ===== HERO ===== */
             .fv-hero {
-                margin-top: 68px;
+                /* margin-top: 68px; - Removed to align directly under sticky layout header */
                 background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e3a5f 100%);
                 padding: 72px 0 80px;
                 position: relative;
@@ -859,81 +859,68 @@
         </style>
 
 
-        <!-- ========== TOPBAR ========== -->
-        <nav class="fv-topbar">
-            <div class="fv-wrap fv-topbar-inner">
-                <a href="/" class="fv-brand">Talent<span>Bridge</span></a>
-
-                <div class="fv-nav">
-                    <a href="#categories">Danh mục</a>
-                    <a href="#projects">Dự án</a>
-                    <a href="#freelancers">Freelancers</a>
-                    <a href="#how">Cách thức</a>
+        <!-- ========== HERO / WELCOME BANNER ========== -->
+        @if (CurrentUser.IsAuthenticated)
+        {
+            <section class="fv-cta">
+                <div class="fv-wrap fv-cta-inner">
+                    <h2>Chào mừng trở lại, <strong>@CurrentUser.Name</strong>! 👋</h2>
+                    <p>Có hàng trăm dự án mới đang chờ bạn — bắt đầu tìm kiếm ngay</p>
+                    <div class="fv-cta-actions">
+                        <a href="/jobs" class="btn-cta-white">Xem dự án mới nhất</a>
+                    </div>
                 </div>
+            </section>
+        }
+        else
+        {
+            <section class="fv-hero">
+                <div class="fv-wrap fv-hero-inner">
+                    <div class="fv-hero-badge">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                        Nền tảng Freelance #1 Việt Nam
+                    </div>
 
-                <div class="fv-nav-actions">
-                    @if (CurrentUser.IsAuthenticated)
-                    {
-                        <span style="color:rgba(255,255,255,.8);font-size:.9rem;font-weight:600">
-                        Xin chào, <strong style="color:#fff">@CurrentUser.Name</strong>
-                    </span>
-                    }
-                    else
-                    {
-                        <a href="/auth/login" class="btn-login">Đăng nhập</a>
-                        <a href="/auth/register" class="btn-register">Đăng ký</a>
-                    }
+                    <h1>
+                        Tìm Dự Án Phù Hợp —<br>
+                        <span>Kết Nối Nhanh, Thanh Toán An Toàn</span>
+                    </h1>
+
+                    <p class="fv-hero-sub">
+                        Hàng nghìn dự án mới mỗi ngày. Kết nối Employer và Freelancer
+                        chuyên nghiệp chỉ trong vài phút.
+                    </p>
+
+                    <!-- Search bar -->
+                    <div class="fv-search-wrap">
+                        <select class="fv-search-select">
+                            <option>Tất cả</option>
+                            <option>Lập trình</option>
+                            <option>Thiết kế</option>
+                            <option>Marketing</option>
+                            <option>Nội dung</option>
+                        </select>
+                        <input class="fv-search-input" type="text"
+                               placeholder="VD: Thiết kế logo, Website React, Viết content..."/>
+                        <button class="fv-search-btn">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
+                    </div>
+
+                    <!-- Popular tags -->
+                    <div class="fv-tags">
+                        <span style="color:rgba(255,255,255,.5);font-size:.82rem;font-weight:600">Phổ biến:</span>
+                        <a href="#" class="fv-tag">React</a>
+                        <a href="#" class="fv-tag">Figma UI/UX</a>
+                        <a href="#" class="fv-tag">SEO</a>
+                        <a href="#" class="fv-tag">ASP.NET</a>
+                        <a href="#" class="fv-tag">Viết bài</a>
+                        <a href="#" class="fv-tag">Logo Design</a>
+                        <a href="#" class="fv-tag">Mobile App</a>
+                    </div>
                 </div>
-            </div>
-        </nav>
-
-        <!-- ========== HERO ========== -->
-        <section class="fv-hero">
-            <div class="fv-wrap fv-hero-inner">
-                <div class="fv-hero-badge">
-                    <i class="bi bi-lightning-charge-fill"></i>
-                    Nền tảng Freelance #1 Việt Nam
-                </div>
-
-                <h1>
-                    Tìm Dự Án Phù Hợp —<br>
-                    <span>Kết Nối Nhanh, Thanh Toán An Toàn</span>
-                </h1>
-
-                <p class="fv-hero-sub">
-                    Hàng nghìn dự án mới mỗi ngày. Kết nối Employer và Freelancer
-                    chuyên nghiệp chỉ trong vài phút.
-                </p>
-
-                <!-- Search bar -->
-                <div class="fv-search-wrap">
-                    <select class="fv-search-select">
-                        <option>Tất cả</option>
-                        <option>Lập trình</option>
-                        <option>Thiết kế</option>
-                        <option>Marketing</option>
-                        <option>Nội dung</option>
-                    </select>
-                    <input class="fv-search-input" type="text"
-                           placeholder="VD: Thiết kế logo, Website React, Viết content..."/>
-                    <button class="fv-search-btn">
-                        <i class="bi bi-search"></i> Tìm kiếm
-                    </button>
-                </div>
-
-                <!-- Popular tags -->
-                <div class="fv-tags">
-                    <span style="color:rgba(255,255,255,.5);font-size:.82rem;font-weight:600">Phổ biến:</span>
-                    <a href="#" class="fv-tag">React</a>
-                    <a href="#" class="fv-tag">Figma UI/UX</a>
-                    <a href="#" class="fv-tag">SEO</a>
-                    <a href="#" class="fv-tag">ASP.NET</a>
-                    <a href="#" class="fv-tag">Viết bài</a>
-                    <a href="#" class="fv-tag">Logo Design</a>
-                    <a href="#" class="fv-tag">Mobile App</a>
-                </div>
-            </div>
-        </section>
+            </section>
+        }
 
         <!-- ========== STATS BAR ========== -->
         <div class="fv-stats">
@@ -1023,14 +1010,7 @@
                         <h2>Dự Án Mới Nhất</h2>
                         <p>Cập nhật liên tục — hàng trăm dự án mới mỗi ngày</p>
                     </div>
-                    @if (CurrentUser.IsAuthenticated)
-                    {
-                        <a href="/freelancer/jobs" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
-                    }
-                    else
-                    {
-                        <a href="/auth/login" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
-                    }
+                    <a href="/jobs" class="fv-see-all">Xem tất cả <i class="bi bi-arrow-right"></i></a>
                 </div>
 
                 <div class="fv-job-grid">
@@ -1220,28 +1200,20 @@
             </div>
         </section>
 
-        <!-- ========== CTA BANNER ========== -->
-        <section class="fv-cta">
-            <div class="fv-wrap fv-cta-inner">
-                @if (!CurrentUser.IsAuthenticated)
-                {
+        <!-- ========== CTA BANNER (GUEST ONLY) ========== -->
+        @if (!CurrentUser.IsAuthenticated)
+        {
+            <section class="fv-cta">
+                <div class="fv-wrap fv-cta-inner">
                     <h2>Sẵn Sàng Bắt Đầu Hành Trình Freelance?</h2>
                     <p>Đăng ký miễn phí — Tìm dự án đầu tiên trong hôm nay</p>
                     <div class="fv-cta-actions">
                         <a href="/auth/register" class="btn-cta-white">Tạo tài khoản miễn phí</a>
                         <a href="/auth/login" class="btn-cta-outline">Đăng nhập</a>
                     </div>
-                }
-                else
-                {
-                    <h2>Chào mừng trở lại, <strong>@CurrentUser.Name</strong>! 👋</h2>
-                    <p>Có hàng trăm dự án mới đang chờ bạn — bắt đầu tìm kiếm ngay</p>
-                    <div class="fv-cta-actions">
-                        <a href="#projects" class="btn-cta-white">Xem dự án mới nhất</a>
-                    </div>
-                }
-            </div>
-        </section>
+                </div>
+            </section>
+        }
     </div>
 </section>
 <!-- ===== Floating chat button ===== -->

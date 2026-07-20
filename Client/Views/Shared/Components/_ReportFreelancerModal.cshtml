@@ -1,0 +1,40 @@
+<div class="modal fade" id="reportModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Report Freelancer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="/employer/report-freelancer" method="post">
+          <div class="modal-body">
+            <input type="hidden" id="reportFreelancerId" name="ReportUserId" />
+            <div class="mb-3">
+                <label class="form-label fw-bold">Reason</label>
+                <select class="form-select" name="Reason" required>
+                    <option value="Scam / Fraud">Scam / Fraud</option>
+                    <option value="Poor performance / Breach of contract">Poor performance / Breach of contract</option>
+                    <option value="Unprofessional behavior">Unprofessional behavior</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Detailed Description</label>
+                <textarea class="form-control" name="Description" rows="3" placeholder="Provide details about the report..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger">Submit Report</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+    function openReportModal(freelancerId) {
+        document.getElementById('reportFreelancerId').value = freelancerId;
+        var myModal = new bootstrap.Modal(document.getElementById('reportModal'));
+        myModal.show();
+    }
+</script>

@@ -15,6 +15,7 @@ public class CreateApplicationDto
     [Required(ErrorMessage = "Cover letter is required")]
     [StringLength(2000, ErrorMessage =  "Cover letter is too long")]
     public string CoverLetter { get; set; }
+    public string? CvUrl { get; set; }
 }
 
 public class ApplicationHistoryDto

@@ -108,6 +108,8 @@ namespace BusinessObjects.DTOs
 
         public List<string> Skills { get; set; } = [];
         public List<ApplicationHistoryDto> Applications { get; set; } = [];
+        public string CompanyName { get; set; } = string.Empty;
+        public string EmployerLogo { get; set; } = string.Empty;
     }
 
     public class FilterJobDTO

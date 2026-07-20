@@ -64,7 +64,13 @@ namespace BusinessObjects.Mapping
                     o => o.MapFrom(s => s.Applications.Count))
                 .ForMember(
                     d => d.Skills,
-                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)));
+                    o => o.MapFrom(s => s.JobSkills.Select(x => x.Skill.Name)))
+                .ForMember(
+                    d => d.CompanyName,
+                    o => o.MapFrom(s => s.EmployerProfile.CompanyName))
+                .ForMember(
+                    d => d.EmployerLogo,
+                    o => o.MapFrom(s => s.EmployerProfile.Logo));
 
             CreateMap<User, UserDto>()
                 .ForMember(
