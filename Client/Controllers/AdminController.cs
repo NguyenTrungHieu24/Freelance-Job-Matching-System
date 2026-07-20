@@ -193,5 +193,35 @@ namespace Client.Controllers
 
             return Redirect(returnUrl ?? "/admin/jobs");
         }
+
+        [HttpGet("payments")]
+        public async Task<IActionResult> Payments([FromQuery] string? keyword, [FromQuery] int page = 1)
+        {
+            try
+            {
+                int pageSize = 10;
+                var queryParams = new List<KeyValuePair<string, string>>
+                {
+                    new("page", page.ToString()),
+                    new("pageSize", pageSize.ToString())
+                };
+
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    queryParams.Add(new("keyword", keyword));
+                }
+
+                var url = QueryHelpers.AddQueryString("api/admin/payments", queryParams);
+                var data = await GetAsync<PaginateResult<AdminPaymentDto>>(url);
+                ViewData["Keyword"] = keyword;
+
+                return View(data ?? new PaginateResult<AdminPaymentDto>());
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Không thể tải danh sách lịch sử thanh toán: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
     }
 }
