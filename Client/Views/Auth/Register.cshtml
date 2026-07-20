@@ -1,4 +1,4 @@
-﻿@model RegisterViewModel
+@model RegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -141,17 +141,17 @@
                     <div class="d-flex align-items-center gap-3 mb-5">
                         <img class="brand-logo"
                              src="~/image/Logo.png"
-                             alt="TalentBridge" />
+                             alt="TopLancer" />
 
                         <div>
-                            <h3 class="fw-bold mb-1">TalentBridge</h3>
-                            <div class="small opacity-75">Freelancer Job Matching System</div>
+                            <h3 class="fw-bold mb-1">TopLancer</h3>
+                            <div class="small opacity-75">Hệ thống kết nối Freelancer</div>
                         </div>
                     </div>
 
                     <h1 class="fw-bold mb-4" style="font-size: 42px; line-height: 1.1;">
-                        Join<br />
-                        TalentBridge
+                        Tham gia<br />
+                        TopLancer
                     </h1>
 
                     <p class="opacity-90" style="line-height: 1.7; max-width: 360px;">
@@ -163,16 +163,16 @@
                 <div class="mt-5">
                     <div class="d-flex gap-4 flex-wrap">
                         <div>
-                            <h3 class="fw-bold mb-1">Fast</h3>
-                            <small>Quick signup</small>
+                            <h3 class="fw-bold mb-1">Nhanh</h3>
+                            <small>Đăng ký tức thì</small>
                         </div>
                         <div>
-                            <h3 class="fw-bold mb-1">Safe</h3>
-                            <small>Secure access</small>
+                            <h3 class="fw-bold mb-1">An toàn</h3>
+                            <small>Bảo mật tuyệt đối</small>
                         </div>
                         <div>
-                            <h3 class="fw-bold mb-1">Easy</h3>
-                            <small>Simple flow</small>
+                            <h3 class="fw-bold mb-1">Dễ dàng</h3>
+                            <small>Thao tác đơn giản</small>
                         </div>
                     </div>
                 </div>
@@ -182,8 +182,8 @@
             <div class="col-lg-7 auth-right">
 
                 <div class="mb-4">
-                    <h2 class="fw-bold mb-2">Create Account ✨</h2>
-                    <p class="text-muted mb-0">Register to continue</p>
+                    <h2 class="fw-bold mb-2">Tạo tài khoản ✨</h2>
+                    <p class="text-muted mb-0">Đăng ký để tiếp tục sử dụng hệ thống</p>
                 </div>
 
                 <form asp-action="Register" method="post">
@@ -191,7 +191,7 @@
 
                     <!-- ROLE -->
                     <div class="mb-4">
-                        <label class="fw-semibold mb-3 d-block">Select Role</label>
+                        <label class="fw-semibold mb-3 d-block">Chọn vai trò của bạn</label>
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -212,7 +212,7 @@
                                              >
                                         <div>
                                             <h6 class="mb-1 fw-bold">Freelancer</h6>
-                                            <small class="text-muted">Find jobs & projects</small>
+                                            <small class="text-muted">Tìm kiếm việc làm & dự án</small>
                                         </div>
                                     </div>
                                 </label>
@@ -237,7 +237,7 @@
 
                                         <div>
                                             <h6 class="mb-1 fw-bold">Employer</h6>
-                                            <small class="text-muted">Hire top freelancers</small>
+                                            <small class="text-muted">Đăng tin & tuyển dụng</small>
                                         </div>
 
                                     </div>
@@ -248,9 +248,9 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="Name" class="fw-semibold mb-2">Name</label>
+                            <label asp-for="Name" class="fw-semibold mb-2">Họ và tên</label>
                             <div class="input-group mb-1">
-                                <input asp-for="Name" class="form-control" placeholder="Name" maxlength="255">
+                                <input asp-for="Name" class="form-control" placeholder="Họ và tên" maxlength="255">
                                 <span class="input-group-text bg-white">
                                     <i class="fas fa-user text-muted"></i>
                                 </span>
@@ -270,9 +270,9 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="Password" class="fw-semibold mb-2">Password</label>
+                            <label asp-for="Password" class="fw-semibold mb-2">Mật khẩu</label>
                             <div class="input-group mb-1">
-                                <input asp-for="Password" type="password" class="form-control" placeholder="Password">
+                                <input asp-for="Password" type="password" class="form-control" placeholder="Mật khẩu">
                                 <span class="input-group-text bg-white">
                                     <i class="fas fa-lock text-muted"></i>
                                 </span>
@@ -281,9 +281,9 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="ConfirmPassword" class="fw-semibold mb-2">Confirm Password</label>
+                            <label asp-for="ConfirmPassword" class="fw-semibold mb-2">Xác nhận mật khẩu</label>
                             <div class="input-group mb-1">
-                                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password">
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Xác nhận mật khẩu">
                                 <span class="input-group-text bg-white">
                                     <i class="fas fa-lock text-muted"></i>
                                 </span>
@@ -302,12 +302,12 @@
                     }
 
                     <button type="submit" class="btn btn-primary submit-btn w-100 mt-4">
-                        Register
+                        Đăng ký
                     </button>
 
                     <div class="mt-4 text-center">
-                        <span class="text-muted">Already have an account? </span>
-                        <a asp-action="Login" class="small-link">Login here</a>
+                        <span class="text-muted">Bạn đã có tài khoản? </span>
+                        <a asp-action="Login" class="small-link">Đăng nhập tại đây</a>
                     </div>
                 </form>
             </div>

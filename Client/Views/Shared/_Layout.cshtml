@@ -70,7 +70,7 @@
                         </button>
                         <div class="tl-nav-dropdown tl-nav-dropdown--right">
                             <div class="tl-wallet-balance">
-                                <span class="tl-wallet-balance-label">Balance</span>
+                                <span class="tl-wallet-balance-label">Số dư ví</span>
                                 <span class="tl-wallet-balance-amount" id="walletBalanceDropdown">0 đ</span>
                             </div>
                         </div>
@@ -102,13 +102,13 @@
                         <div class="tl-nav-dropdown tl-nav-dropdown--right">
                             @if (CurrentUser.Role == "FREELANCER")
                             {
-                                <a href="/freelancer/personal-info">Profile</a>
+                                <a href="/freelancer/personal-info">Hồ sơ cá nhân</a>
                             }
                             else if (CurrentUser.Role == "EMPLOYER")
                             {
-                                <a href="/employer/personal-info">Profile</a>
+                                <a href="/employer/personal-info">Hồ sơ cá nhân</a>
                             }
-                            <a href="#">Member Package</a>
+                            <a href="#">Gói thành viên</a>
                         </div>
                     </div>
                     <form asp-controller="auth" asp-action="logout" method="post" class="d-inline">
@@ -120,10 +120,10 @@
                 else
                 {
                     <a class="btn-tl rounded-3" role="button" asp-action="Login" asp-controller="Auth" aria-label="Login">
-                        Login
+                        Đăng nhập
                     </a>
                     <a class="btn-tl rounded-3" role="button" asp-action="Register" asp-controller="Auth" aria-label="Register">
-                        Register
+                        Đăng ký
                     </a>
                 }
             </div>
@@ -139,10 +139,10 @@
 
         <div class="collapse tl-mobile-collapse" id="mobileNav">
             <ul class="tl-mobile-nav list-unstyled mb-0">
-                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")" href="#">Dashboard</a></li>
-                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")" href="#">Job Search</a></li>
-                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")" href="#">Job Management</a></li>
-                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")" href="#">Statistical</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "is-active" : "")" href="#">Bảng điều khiển</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobSearch" ? "is-active" : "")" href="#">Tìm kiếm việc làm</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "JobManagement" ? "is-active" : "")" href="#">Quản lý công việc</a></li>
+                <li><a class="tl-mobile-link @(ViewData["ActivePage"]?.ToString() == "Statistical" ? "is-active" : "")" href="#">Thống kê</a></li>
             </ul>
         </div>
     </header>
@@ -187,36 +187,36 @@
                         </a>
                     </div>
                     <address class="tl-contact">
-                        <p>Phone: +84 (012) 3456789</p>
+                        <p>Điện thoại: +84 (012) 3456789</p>
                         <p>Email: support@toplancer.vn</p>
                     </address>
                 </div>
 
                 <div class="tl-footer-col">
-                    <h5 class="tl-footer-heading">About TopLancer</h5>
+                    <h5 class="tl-footer-heading">Về TopLancer</h5>
                     <ul class="tl-footer-links list-unstyled">
-                        <li><a href="#">Introduce</a></li>
+                        <li><a href="#">Giới thiệu</a></li>
                         <li><a href="#">Blog</a></li>
-                        <li><a href="#">Support Request</a></li>
+                        <li><a href="#">Yêu cầu hỗ trợ</a></li>
                     </ul>
                 </div>
 
                 <div class="tl-footer-col">
-                    <h5 class="tl-footer-heading">Employer</h5>
+                    <h5 class="tl-footer-heading">Nhà tuyển dụng</h5>
                     <ul class="tl-footer-links list-unstyled">
-                        <li><a href="#">Job Posting</a></li>
-                        <li><a href="#">How it works</a></li>
-                        <li><a href="#">Find candidates</a></li>
+                        <li><a href="#">Đăng tin tuyển dụng</a></li>
+                        <li><a href="#">Quy trình hoạt động</a></li>
+                        <li><a href="#">Tìm ứng viên</a></li>
                     </ul>
                 </div>
 
                 <div class="tl-footer-col">
-                    <h5 class="tl-footer-heading">Candidates</h5>
+                    <h5 class="tl-footer-heading">Ứng viên</h5>
                     <ul class="tl-footer-links list-unstyled">
-                        <li><a href="#">Register</a></li>
-                        <li><a href="#">How it works</a></li>
-                        <li><a href="#">Find freelance work</a></li>
-                        <li><a href="#">Find a full-time job</a></li>
+                        <li><a href="#">Đăng ký</a></li>
+                        <li><a href="#">Quy trình hoạt động</a></li>
+                        <li><a href="#">Tìm việc tự do</a></li>
+                        <li><a href="#">Tìm việc toàn thời gian</a></li>
                     </ul>
                 </div>
 

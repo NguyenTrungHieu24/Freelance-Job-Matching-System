@@ -127,6 +127,9 @@ namespace API.Controllers
             if (!check)
                 return Unauthorized("Invalid password");
 
+            if (!user.IsActive)
+                return Unauthorized("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ với quản trị viên để biết thêm chi tiết!");
+
             await _context.Entry(user)
                 .Reference(x => x.Role)
                 .LoadAsync();

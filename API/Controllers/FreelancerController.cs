@@ -503,10 +503,17 @@ namespace API.Controllers
             var rejectedApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.REJECTED);
             var cancelledApplications = await applicationsQuery.CountAsync(a => a.Status == ApplicationStatus.CANCELLED);
 
-            var totalEarnings = await _context.Payments
+            var feeSettings = HttpContext.RequestServices
+                .GetRequiredService<Microsoft.Extensions.Options.IOptions<BusinessObjects.Common.ServiceFeeSettings>>()
+                .Value;
+
+            var grossEarnings = await _context.Payments
                 .Include(p => p.Application)
                 .Where(p => p.Application.FreelancerProfileId == profile.Id && p.Status == PaymentStatus.PAID)
                 .SumAsync(p => p.Amount);
+
+            var commission = grossEarnings * feeSettings.CommissionPercent / 100;
+            var totalEarnings = grossEarnings - commission;
 
             var recentApps = await applicationsQuery
                 .Include(a => a.Job).ThenInclude(j => j.EmployerProfile).ThenInclude(e => e.Account)
