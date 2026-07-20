@@ -92,16 +92,16 @@ namespace API.Controllers
                 .Reference(x => x.Role)
                 .LoadAsync();
 
-            var token = _jwt.GenerateToken(account);
-
-
+            var jwt = _jwt.GenerateToken(account);
 
             return Ok(new
             {
-                Token = token,
+                Token = jwt.Token,
+                ExpiresAt = jwt.ExpiresAt,
                 Role = account.Role.Name,
                 User = new
                 {
+                    Id = account.Id,
                     Name = account.FullName,
                     Email = account.Email
                 }
@@ -140,6 +140,7 @@ namespace API.Controllers
                 Role = user.Role.Name,
                 User = new
                 {
+                    Id = user.Id,
                     Name = user.FullName,
                     Email = user.Email,
                     Role = user.Role.Name,

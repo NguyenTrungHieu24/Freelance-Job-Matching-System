@@ -133,17 +133,12 @@ namespace Client.Controllers
 
                 if (result == null)
                 {
-                    ViewBag.Error = "Register failed.";
+                    ViewBag.Error = "Đăng ký không thành công. Vui lòng thử lại!";
                     return View(model);
                 }
 
-                // Auto login
-                //SaveAuthSession(result);
-
-                if (result.Role.Equals("FREELANCER"))
-                    return RedirectToAction("Dashboard", "Freelancer");
-                else
-                    return RedirectToAction("Index", "Home");
+                TempData["Success"] = "Đăng ký tài khoản thành công! Hãy đăng nhập để tiếp tục!";
+                return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
