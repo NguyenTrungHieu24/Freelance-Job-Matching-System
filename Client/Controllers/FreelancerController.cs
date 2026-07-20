@@ -442,4 +442,19 @@ public class FreelancerController : BaseController
             return View(new List<MyJobDto>());
         }
     }
+
+    [HttpPost("reviews/create")]
+    public async Task<IActionResult> CreateReview(CreateReviewDto dto)
+    {
+        try
+        {
+            var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
+            TempData["Success"] = "Đánh giá nhà tuyển dụng thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
+        }
+        return RedirectToAction("MyJobs");
+    }
 }

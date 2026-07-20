@@ -1,33 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using BusinessObjects.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Client.Controllers
 {
-    public class JobController : Controller
+    public class JobController : BaseController
     {
-        private readonly HttpClient _httpClient;
-
-        public JobController(HttpClient httpClient)
+        public JobController(IHttpClientFactory factory) : base(factory)
         {
-            _httpClient = httpClient;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet("jobs/{id}")]
+        public async Task<IActionResult> Details(int id)
         {
-            var response = await _httpClient.GetAsync(
-                "https://localhost:7001/api/jobs"
-            );
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return View(new List<string>());
+                var job = await GetAsync<JobDto>($"api/jobs/{id}");
+                if (job == null) return NotFound();
+
+                return View("Detail", job);
             }
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            var jobs = JsonSerializer.Deserialize<List<string>>(json);
-
-            return View(jobs);
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Không thể tải chi tiết công việc: " + ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

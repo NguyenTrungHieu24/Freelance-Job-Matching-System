@@ -1,4 +1,4 @@
-﻿using BusinessObjects.Common;
+using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using Client.Models.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -99,6 +99,26 @@ namespace Client.Controllers
             try
             {
                 var result = await PostAsync<string, ApiResult<bool>>($"api/users/deactivate/{id}", null);
+
+                if (!result.Success)
+                {
+                    return StatusCode(500, result);
+                }
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResult<bool>.Fail(ex.Message));
+            }
+        }
+
+        [HttpPost]
+        [Route("activate")]
+        public async Task<IActionResult> Activate([FromQuery] int id)
+        {
+            try
+            {
+                var result = await PostAsync<string, ApiResult<bool>>($"api/users/activate/{id}", null);
 
                 if (!result.Success)
                 {

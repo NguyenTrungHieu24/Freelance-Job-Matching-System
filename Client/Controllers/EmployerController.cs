@@ -2,6 +2,7 @@ using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using Client.Models.Employer;
 using Client.Models.Jobs;
+using Client.Models.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -456,5 +457,71 @@ public class EmployerController : BaseController
         queryParams.Add(new KeyValuePair<string, string>("pageSize", filter.PageSize.ToString()));
 
         return queryParams;
+    }
+
+    [HttpGet("freelancer-profile/{id}")]
+    public async Task<IActionResult> FreelancerProfile(int id)
+    {
+        try
+        {
+            var profile = await GetAsync<FreelancerCvDto>($"api/employer/freelancer-profile/{id}");
+            return View(profile);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Không thể tải hồ sơ ứng viên: " + ex.Message;
+            return RedirectToAction("Applications");
+        }
+    }
+
+    [HttpPost("reviews/create")]
+    public async Task<IActionResult> CreateReview(CreateReviewDto dto)
+    {
+        try
+        {
+            var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
+            TempData["Success"] = "Đánh giá ứng viên thành công!";
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
+        }
+        return RedirectToAction("Applications");
+    }
+
+    [HttpGet("change-password")]
+    public IActionResult ChangePassword()
+    {
+        return View(new ChangePasswordViewModel());
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+        try
+        {
+            var success = await PutAsync("api/auth/change-password", new
+            {
+                OldPassword = model.OldPassword,
+                NewPassword = model.NewPassword,
+                ConfirmPassword = model.ConfirmPassword
+            });
+
+            if (success)
+            {
+                TempData["Success"] = "Password changed successfully!";
+                return RedirectToAction("ChangePassword");
+            }
+
+            TempData["Error"] = "Failed to change password";
+            return RedirectToAction("ChangePassword");
+        }
+        catch (Exception e)
+        {
+            TempData["Error"] = e.Message;
+            return RedirectToAction("ChangePassword");
+        }
     }
 }
