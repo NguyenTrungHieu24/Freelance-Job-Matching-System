@@ -1,4 +1,4 @@
-﻿@model Client.Models.Users.ListUsersModel
+@model Client.Models.Users.ListUsersModel
 
 @{
     ViewData["Title"] = "Users Management";
@@ -148,11 +148,12 @@
                                                 Url = Url.Action("Edit", new { id = item.Id })
                                             },
                                             new() {
-                                                Title = item.Status == 1 ? "Deactivate" : "Active",
+                                                Title = item.Status == 1 ? "Deactivate" : "Activate",
                                                 Icon = item.Status == 1 ? "bi-lock" : "bi-unlock",
-                                                AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "active", "Jobs", new { id = item.Id }),
-                                                ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Active") + " this user?",
-                                                ExtraMessage = "This user "+ (item.Status == 1 ? "can" : "can't") + " login to system!"
+                                                AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "activate", "Users", new { id = item.Id }),
+                                                ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Activate") + " this user?",
+                                                ExtraMessage = "This user "+ (item.Status == 1 ? "will be deactivated" : "will be activated") + "!",
+                                                Handle = "reloadPage"
                                             },
                                             new() {
                                                 Title = "Delete",

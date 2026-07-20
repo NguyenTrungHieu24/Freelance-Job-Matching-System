@@ -51,3 +51,56 @@
 </div>
 
 <partial name="_ReportEmployerModal" />
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CreateReview" asp-controller="Freelancer" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đánh giá nhà tuyển dụng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="RevieweeId" id="revieweeId" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nhà tuyển dụng</label>
+                        <p id="revieweeName" class="form-control-plaintext"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số sao (1-5)</label>
+                        <select name="Rating" class="form-select" required>
+                            <option value="5" selected>5 ⭐⭐⭐⭐⭐ (Rất tốt)</option>
+                            <option value="4">4 ⭐⭐⭐⭐ (Tốt)</option>
+                            <option value="3">3 ⭐⭐⭐ (Bình thường)</option>
+                            <option value="2">2 ⭐⭐ (Kém)</option>
+                            <option value="1">1 ⭐ (Rất kém)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nhận xét chi tiết</label>
+                        <textarea name="Comment" class="form-control" rows="3" required placeholder="Nhập cảm nhận của bạn về nhà tuyển dụng này..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openReviewModal(employerId, name) {
+            document.getElementById('revieweeId').value = employerId;
+            document.getElementById('revieweeName').textContent = name;
+            var modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
+        }
+    </script>
+}

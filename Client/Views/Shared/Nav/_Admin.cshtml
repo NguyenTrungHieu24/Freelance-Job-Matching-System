@@ -1,7 +1,7 @@
-﻿@await Html.PartialAsync("Nav/_Nav",
+@await Html.PartialAsync("Nav/_Nav",
     new List<NavViewModel>{
         new () { Controller = "Admin", Action = "Dashboard", Title = "Dashboard" },
-        new () { Controller = "Jobs", Action = "Manage", Title = "Jobs" },
+        new () { Controller = "Admin", Action = "Jobs", Title = "Jobs" },
         new () { Controller = "Skills", Title = "Skills" },
         new () { Controller = "Users", Title = "Users" },
         new () { Controller = "Payments", Title = "Payments" },

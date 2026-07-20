@@ -74,12 +74,20 @@
                     </div>
                 }
 
-                <div class="tl-nav-dropdown-wrap ml-3">
-                    <button class="tl-icon-btn" type="button" aria-label="Notification">
-                        <img src="~/image/notification.png" alt="Notification" class="tl-icon-img" />
-                        <span class="tl-bell-dot"></span>
-                    </button>
-                </div>
+                 @if (CurrentUser.IsAuthenticated)
+                 {
+                     <div class="tl-nav-dropdown-wrap ml-3" id="notificationDropdownWrap">
+                         <button class="tl-icon-btn" type="button" aria-label="Notification" id="notificationBellBtn">
+                             <img src="~/image/notification.png" alt="Notification" class="tl-icon-img" />
+                             <span class="tl-bell-dot d-none" id="notificationDot"></span>
+                         </button>
+                         <div class="tl-nav-dropdown tl-nav-dropdown--right" style="width: 320px; max-height: 400px; overflow-y: auto; padding: 15px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);" id="notificationList">
+                             <div class="fw-bold mb-2 pb-2 border-bottom text-dark">Thông báo</div>
+                             <div class="text-center py-3 text-muted" id="noNotificationText">Không có thông báo mới</div>
+                             <div id="notificationItemsContainer"></div>
+                         </div>
+                     </div>
+                 }
 
 
                 @if (CurrentUser.IsAuthenticated)
@@ -246,6 +254,68 @@
                         if (dropEl) dropEl.textContent = formatted;
                     })
                     .catch(() => {});
+            }
+
+            // Notifications logic
+            const isAuthenticated = @(CurrentUser.IsAuthenticated ? "true" : "false");
+            if (isAuthenticated) {
+                const loadNotifications = () => {
+                    fetch("/notifications/list")
+                        .then(r => r.json())
+                        .then(data => {
+                            const container = document.getElementById("notificationItemsContainer");
+                            const noText = document.getElementById("noNotificationText");
+                            const dot = document.getElementById("notificationDot");
+                            
+                            if (!container) return;
+                            container.innerHTML = "";
+                            
+                            let unreadCount = 0;
+                            if (data && data.length > 0) {
+                                noText.classList.add("d-none");
+                                data.forEach(n => {
+                                    if (!n.isRead) unreadCount++;
+                                    
+                                    const el = document.createElement("div");
+                                    el.className = `p-2 mb-2 rounded border-bottom text-start ${n.isRead ? 'opacity-75 bg-light text-muted' : 'bg-white fw-semibold text-dark'}`;
+                                    el.style.fontSize = "13px";
+                                    el.style.cursor = "pointer";
+                                    el.style.transition = "background-color 0.2s";
+                                    el.innerHTML = `
+                                        <div>${n.content}</div>
+                                        <div class="text-muted" style="font-size: 11px; margin-top: 4px;">${new Date(n.createdAt).toLocaleString()}</div>
+                                    `;
+                                    
+                                    if (!n.isRead) {
+                                        el.addEventListener("click", () => {
+                                            fetch(`/notifications/read/${n.id}`, { method: "POST" })
+                                                .then(() => loadNotifications());
+                                        });
+                                        el.addEventListener("mouseover", () => el.style.backgroundColor = "#f0f4f8");
+                                        el.addEventListener("mouseout", () => el.style.backgroundColor = "#fff");
+                                    } else {
+                                        el.addEventListener("mouseover", () => el.style.backgroundColor = "#eef2f5");
+                                        el.addEventListener("mouseout", () => el.style.backgroundColor = "#f8fafc");
+                                    }
+                                    
+                                    container.appendChild(el);
+                                });
+                            } else {
+                                noText.classList.remove("d-none");
+                            }
+                            
+                            if (unreadCount > 0) {
+                                dot.classList.remove("d-none");
+                            } else {
+                                dot.classList.add("d-none");
+                            }
+                        })
+                        .catch(() => {});
+                };
+                
+                loadNotifications();
+                // Check notifications every 30 seconds
+                setInterval(loadNotifications, 30000);
             }
         });
     </script>

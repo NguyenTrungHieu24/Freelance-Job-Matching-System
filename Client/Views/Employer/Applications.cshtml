@@ -32,7 +32,7 @@
                         {
                             <tr>
                                 <td class="ps-4">
-                                    <div class="fw-bold text-primary">@app.FreelancerName</div>
+                                    <a href="/employer/freelancer-profile/@app.FreelancerProfileId" class="fw-bold text-primary">@app.FreelancerName</a>
                                 </td>
                                 <td>
                                     <div class="fw-semibold">@app.JobTitle</div>
@@ -90,6 +90,19 @@
                                             </button>
                                         </form>
                                     }
+                                    else if (app.Status == "COMPLETED")
+                                    {
+                                        if (!app.IsReviewed)
+                                        {
+                                            <button class="btn btn-sm btn-warning" onclick="openReviewModal(@app.FreelancerProfileId, '@app.FreelancerName')">
+                                                <i class="bi bi-star"></i> Đánh giá
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Đã đánh giá</span>
+                                        }
+                                    }
                                     else
                                     {
                                         <span class="text-muted small">Đã hoàn tất</span>
@@ -127,6 +140,48 @@
     </div>
 </div>
 
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CreateReview" asp-controller="Employer" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Đánh giá Freelancer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="RevieweeId" id="revieweeId" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Freelancer</label>
+                        <p id="revieweeName" class="form-control-plaintext"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số sao (1-5)</label>
+                        <select name="Rating" class="form-select" required>
+                            <option value="5" selected>5 ⭐⭐⭐⭐⭐ (Xuất sắc)</option>
+                            <option value="4">4 ⭐⭐⭐⭐ (Tốt)</option>
+                            <option value="3">3 ⭐⭐⭐ (Khá)</option>
+                            <option value="2">2 ⭐⭐ (Trung bình)</option>
+                            <option value="1">1 ⭐ (Kém)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nhận xét chi tiết</label>
+                        <textarea name="Comment" class="form-control" rows="3" required placeholder="Nhập cảm nhận của bạn về chất lượng công việc của Freelancer này..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         function showCoverLetter(name, content) {
@@ -134,6 +189,13 @@
             document.getElementById('modalBody').innerText = content;
             var myModal = new bootstrap.Modal(document.getElementById('coverLetterModal'));
             myModal.show();
+        }
+
+        function openReviewModal(freelancerId, name) {
+            document.getElementById('revieweeId').value = freelancerId;
+            document.getElementById('revieweeName').textContent = name;
+            var modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
         }
     </script>
 }

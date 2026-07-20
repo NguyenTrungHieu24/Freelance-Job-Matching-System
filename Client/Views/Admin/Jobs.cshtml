@@ -1,0 +1,123 @@
+@using BusinessObjects.Enums
+@using Client.Models.Jobs
+@model ListJobsModel
+
+@{
+    ViewBag.Title = "Quản lý công việc";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý tin tuyển dụng (Admin)</h2>
+            <p class="text-muted mb-0">Quản trị danh sách, ẩn/hiện hoặc hủy tin tuyển dụng vi phạm</p>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <form method="get" class="card p-3 mb-4 shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-10">
+                <input asp-for="Filter.Keyword" class="form-control" placeholder="Tìm kiếm theo tiêu đề hoặc mô tả..." />
+            </div>
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-primary">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </div>
+    </form>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Tiêu đề công việc</th>
+                        <th>Nhà tuyển dụng</th>
+                        <th>Ngân sách (VNĐ)</th>
+                        <th>Hạn chót</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Jobs.Items != null && Model.Jobs.Items.Any())
+                    {
+                        @foreach (var job in Model.Jobs.Items)
+                        {
+                            <tr>
+                                <td class="ps-4">@job.Id</td>
+                                <td>
+                                    <div class="fw-bold">@job.Title</div>
+                                    <div class="text-muted small">Ngành: @job.CategoryName</div>
+                                </td>
+                                <td>@job.EmployerName</td>
+                                <td class="fw-semibold">@job.Budget.ToString("N0")</td>
+                                <td>@job.Deadline?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (job.Status == JobStatus.ACTIVE)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else if (job.Status == JobStatus.DELETED)
+                                    {
+                                        <span class="badge bg-danger">Bị khóa/Xóa</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@job.Status</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="/jobs/@job.Id" class="btn btn-sm btn-outline-secondary me-2">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                    <form asp-action="ToggleJobStatus" method="post" class="d-inline" onsubmit="return confirm('Xác nhận thay đổi trạng thái của tin tuyển dụng này?')">
+                                        <input type="hidden" name="id" value="@job.Id" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                                        @if (job.Status == JobStatus.DELETED)
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="bi bi-unlock"></i> Kích hoạt lại
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-lock"></i> Khóa tin
+                                            </button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                Không tìm thấy công việc nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Jobs)
+    </div>
+</div>
