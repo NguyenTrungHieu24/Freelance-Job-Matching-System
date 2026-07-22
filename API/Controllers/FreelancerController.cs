@@ -102,7 +102,12 @@ namespace API.Controllers
                 return BadRequest();
             if (file.Length > 0)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatar", file.FileName);
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatar");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                var path = Path.Combine(folderPath, file.FileName);
                 using (var stream = System.IO.File.Create(path))
                 {
                     await file.CopyToAsync(stream);
@@ -192,7 +197,12 @@ namespace API.Controllers
                 return BadRequest();
             if (file.Length > 0)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cv", file.FileName);
+                var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cv");
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                var path = Path.Combine(folderPath, file.FileName);
                 using (var stream = System.IO.File.Create(path))
                 {
                     await file.CopyToAsync(stream);

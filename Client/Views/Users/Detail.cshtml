@@ -1,0 +1,120 @@
+@model BusinessObjects.DTOs.UserDto
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    Layout = "_Layout";
+}
+
+<div class="container py-4">
+    <!-- Back Link -->
+    <div class="mb-4">
+        <a href="/users" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Trở lại danh sách người dùng
+        </a>
+    </div>
+
+
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <div class="text-center mb-4">
+                    <!-- User Icon Placeholder -->
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light border mb-3" 
+                         style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <i class="bi bi-person-fill text-muted" style="font-size: 3.5rem;"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">@Model.Name</h3>
+                    <div>
+                        <span class="badge bg-light text-primary border px-3 py-1.5" style="border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                            @Model.Role
+                        </span>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Thông tin tài khoản</h5>
+
+                <div class="row g-3 text-secondary mb-4" style="font-size: 0.95rem;">
+                    <div class="col-sm-4 fw-bold text-dark">ID tài khoản</div>
+                    <div class="col-sm-8">@Model.Id</div>
+
+                    <div class="col-sm-4 fw-bold text-dark">Email</div>
+                    <div class="col-sm-8">@Model.Email</div>
+
+                    <div class="col-sm-4 fw-bold text-dark">Ngày đăng ký</div>
+                    <div class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+
+                    <div class="col-sm-4 fw-bold text-dark">Trạng thái</div>
+                    <div class="col-sm-8">
+                        @if (Model.Status == 1)
+                        {
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1" style="border-radius: 20px;">
+                                <i class="bi bi-check-circle-fill me-1"></i> Đang hoạt động
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-1" style="border-radius: 20px;">
+                                <i class="bi bi-x-circle-fill me-1"></i> Bị khóa
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="border-top pt-4 text-center">
+                    <h6 class="fw-bold text-dark mb-3">Thao tác quản trị</h6>
+                    <div class="d-flex justify-content-center gap-2">
+                        @if (Model.Role != "ADMIN")
+                        {
+                            <button id="toggleStatusBtn" class="btn btn-outline-secondary px-4 fw-bold" style="border-radius: 10px;" onclick="toggleUserStatus(@Model.Id, @Model.Status)">
+                                @if (Model.Status == 1)
+                                {
+                                    <i class="bi bi-lock-fill me-1"></i> @:Khoá tài khoản
+                                }
+                                else
+                                {
+                                    <i class="bi bi-unlock-fill me-1"></i> @:Mở khoá tài khoản
+                                }
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="text-muted small italic">Không được phép thay đổi tài khoản Admin.</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleUserStatus(id, currentStatus) {
+            const actionUrl = currentStatus === 1 ? '/users/deactivate' : '/users/activate';
+            const actionText = currentStatus === 1 ? 'khoá' : 'mở khoá';
+            
+            if (confirm(`Bạn có chắc chắn muốn ${actionText} tài khoản này không?`)) {
+                fetch(`${actionUrl}?id=${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Đã ${actionText} tài khoản thành công!`);
+                        window.location.reload();
+                    } else {
+                        alert('Thao tác thất bại: ' + (data.message || 'Lỗi không xác định'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi kết nối!');
+                });
+            }
+        }
+    </script>
+}

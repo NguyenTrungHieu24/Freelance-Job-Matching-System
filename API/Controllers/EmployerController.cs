@@ -132,7 +132,12 @@ public class EmployerController : BaseController
         if (!FileValidateHelper.IsAvatarValid(file)) return BadRequest();
         if (file.Length > 0)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "logo", file.FileName);
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "logo");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            var path = Path.Combine(folderPath, file.FileName);
             using (var stream = System.IO.File.Create(path))
             {
                 await file.CopyToAsync(stream);
@@ -199,7 +204,7 @@ public class EmployerController : BaseController
         // Kiem tra trang thai Duyet (ACCEPTED hoac REJECTED)
         if (status != ApplicationStatus.ACCEPTED && status != ApplicationStatus.REJECTED)
         {
-            return BadRequest(new { message = "Trạng thái duyệt không hợp lệ." });
+            return BadRequest(new { message = "Trang thai duyet khong hop le." });
         }
 
         // Tim Application va Employer
@@ -209,13 +214,13 @@ public class EmployerController : BaseController
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (application == null)
-            return NotFound(new { message = "Đơn ứng tuyển không tồn tại." });
+            return NotFound(new { message = "Don ung tuyen khong ton tai." });
 
         // Xac thuc Job co phai cua Employer dang login khong
         var employer = await _context.EmployerProfiles.FirstOrDefaultAsync(e => e.AccountId == userId);
         if (employer == null || application.Job.EmployerProfileId != employer.Id)
         {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Bạn không có quyền duyệt đơn này." });
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Ban khong co quyen duyet don nay." });
         }
 
         // Update trang thai
@@ -228,7 +233,7 @@ public class EmployerController : BaseController
             _context.Notifications.Add(new Notification
             {
                 AccountId = application.FreelancerProfile.AccountId,
-                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã được chấp nhận!"
+                Content = $"Don ung tuyen cua ban cho du an \"{application.Job.Title}\" da duoc chap nhan!"
             });
 
             // Reject other pending applications for this job
@@ -245,7 +250,7 @@ public class EmployerController : BaseController
                 _context.Notifications.Add(new Notification
                 {
                     AccountId = other.FreelancerProfile.AccountId,
-                    Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+                    Content = $"Don ung tuyen cua ban cho du an \"{application.Job.Title}\" da bi tu choi."
                 });
             }
         }
@@ -255,7 +260,7 @@ public class EmployerController : BaseController
             _context.Notifications.Add(new Notification
             {
                 AccountId = application.FreelancerProfile.AccountId,
-                Content = $"Đơn ứng tuyển của bạn cho dự án \"{application.Job.Title}\" đã bị từ chối."
+                Content = $"Don ung tuyen cua ban cho du an \"{application.Job.Title}\" da bi tu choi."
             });
         }
 
@@ -277,7 +282,7 @@ public class EmployerController : BaseController
 
         await _context.SaveChangesAsync();
 
-        return Ok(new { message = $"Đã cập nhật trạng thái đơn ứng tuyển thành: {application.Status}" });
+        return Ok(new { message = $"Da cap nhat trang thai don ung tuyen thanh: {application.Status}" });
     }
 
 
@@ -354,6 +359,7 @@ public class EmployerController : BaseController
             {
                 Id = a.Id,
                 JobId = a.JobId,
+                FreelancerProfileId = a.FreelancerProfileId,
                 JobTitle = a.Job.Title,
                 CandidateName = a.FreelancerProfile.Account.FullName,
                 CandidateAvatar = a.FreelancerProfile?.ProfilePhoto ?? "",
@@ -366,7 +372,7 @@ public class EmployerController : BaseController
     }
 
     /// <summary>
-    /// Employer xác nhận hoàn thành Job → Thanh toán tự động
+    /// Employer xac nhan hoan thanh Job → Thanh toan tu dong
     /// </summary>
     [HttpPost("applications/{id}/complete")]
     public async Task<IActionResult> CompleteApplication(int id)
@@ -401,7 +407,7 @@ public class EmployerController : BaseController
         var employerWallet = await _context.Wallets
             .FirstOrDefaultAsync(w => w.UserId == userId);
         if (employerWallet == null || employerWallet.Balance < budget)
-            return BadRequest($"Số dư ví không đủ. Cần {budget:N0} VNĐ");
+            return BadRequest($"So du vi khong du. Can {budget:N0} VND");
 
         // Check freelancer wallet
         var freelancerWallet = await _context.Wallets
@@ -409,11 +415,11 @@ public class EmployerController : BaseController
         if (freelancerWallet == null)
             return BadRequest("Freelancer wallet not found");
 
-        // --- THANH TOÁN ---
+        // --- THANH TOAN ---
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            // 1. Trừ ví Employer
+            // 1. Tru vi Employer
             employerWallet.Balance -= budget;
             employerWallet.UpdatedAt = DateTime.Now;
             _context.Transactions.Add(new Transaction
@@ -423,10 +429,10 @@ public class EmployerController : BaseController
                 Type = TransactionType.JOB_PAYMENT,
                 Amount = -budget,
                 BalanceAfter = employerWallet.Balance,
-                Description = $"Thanh toán Job: {application.Job.Title}"
+                Description = $"Thanh toan Job: {application.Job.Title}"
             });
 
-            // 2. Cộng ví Freelancer (sau khi trừ hoa hồng)
+            // 2. Cong vi Freelancer (sau khi tru hoa hong)
             freelancerWallet.Balance += freelancerReceives;
             freelancerWallet.UpdatedAt = DateTime.Now;
             _context.Transactions.Add(new Transaction
@@ -436,10 +442,10 @@ public class EmployerController : BaseController
                 Type = TransactionType.JOB_EARNING,
                 Amount = freelancerReceives,
                 BalanceAfter = freelancerWallet.Balance,
-                Description = $"Thu nhập Job: {application.Job.Title} (đã trừ {feeSettings.CommissionPercent}% hoa hồng)"
+                Description = $"Thu nhap Job: {application.Job.Title} (da tru {feeSettings.CommissionPercent}% hoa hong)"
             });
 
-            // 3. Ghi nhận hoa hồng hệ thống
+            // 3. Ghi nhan hoa hong he thong
             _context.Transactions.Add(new Transaction
             {
                 WalletId = freelancerWallet.Id,
@@ -447,10 +453,10 @@ public class EmployerController : BaseController
                 Type = TransactionType.COMMISSION_FEE,
                 Amount = -commission,
                 BalanceAfter = freelancerWallet.Balance,
-                Description = $"Phí hoa hồng {feeSettings.CommissionPercent}%: {application.Job.Title}"
+                Description = $"Phi hoa hong {feeSettings.CommissionPercent}%: {application.Job.Title}"
             });
 
-            // 4. Cập nhật trạng thái
+            // 4. Cap nhat trang thai
             application.Status = ApplicationStatus.COMPLETED;
             application.Job.Status = JobStatus.COMPLETED;
 
@@ -468,11 +474,11 @@ public class EmployerController : BaseController
             };
             _context.Payments.Add(payment);
 
-            // 5. Thông báo cho Freelancer
+            // 5. Thong bao cho Freelancer
             _context.Notifications.Add(new Notification
             {
                 AccountId = application.FreelancerProfile.AccountId,
-                Content = $"Job \"{application.Job.Title}\" đã hoàn thành! Bạn nhận được {freelancerReceives:N0} VNĐ (sau phí {feeSettings.CommissionPercent}%)."
+                Content = $"Job \"{application.Job.Title}\" da hoan thanh! Ban nhan duoc {freelancerReceives:N0} VND (sau phi {feeSettings.CommissionPercent}%)."
             });
 
             await _context.SaveChangesAsync();

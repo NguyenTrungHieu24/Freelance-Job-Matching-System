@@ -100,6 +100,17 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Skill>> CreateSkill([FromBody] Skill skill)
         {
+            if (string.IsNullOrWhiteSpace(skill.Name))
+            {
+                return BadRequest(new { message = "Ten ky nang khong duoc de trong!" });
+            }
+
+            var trimmedName = skill.Name.Trim().ToLower();
+            if (await _context.Skills.AnyAsync(s => s.Name.Trim().ToLower() == trimmedName))
+            {
+                return BadRequest(new { message = "Ky nang nay da ton tai!" });
+            }
+
             _context.Skills.Add(skill);
 
             await _context.SaveChangesAsync();
@@ -115,6 +126,11 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateSkill(int id, [FromBody] Skill updatedSkill)
         {
+            if (string.IsNullOrWhiteSpace(updatedSkill.Name))
+            {
+                return BadRequest(new { message = "Ten ky nang khong duoc de trong!" });
+            }
+
             var skill = await _context.Skills
                 .FindAsync(id);
 
@@ -124,6 +140,12 @@ namespace API.Controllers
                 {
                     message = "Skill not found"
                 });
+            }
+
+            var trimmedName = updatedSkill.Name.Trim().ToLower();
+            if (await _context.Skills.AnyAsync(s => s.Id != id && s.Name.Trim().ToLower() == trimmedName))
+            {
+                return BadRequest(new { message = "Ky nang nay da ton tai!" });
             }
 
             skill.Name = updatedSkill.Name;

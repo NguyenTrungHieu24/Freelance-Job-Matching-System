@@ -181,7 +181,7 @@ namespace API.Controllers
         // GET: api/jobs/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<JobDTO>> GetJob(int id)
+        public async Task<ActionResult<JobDto>> GetJob(int id)
         {
             var job = await _context.Jobs
                 .Include(j => j.Category)
@@ -197,13 +197,43 @@ namespace API.Controllers
                 return NotFound(new { message = "Job not found" });
             }
 
-            var dto = _mapper.Map<JobDTO>(job);
+            var dto = _mapper.Map<JobDto>(job);
             return Ok(dto);
         }
 
         private void FullTextSearch()
         {
 
+        }
+
+        [HttpPost("upload-image")]
+        [Authorize(Roles = "EMPLOYER")]
+        public async Task<IActionResult> UploadJobImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+
+            // Create directory if not exists
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "jobs");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var request = HttpContext.Request;
+            var imageUrl = $"{request.Scheme}://{request.Host}/uploads/jobs/{fileName}";
+
+            return Ok(new { location = imageUrl });
         }
 
         // POST: api/jobs
@@ -227,11 +257,39 @@ namespace API.Controllers
                 return BadRequest(new { message = "Employer profile not found for this user" });
             }
 
-            // Verify category exists
-            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == dto.CategoryId);
-            if (!categoryExists)
+            // Resolve Category (existing ID or new name)
+            int resolvedCategoryId = 0;
+
+            if (dto.CategoryId.HasValue && dto.CategoryId.Value > 0)
             {
-                return BadRequest(new { message = "Invalid CategoryId" });
+                var categoryExists = await _context.Categories.AnyAsync(c => c.Id == dto.CategoryId.Value);
+                if (!categoryExists)
+                {
+                    return BadRequest(new { message = "Invalid CategoryId" });
+                }
+                resolvedCategoryId = dto.CategoryId.Value;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.NewCategoryName))
+            {
+                var trimmedCatName = dto.NewCategoryName.Trim();
+                var existingCategory = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Name.ToLower() == trimmedCatName.ToLower());
+                
+                if (existingCategory != null)
+                {
+                    resolvedCategoryId = existingCategory.Id;
+                }
+                else
+                {
+                    var newCategory = new Category { Name = trimmedCatName };
+                    _context.Categories.Add(newCategory);
+                    await _context.SaveChangesAsync();
+                    resolvedCategoryId = newCategory.Id;
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Vui long chon hoac nhap Nganh nghe (Category)" });
             }
 
             if (dto.Budget <= 0)
@@ -253,7 +311,7 @@ namespace API.Controllers
 
             if (wallet == null || wallet.Balance < feeSettings.JobPostingFee)
             {
-                return BadRequest(new { message = $"Số dư ví không đủ để đăng tin. Cần ít nhất {feeSettings.JobPostingFee:N0} VNĐ." });
+                return BadRequest(new { message = $"So du vi khong du de dang tin. Can it nhat {feeSettings.JobPostingFee:N0} VND." });
             }
 
             // Map CreateJobDto to Job entity
@@ -262,7 +320,7 @@ namespace API.Controllers
                 Title = dto.Title.Trim(),
                 Description = dto.Description.Trim(),
                 Budget = dto.Budget,
-                CategoryId = dto.CategoryId,
+                CategoryId = resolvedCategoryId,
                 Deadline = dto.Deadline,
                 Status = JobStatus.ACTIVE,
                 EmployerProfileId = employerProfile.Id,
@@ -287,21 +345,54 @@ namespace API.Controllers
                     Type = TransactionType.JOB_POSTING_FEE,
                     Amount = -feeSettings.JobPostingFee,
                     BalanceAfter = wallet.Balance,
-                    Description = $"Phí đăng tin: {job.Title}"
+                    Description = $"Phi dang tin: {job.Title}"
                 });
 
                 await _context.SaveChangesAsync();
 
-                // Add JobSkills if provided
+                // Combine and resolve existing + new skills
+                var allSkillIds = new HashSet<int>();
+
+                // 1. Process existing skill IDs
                 if (dto.Skills != null && dto.Skills.Any())
                 {
-                    // Filter out non-existent skills
                     var validSkillIds = await _context.Skills
                         .Where(s => dto.Skills.Distinct().ToList().Contains(s.Id))
                         .Select(s => s.Id)
                         .ToListAsync();
 
-                    foreach (var skillId in validSkillIds)
+                    foreach (var id in validSkillIds)
+                    {
+                        allSkillIds.Add(id);
+                    }
+                }
+
+                // 2. Process new skill names (strings)
+                if (dto.NewSkills != null && dto.NewSkills.Any())
+                {
+                    foreach (var skillName in dto.NewSkills.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).Distinct())
+                    {
+                        var existingSkill = await _context.Skills
+                            .FirstOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower());
+
+                        if (existingSkill != null)
+                        {
+                            allSkillIds.Add(existingSkill.Id);
+                        }
+                        else
+                        {
+                            var newSkill = new Skill { Name = skillName };
+                            _context.Skills.Add(newSkill);
+                            await _context.SaveChangesAsync();
+                            allSkillIds.Add(newSkill.Id);
+                        }
+                    }
+                }
+
+                // 3. Associate all resolved skill IDs to the Job
+                if (allSkillIds.Any())
+                {
+                    foreach (var skillId in allSkillIds)
                     {
                         _context.JobSkills.Add(new JobSkill
                         {
@@ -360,31 +451,95 @@ namespace API.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = "You do not have permission to modify this job posting" });
             }
 
-            // Verify category exists
-            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == dto.CategoryId);
-            if (!categoryExists)
-            {
-                return BadRequest(new { message = "Invalid CategoryId" });
-            }
+            // Resolve Category (existing ID or new name)
+            int resolvedCategoryId = 0;
 
+            if (dto.CategoryId.HasValue && dto.CategoryId.Value > 0)
+            {
+                var categoryExists = await _context.Categories.AnyAsync(c => c.Id == dto.CategoryId.Value);
+                if (!categoryExists)
+                {
+                    return BadRequest(new { message = "Invalid CategoryId" });
+                }
+                resolvedCategoryId = dto.CategoryId.Value;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.NewCategoryName))
+            {
+                var trimmedCatName = dto.NewCategoryName.Trim();
+                var existingCategory = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Name.ToLower() == trimmedCatName.ToLower());
+                
+                if (existingCategory != null)
+                {
+                    resolvedCategoryId = existingCategory.Id;
+                }
+                else
+                {
+                    var newCategory = new Category { Name = trimmedCatName };
+                    _context.Categories.Add(newCategory);
+                    await _context.SaveChangesAsync();
+                    resolvedCategoryId = newCategory.Id;
+                }
+            }
+            else
+            {
+                return BadRequest(new { message = "Vui long chon hoac nhap Nganh nghe (Category)" });
+            }
 
             // Update Job fields
             job.Title = dto.Title.Trim();
             job.Description = dto.Description.Trim();
             job.Budget = dto.Budget;
-            job.CategoryId = dto.CategoryId;
+            job.CategoryId = resolvedCategoryId;
             job.Deadline = dto.Deadline;
 
-            // Update Skills
+            // Combine and resolve existing + new skills
+            var allTargetSkillIds = new HashSet<int>();
+
+            // 1. Process existing skill IDs
+            if (dto.Skills != null && dto.Skills.Any())
+            {
+                var validSkillIds = await _context.Skills
+                    .Where(s => dto.Skills.Distinct().ToList().Contains(s.Id))
+                    .Select(s => s.Id)
+                    .ToListAsync();
+
+                foreach (var skId in validSkillIds)
+                {
+                    allTargetSkillIds.Add(skId);
+                }
+            }
+
+            // 2. Process new skill names (strings)
+            if (dto.NewSkills != null && dto.NewSkills.Any())
+            {
+                foreach (var skillName in dto.NewSkills.Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).Distinct())
+                {
+                    var existingSkill = await _context.Skills
+                        .FirstOrDefaultAsync(s => s.Name.ToLower() == skillName.ToLower());
+
+                    if (existingSkill != null)
+                    {
+                        allTargetSkillIds.Add(existingSkill.Id);
+                    }
+                    else
+                    {
+                        var newSkill = new Skill { Name = skillName };
+                        _context.Skills.Add(newSkill);
+                        await _context.SaveChangesAsync();
+                        allTargetSkillIds.Add(newSkill.Id);
+                    }
+                }
+            }
+
+            // Update Skills association
             var currentSkills = await _context.JobSkills
-                                            .Where(x => x.JobId == job.Id)
-                                            .Select(x => x.SkillId)
-                                            .ToListAsync();
+                .Where(x => x.JobId == job.Id)
+                .Select(x => x.SkillId)
+                .ToListAsync();
 
-            var newSkills = dto.Skills.Distinct().ToList();
-
-            var toRemove = currentSkills.Except(newSkills);
-            var toAdd = newSkills.Except(currentSkills);
+            var toRemove = currentSkills.Except(allTargetSkillIds).ToList();
+            var toAdd = allTargetSkillIds.Except(currentSkills).ToList();
 
             // remove
             var removeEntities = await _context.JobSkills

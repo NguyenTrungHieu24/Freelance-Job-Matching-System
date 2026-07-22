@@ -1,4 +1,4 @@
-using API.Services.Auth;
+﻿using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.DTOs;
@@ -70,7 +70,7 @@ namespace API.Controllers
             var reviewerName = await _context.Users
                 .Where(u => u.Id == reviewerId)
                 .Select(u => u.FullName)
-                .FirstOrDefaultAsync() ?? "một người dùng";
+                .FirstOrDefaultAsync() ?? "mot nguoi dung";
 
             _context.Reviews.Add(review);
             
@@ -78,7 +78,7 @@ namespace API.Controllers
             _context.Notifications.Add(new Notification
             {
                 AccountId = revieweeId,
-                Content = $"Bạn nhận được một đánh giá mới ({dto.Rating} sao) từ {reviewerName}."
+                Content = $"Ban nhan duoc mot danh gia moi ({dto.Rating} sao) tu {reviewerName}."
             });
 
             await _context.SaveChangesAsync();

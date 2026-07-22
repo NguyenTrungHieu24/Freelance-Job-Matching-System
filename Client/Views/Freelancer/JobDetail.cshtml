@@ -25,7 +25,7 @@
 
                     <div class="mb-3">
                         <h5 class="fw-bold">Description</h5>
-                        <p class="text-muted" style="white-space: pre-wrap;">@Model.Job.Description</p>
+                        <div class="text-secondary" style="line-height: 1.7;">@Html.Raw(Model.Job.Description)</div>
                     </div>
                     <hr />
 
@@ -135,4 +135,37 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+}
+
+@section Styles {
+    <style>
+        .job-attachments {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px !important;
+        }
+
+        .job-attachments h6 {
+            color: #0f172a !important;
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 10px !important;
+        }
+
+        .job-attachments img {
+            max-height: 130px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .job-attachments img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+    </style>
 }

@@ -73,18 +73,31 @@
 
     .form-control {
         height: 52px;
-        border-radius: 14px;
+        border-radius: 14px 0 0 14px;
         border: 1px solid var(--border);
+        border-right: none;
         padding-left: 16px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-        .form-control:focus {
-            box-shadow: none;
-            border-color: var(--primary);
-        }
-
     .input-group-text {
+        height: 52px;
         border-radius: 0 14px 14px 0;
+        border: 1px solid var(--border);
+        border-left: none;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .input-group:focus-within .form-control {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(20, 63, 99, 0.12);
+        background-color: #fff;
+    }
+
+    .input-group:focus-within .input-group-text {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(20, 63, 99, 0.12);
+        background-color: #fff;
     }
 
     .submit-btn {
@@ -93,12 +106,13 @@
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         border: none;
         font-weight: 600;
-        transition: .25s;
+        transition: all 0.25s ease;
     }
 
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(20, 63, 99, .22);
+            opacity: 0.95;
         }
 
     .small-link {
@@ -123,6 +137,7 @@
         .role-card:hover {
             border-color: var(--primary);
             transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(20, 63, 99, .06);
         }
 
     .btn-check:checked + .role-card {

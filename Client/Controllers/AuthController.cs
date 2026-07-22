@@ -1,4 +1,4 @@
-using Client.Models.Auth;
+﻿using Client.Models.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -120,7 +120,7 @@ namespace Client.Controllers
 
             if (model.Password != model.ConfirmPassword)
             {
-                ViewBag.Error = "Mật khẩu xác nhận không khớp.";
+                ViewBag.Error = "Mat khau xac nhan khong khop.";
                 return View(model);
             }
 
@@ -133,11 +133,11 @@ namespace Client.Controllers
 
                 if (result == null)
                 {
-                    ViewBag.Error = "Đăng ký không thành công. Vui lòng thử lại!";
+                    ViewBag.Error = "Dang ky khong thanh cong. Vui long thu lai!";
                     return View(model);
                 }
 
-                TempData["Success"] = "Đăng ký tài khoản thành công! Hãy đăng nhập để tiếp tục!";
+                TempData["Success"] = "Dang ky tai khoan thanh cong! Hay dang nhap de tiep tuc!";
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
@@ -180,14 +180,14 @@ namespace Client.Controllers
         // FORGOT PASSWORD
         // ==========================================
 
-        // 1. GET: Hiển thị trang nhập Email quên mật khẩu
+        // 1. GET: Hien thi trang nhap Email quen mat khau
         [HttpGet("forgot-password")]
         public IActionResult ForgotPassword()
         {
             return View();
         }
 
-        // 2. POST: Gửi email lên API
+        // 2. POST: Gui email len API
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
@@ -196,20 +196,20 @@ namespace Client.Controllers
 
             try
             {
-                // Sử dụng hàm PostAsync có sẵn của BaseController để gọi sang API
-                // "api/auth/forgot-password" là endpoint tương ứng bên phía dự án API
+                // Su dung ham PostAsync co san cua BaseController de goi sang API
+                // "api/auth/forgot-password" la endpoint tuong ung ben phia du an API
                 var result = await PostAsync<ForgotPasswordViewModel, object>(
                     "api/auth/forgot-password",
                     model
                 );
 
-                TempData["SuccessMessage"] = "Nếu email tồn tại, hệ thống đã gửi mã OTP đặt lại mật khẩu.";
+                TempData["SuccessMessage"] = "Neu email ton tai, he thong da gui ma OTP dat lai mat khau.";
                 return RedirectToAction("ResetPassword", new { email = model.Email });
             }
             catch (Exception ex)
             {
-                // Nếu API trả về BadRequest hoặc lỗi, nó sẽ nhảy vào đây
-                ModelState.AddModelError("", ex.Message ?? "Có lỗi xảy ra từ hệ thống. Vui lòng thử lại.");
+                // Neu API tra ve BadRequest hoac loi, no se nhay vao day
+                ModelState.AddModelError("", ex.Message ?? "Co loi xay ra tu he thong. Vui long thu lai.");
                 return View(model);
             }
         }
@@ -218,8 +218,8 @@ namespace Client.Controllers
         // RESET PASSWORD
         // ==========================================
 
-        // 3. GET: Hiển thị trang nhập mật khẩu mới
-        // Đường dẫn thực tế sẽ có dạng: /auth/reset-password?email=abc@gmail.com&token=xyz
+        // 3. GET: Hien thi trang nhap mat khau moi
+        // Duong dan thuc te se co dang: /auth/reset-password?email=abc@gmail.com&token=xyz
         [HttpGet("reset-password")]
         public IActionResult ResetPassword([FromQuery] string email, [FromQuery] string? token)
         {
@@ -232,7 +232,7 @@ namespace Client.Controllers
             return View(model);
         }
 
-        // 4. POST: Gửi mật khẩu mới lên API để cập nhật dữ liệu
+        // 4. POST: Gui mat khau moi len API de cap nhat du lieu
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
@@ -241,20 +241,20 @@ namespace Client.Controllers
 
             try
             {
-                // Gọi sang endpoint reset-password của API bằng hàm kế thừa từ BaseController
+                // Goi sang endpoint reset-password cua API bang ham ke thua tu BaseController
                 var result = await PostAsync<ResetPasswordViewModel, object>(
                     "api/auth/reset-password",
                     model
                 );
 
-                // Chuyển hướng về trang Login kèm thông báo thành công hiển thị cho người dùng
-                TempData["SuccessMessage"] = "Đặt lại mật khẩu thành công! Vui lòng đăng nhập bằng mật khẩu mới.";
+                // Chuyen huong ve trang Login kem thong bao thanh cong hien thi cho nguoi dung
+                TempData["SuccessMessage"] = "Dat lai mat khau thanh cong! Vui long dang nhap bang mat khau moi.";
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
-                // Hiển thị lỗi chi tiết từ API trả về (ví dụ: "Mã xác thực đã hết hạn")
-                ModelState.AddModelError("", ex.Message ?? "Mã xác thực không hợp lệ hoặc đã hết hạn.");
+                // Hien thi loi chi tiet tu API tra ve (vi du: "Ma xac thuc da het han")
+                ModelState.AddModelError("", ex.Message ?? "Ma xac thuc khong hop le hoac da het han.");
                 return View(model);
             }
         }

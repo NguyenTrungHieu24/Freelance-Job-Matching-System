@@ -143,23 +143,12 @@
                                                 Url = Url.Action("Detail", new { id = item.Id })
                                             },
                                             new() {
-                                                Title = "Edit",
-                                                Icon = "bi-pencil",
-                                                Url = Url.Action("Edit", new { id = item.Id })
-                                            },
-                                            new() {
                                                 Title = item.Status == 1 ? "Deactivate" : "Activate",
                                                 Icon = item.Status == 1 ? "bi-lock" : "bi-unlock",
                                                 AjaxUrl = Url.Action(item.Status == 1 ? "deactivate" : "activate", "Users", new { id = item.Id }),
                                                 ConfirmMessage = (item.Status == 1 ? "Deactivate" : "Activate") + " this user?",
                                                 ExtraMessage = "This user "+ (item.Status == 1 ? "will be deactivated" : "will be activated") + "!",
                                                 Handle = "reloadPage"
-                                            },
-                                            new() {
-                                                Title = "Delete",
-                                                Icon = "bi-trash",
-                                                CssClass = "text-danger",
-                                                OnClick = $"deleteItem({item.Id})"
                                             }
                                         };
                                 }

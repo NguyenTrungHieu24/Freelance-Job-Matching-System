@@ -137,13 +137,13 @@ namespace API.Controllers
         {
             var fromDate = GetFromDate(range);
 
-            // System revenue consists of commissions and job posting fees (stored as negative amounts, so negate them)
+            // System revenue from transactions between employer and freelancer is COMMISSION_FEE (stored as negative amounts, so negate them)
             var totalRevenue = await _context.Transactions
-                .Where(t => t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE)
+                .Where(t => t.Type == TransactionType.COMMISSION_FEE)
                 .SumAsync(t => -t.Amount);
 
             var revenueInRange = await _context.Transactions
-                .Where(t => (t.Type == TransactionType.COMMISSION_FEE || t.Type == TransactionType.JOB_POSTING_FEE) && t.CreatedAt >= fromDate)
+                .Where(t => t.Type == TransactionType.COMMISSION_FEE && t.CreatedAt >= fromDate)
                 .SumAsync(t => -t.Amount);
 
             var totalTransactions = await _context.Transactions
@@ -165,15 +165,15 @@ namespace API.Controllers
         {
             return range switch
             {
-                DashboardRangeType.Today => DateTime.UtcNow.Date,
+                DashboardRangeType.Today => DateTime.Today,
 
-                DashboardRangeType.ThisWeek => DateTime.UtcNow.AddDays(-7),
+                DashboardRangeType.ThisWeek => DateTime.Now.AddDays(-7),
 
-                DashboardRangeType.ThisMonth => DateTime.UtcNow.AddMonths(-1),
+                DashboardRangeType.ThisMonth => DateTime.Now.AddMonths(-1),
 
-                DashboardRangeType.ThisYear => DateTime.UtcNow.AddYears(-1),
+                DashboardRangeType.ThisYear => DateTime.Now.AddYears(-1),
 
-                _ => DateTime.UtcNow.AddMonths(-1)
+                _ => DateTime.Now.AddMonths(-1)
             };
         }
 

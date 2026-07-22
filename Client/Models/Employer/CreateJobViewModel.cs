@@ -1,4 +1,7 @@
-﻿using BusinessObjects.DTOs;
+using BusinessObjects.DTOs;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 
 namespace Client.Models.Employer
 {
@@ -10,14 +13,16 @@ namespace Client.Models.Employer
 
         public decimal Budget { get; set; }
 
-        public int CategoryId { get; set; }
+        public string? CategoryId { get; set; }
 
         public DateTime? Deadline { get; set; }
 
-        public List<int> SkillIds { get; set; } = [];
+        public List<string> SkillIds { get; set; } = [];
 
         public List<CategoryDTO> Categories { get; set; } = [];
 
         public List<SkillDTO> Skills { get; set; } = [];
+
+        public List<IFormFile>? AttachedImages { get; set; }
     }
 }

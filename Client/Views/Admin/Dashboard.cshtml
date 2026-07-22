@@ -1,5 +1,5 @@
-﻿@{
-    ViewData["Title"] = "Admin Dashboard";
+@{
+    ViewData["Title"] = "Bảng thống kê Admin";
     Layout = "_Layout";
 }
 
@@ -8,18 +8,18 @@
     <!-- PAGE HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="fw-bold mb-1">Dashboard</h2>
+            <h2 class="fw-bold mb-1">Bảng thống kê</h2>
             <p class="text-muted mb-0">
-                Overview of system statistics and activities
+                Tổng quan số liệu thống kê và hoạt động hệ thống
             </p>
         </div>
 
         <div>
             <select id="dashboardRange" class="form-select">
-                <option value="Today">Today</option>
-                <option value="ThisWeek">This Week</option>
-                <option value="ThisMonth" selected>This Month</option>
-                <option value="ThisYear">This Year</option>
+                <option value="Today">Hôm nay</option>
+                <option value="ThisWeek">Tuần này</option>
+                <option value="ThisMonth" selected>Tháng này</option>
+                <option value="ThisYear">Năm nay</option>
             </select>
         </div>
     </div>
@@ -29,9 +29,9 @@
 
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body row">
+                <div class="card-body">
                     <div id="usersLoading">
-                        <h6 class="text-muted">Total Users</h6>
+                        <h6 class="text-muted">Tổng người dùng</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="skeleton skeleton-text"></div>
@@ -45,13 +45,13 @@
 
                     <div id="usersContent" class="d-none">
 
-                        <h6 class="text-muted">Total Users</h6>
+                        <h6 class="text-muted">Tổng người dùng</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <h2 id="totalUsers" class="fw-bold">0</h2>
 
                                 <small class="text-success" id="newUsers">
-                                    +0 new users
+                                    +0 người dùng mới
                                 </small>
                             </div>
                             <div class="col-md-6">
@@ -70,7 +70,7 @@
                 <div class="card-body">
 
                     <div id="jobsLoading">
-                        <h6 class="text-muted">Total Jobs</h6>
+                        <h6 class="text-muted">Tổng việc làm</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="skeleton skeleton-text"></div>
@@ -83,13 +83,13 @@
                     </div>
 
                     <div id="jobsContent" class="d-none">
-                        <h6 class="text-muted">Total Jobs</h6>
+                        <h6 class="text-muted">Tổng việc làm</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <h2 id="totalJobs" class="fw-bold">0</h2>
 
                                 <small class="text-success" id="activeJobs">
-                                    0 active jobs
+                                    0 việc hoạt động
                                 </small>
                             </div>
                             <div class="col-md-6">
@@ -106,7 +106,7 @@
                 <div class="card-body">
 
                     <div id="applicationsLoading">
-                        <h6 class="text-muted">Applications</h6>
+                        <h6 class="text-muted">Đơn ứng tuyển</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="skeleton skeleton-text"></div>
@@ -119,13 +119,13 @@
                     </div>
 
                     <div id="applicationsContent" class="d-none">
-                        <h6 class="text-muted">Applications</h6>
+                        <h6 class="text-muted">Đơn ứng tuyển</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <h2 id="totalApplications" class="fw-bold">0</h2>
 
                                 <small class="text-success" id="matchRate">
-                                    0% match rate
+                                    0% tỷ lệ khớp
                                 </small>
                             </div>
                             <div class="col-md-6">
@@ -142,7 +142,7 @@
                 <div class="card-body">
 
                     <div id="revenueLoading">
-                        <h6 class="text-muted">Revenue</h6>
+                        <h6 class="text-muted">Doanh thu hệ thống</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="skeleton skeleton-text"></div>
@@ -155,13 +155,13 @@
                     </div>
 
                     <div id="revenueContent" class="d-none">
-                        <h6 class="text-muted">Revenue</h6>
+                        <h6 class="text-muted">Doanh thu hệ thống</h6>
                         <div class="row">
                             <div class="col-md-6">
-                                <h2 id="totalRevenue" class="fw-bold">0</h2>
+                                <h2 id="totalRevenue" class="fw-bold" style="font-size: 1.6rem; white-space: nowrap;">0</h2>
 
                                 <small class="text-success" id="monthlyRevenue">
-                                    $0 this month
+                                    0 đ trong kỳ
                                 </small>
                             </div>
                             <div class="col-md-6">
@@ -182,14 +182,14 @@
         <!-- USER GROWTH -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">User Growth</h5>
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0 fw-bold">Tăng trưởng người dùng</h5>
                 </div>
 
                 <div class="card-body">
 
                     <div id="userGrowthLoading"
-                         class="skeleton skeleton-chart">
+                          class="skeleton skeleton-chart">
                     </div>
 
                     <canvas id="userGrowthContent"
@@ -204,14 +204,14 @@
         <!-- JOB GROWTH -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Job Statistics</h5>
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0 fw-bold">Thống kê việc làm & ứng tuyển</h5>
                 </div>
 
                 <div class="card-body">
 
                     <div id="jobGrowthLoading"
-                         class="skeleton skeleton-chart">
+                          class="skeleton skeleton-chart">
                     </div>
 
                     <canvas id="jobGrowthContent"
@@ -231,17 +231,17 @@
         <!-- RECENT USERS -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Recent Users</h5>
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0 fw-bold">Người dùng mới đăng ký</h5>
                 </div>
 
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Joined</th>
+                                <th class="ps-4">Họ và tên</th>
+                                <th>Vai trò</th>
+                                <th class="pe-4 text-end">Ngày tham gia</th>
                             </tr>
                         </thead>
                         <tbody id="recentUsersLoading">
@@ -268,17 +268,17 @@
         <!-- RECENT JOBS -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-white border-0">
-                    <h5 class="mb-0">Recent Jobs</h5>
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0 fw-bold">Công việc mới đăng</h5>
                 </div>
 
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Title</th>
-                                <th>Employer</th>
-                                <th>Created</th>
+                                <th class="ps-4">Tiêu đề</th>
+                                <th>Nhà tuyển dụng</th>
+                                <th class="pe-4 text-end">Ngày tạo</th>
                             </tr>
                         </thead>
 

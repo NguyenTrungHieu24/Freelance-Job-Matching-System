@@ -21,7 +21,7 @@ namespace API.Helper
 
             string raw = string.Join("&", parts);
 
-            Console.WriteLine("Raw string for signature: " + raw);   // Quan trọng để debug
+            Console.WriteLine("Raw string for signature: " + raw);   // Quan trong de debug
 
             using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(checksumKey));
             byte[] hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(raw));
@@ -56,7 +56,7 @@ namespace API.Helper
                 return je.ValueKind switch
                 {
                     JsonValueKind.String => je.GetString() ?? "",
-                    JsonValueKind.Number => je.GetRawText(),           // Giữ nguyên số không có dấu "
+                    JsonValueKind.Number => je.GetRawText(),           // Giu nguyen so khong co dau "
                     JsonValueKind.True => "true",
                     JsonValueKind.False => "false",
                     JsonValueKind.Null => "",
@@ -74,7 +74,7 @@ namespace API.Helper
             var dict = new SortedDictionary<string, string>();
             foreach (var prop in obj.EnumerateObject())
             {
-                dict[prop.Name] = NormalizeValue(prop.Value);   // Đệ quy
+                dict[prop.Name] = NormalizeValue(prop.Value);   // De quy
             }
 
             return JsonSerializer.Serialize(dict, new JsonSerializerOptions

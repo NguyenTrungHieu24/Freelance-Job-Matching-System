@@ -77,6 +77,21 @@ namespace Client.Controllers
             return response.IsSuccessStatusCode;
         }
 
+        protected async Task PutOrThrowAsync<TRequest>(string endpoint, TRequest data)
+        {
+            var client = CreateClient();
+
+            var json = JsonSerializer.Serialize(data);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync(endpoint, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception(error);
+            }
+        }
+
         protected async Task<bool> DeleteAsync(string endpoint)
         {
             var client = CreateClient();
@@ -99,6 +114,29 @@ namespace Client.Controllers
             var response = await client.PostAsync(endpoint, content);
     
             return response.IsSuccessStatusCode;
+        }
+
+        protected async Task<string?> UploadJobImageAsync(string endpoint, IFormFile file)
+        {
+            var client = CreateClient(); 
+            using var content = new MultipartFormDataContent();
+            using var fileStream = file.OpenReadStream();
+            using var streamContent = new StreamContent(fileStream);
+            
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(streamContent, "file", file.FileName);
+            
+            var response = await client.PostAsync(endpoint, content);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                using var jsonDoc = System.Text.Json.JsonDocument.Parse(responseContent);
+                if (jsonDoc.RootElement.TryGetProperty("location", out var locationProp))
+                {
+                    return locationProp.GetString();
+                }
+            }
+            return null;
         }
 
         protected async Task<TResponse?> PostMultipartFormAsync<TResponse>(string endpoint, Dictionary<string, string> formFields, IFormFile? file = null, string fileFieldName = "cvFile")

@@ -1,4 +1,4 @@
-using API.Services;
+﻿using API.Services;
 using API.Services.Auth;
 using BusinessObjects;
 using BusinessObjects.DTOs;
@@ -76,7 +76,7 @@ namespace API.Controllers
                     break;
             }
 
-            // Tạo ví ảo cho Employer/Freelancer mới
+            // Tao vi ao cho Employer/Freelancer moi
             if (account.RoleId == (int)RoleEnum.EMPLOYER
                 || account.RoleId == (int)RoleEnum.FREELANCER)
             {
@@ -128,7 +128,7 @@ namespace API.Controllers
                 return Unauthorized("Invalid password");
 
             if (!user.IsActive)
-                return Unauthorized("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ với quản trị viên để biết thêm chi tiết!");
+                return Unauthorized("Tai khoan cua ban da bi khoa. Vui long lien he voi quan tri vien de biet them chi tiet!");
 
             await _context.Entry(user)
                 .Reference(x => x.Role)
@@ -172,7 +172,7 @@ namespace API.Controllers
         }
 
         // =========================
-        // FORGOT PASSWORD (Yêu cầu khôi phục)
+        // FORGOT PASSWORD (Yeu cau khoi phuc)
         // =========================
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
@@ -181,29 +181,29 @@ namespace API.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             
-            // để tránh kẻ xấu dò tìm email có tồn tại trong hệ thống hay không.
+            // de tranh ke xau do tim email co ton tai trong he thong hay khong.
             if (user == null)
-                return Ok(new { message = "Nếu email tồn tại trên hệ thống, mã khôi phục đã được gửi." });
+                return Ok(new { message = "Neu email ton tai tren he thong, ma khoi phuc da duoc gui." });
 
-            // 1. Tạo mã OTP 6 số để người dùng nhập trên trang đặt lại mật khẩu
+            // 1. Tao ma OTP 6 so de nguoi dung nhap tren trang dat lai mat khau
             var resetToken = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
 
-            // 2. Lưu Token và thời gian hết hạn trực tiếp vào bảng User
+            // 2. Luu Token va thoi gian het han truc tiep vao bang User
            
             user.PasswordResetToken = resetToken;
-            user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15); // Token có hiệu lực trong 15 phút
+            user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15); // Token co hieu luc trong 15 phut
 
             await _context.SaveChangesAsync();
 
-            // 3. GỬI EMAIL CHỨA MÃ OTP
-            var subject = "Khôi phục mật khẩu";
+            // 3. GUI EMAIL CHUA MA OTP
+            var subject = "Khoi phuc mat khau";
             var body = $@"
-        <p>Xin chào <b>{user.FullName}</b>,</p>
-        <p>Bạn vừa yêu cầu đặt lại mật khẩu.</p>
-        <p>Mã OTP đặt lại mật khẩu của bạn là:</p>
+        <p>Xin chao <b>{user.FullName}</b>,</p>
+        <p>Ban vua yeu cau dat lai mat khau.</p>
+        <p>Ma OTP dat lai mat khau cua ban la:</p>
         <h2 style='letter-spacing:4px'>{resetToken}</h2>
-        <p>Mã này có hiệu lực trong 15 phút.</p>
-        <p>Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
+        <p>Ma nay co hieu luc trong 15 phut.</p>
+        <p>Neu ban khong yeu cau, hay bo qua email nay.</p>
     ";
 
             await _emailService.SendEmailAsync(user.Email, subject, body);
@@ -211,7 +211,7 @@ namespace API.Controllers
 
             return Ok(new
             {
-                message = "Mã khôi phục đã được tạo thành công.",
+                message = "Ma khoi phuc da duoc tao thanh cong.",
                 
             });
         }
@@ -225,7 +225,7 @@ namespace API.Controllers
                 await _emailService.SendEmailAsync(
                     "hieu81194@gmail.com",
                     "Test Mail",
-                    "<h2>Gửi thành công</h2>"
+                    "<h2>Gui thanh cong</h2>"
                 );
 
                 return Ok(new { message = "Email sent" });
@@ -239,7 +239,7 @@ namespace API.Controllers
 // Removed duplicate constructor; single constructor now includes IEmailService.
 
         // =========================
-        // RESET PASSWORD (Xác nhận đổi mật khẩu mới)
+        // RESET PASSWORD (Xac nhan doi mat khau moi)
         // =========================
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
@@ -248,24 +248,24 @@ namespace API.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             if (user == null)
-                return BadRequest("Yêu cầu không hợp lệ.");
+                return BadRequest("Yeu cau khong hop le.");
 
-            // Kiểm tra Token khớp không và đã hết hạn chưa
+            // Kiem tra Token khop khong va da het han chua
             if (user.PasswordResetToken != dto.Token.Trim() || user.ResetTokenExpires < DateTime.UtcNow)
             {
-                return BadRequest("Mã xác thực không chính xác hoặc đã hết hạn.");
+                return BadRequest("Ma xac thuc khong chinh xac hoac da het han.");
             }
 
-            // Tiến hành đổi mật khẩu mới (Bcryt mật khẩu bằng BCrypt tương tự như lúc Register)
+            // Tien hanh doi mat khau moi (Bcryt mat khau bang BCrypt tuong tu nhu luc Register)
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
 
-            // Xóa token sau khi đã sử dụng thành công để tránh dùng lại
+            // Xoa token sau khi da su dung thanh cong de tranh dung lai
             user.PasswordResetToken = null;
             user.ResetTokenExpires = null;
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập ngay bây giờ." });
+            return Ok(new { message = "Dat lai mat khau thanh cong! Ban co the dang nhap ngay bay gio." });
         }
 
 

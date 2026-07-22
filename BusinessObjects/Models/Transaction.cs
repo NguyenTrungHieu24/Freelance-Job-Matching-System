@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,12 +6,12 @@ namespace BusinessObjects.Models
 {
     public enum TransactionType
     {
-        JOB_POSTING_FEE = 1,    // Phí đăng tin
-        JOB_PAYMENT = 2,        // Employer trả tiền cho Job
-        JOB_EARNING = 3,        // Freelancer nhận tiền
-        COMMISSION_FEE = 4,     // Hoa hồng hệ thống
-        DEPOSIT = 5,            // Nạp tiền (FM)
-        WITHDRAW = 6,           // Rút tiền (FM)
+        JOB_POSTING_FEE = 1,    // Phi dang tin
+        JOB_PAYMENT = 2,        // Employer tra tien cho Job
+        JOB_EARNING = 3,        // Freelancer nhan tien
+        COMMISSION_FEE = 4,     // Hoa hong he thong
+        DEPOSIT = 5,            // Nap tien (FM)
+        WITHDRAW = 6,           // Rut tien (FM)
     }
 
     public class Transaction
