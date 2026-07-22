@@ -1,4 +1,4 @@
-using BusinessObjects.Enums;
+﻿using BusinessObjects.Enums;
 using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,7 +23,7 @@ namespace BusinessObjects.Seeders
                 await context.SaveChangesAsync();
             }
 
-            // 1. Seed tài khoản Finance Manager nếu chưa có
+            // 1. Seed tai khoan Finance Manager neu chua co
             var fmExists = await context.Users
                 .AnyAsync(u => u.Email == "finance@toplancer.vn");
 
@@ -43,7 +43,7 @@ namespace BusinessObjects.Seeders
                 await context.SaveChangesAsync();
             }
 
-            // 2. Tạo ví cho tất cả Employer + Freelancer chưa có ví
+            // 2. Tao vi cho tat ca Employer + Freelancer chua co vi
             var usersWithoutWallet = await context.Users
                 .Where(u => (u.RoleId == (int)RoleEnum.EMPLOYER
                           || u.RoleId == (int)RoleEnum.FREELANCER)

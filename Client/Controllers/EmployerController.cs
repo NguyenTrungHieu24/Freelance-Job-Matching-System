@@ -1,4 +1,4 @@
-using BusinessObjects.Common;
+﻿using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using Client.Models.Employer;
 using Client.Models.Jobs;
@@ -125,7 +125,7 @@ public class EmployerController : BaseController
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Không thể tải danh sách đơn ứng tuyển: " + ex.Message;
+            TempData["Error"] = "Khong the tai danh sach don ung tuyen: " + ex.Message;
             return View(new List<EmployerApplicationDto>());
         }
     }
@@ -143,16 +143,16 @@ public class EmployerController : BaseController
 
             if (success)
             {
-                TempData["Success"] = status == "2" ? "Đã duyệt nhận ứng viên thành công!" : "Đã từ chối đơn ứng tuyển.";
+                TempData["Success"] = status == "2" ? "Da duyet nhan ung vien thanh cong!" : "Da tu choi don ung tuyen.";
             }
             else
             {
-                TempData["Error"] = "Cập nhật trạng thái đơn thất bại.";
+                TempData["Error"] = "Cap nhat trang thai don that bai.";
             }
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Có lỗi xảy ra: " + ex.Message;
+            TempData["Error"] = "Co loi xay ra: " + ex.Message;
         }
         return RedirectToAction("Applications");
     }
@@ -164,11 +164,11 @@ public class EmployerController : BaseController
         try
         {
             var success = await PostAsync<object, object>($"api/employer/applications/{id}/complete", new { });
-            TempData["Success"] = "Xác nhận hoàn thành job và thanh toán thành công!";
+            TempData["Success"] = "Xac nhan hoan thanh job va thanh toan thanh cong!";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Thanh toán thất bại: " + ex.Message;
+            TempData["Error"] = "Thanh toan that bai: " + ex.Message;
         }
         return RedirectToAction("Applications");
     }
@@ -209,8 +209,81 @@ public class EmployerController : BaseController
 
         try
         {
-            await PostAsync<CreateJobViewModel, JobDTO>("api/jobs", model);
-            TempData["Success"] = "Đăng tin tuyển dụng thành công!";
+            if (model.AttachedImages != null && model.AttachedImages.Any())
+            {
+                var validImages = model.AttachedImages.Where(img => img.Length > 0).ToList();
+                if (validImages.Count > 3)
+                {
+                    ModelState.AddModelError(string.Empty, "Ban chi duoc dinh kem toi da 3 anh!");
+                    model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+                    model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+                    return View("JobForm", model);
+                }
+
+                var imageUrls = new List<string>();
+                foreach (var imgFile in validImages)
+                {
+                    var imgUrl = await UploadJobImageAsync("api/jobs/upload-image", imgFile);
+                    if (!string.IsNullOrEmpty(imgUrl))
+                    {
+                        imageUrls.Add(imgUrl);
+                    }
+                }
+
+                if (imageUrls.Any())
+                {
+                    var attachmentsHtml = "<div class='job-attachments mt-4'><h6 class='fw-bold text-dark mb-2'><i class='bi bi-paperclip'></i> Anh dinh kem:</h6><div class='d-flex gap-2 flex-wrap'>";
+                    foreach (var url in imageUrls)
+                    {
+                        attachmentsHtml += $"<a href='{url}' target='_blank'><img src='{url}' style='max-height: 150px; border-radius: 8px; border: 1px solid #dee2e6;' /></a>";
+                    }
+                    attachmentsHtml += "</div></div>";
+                    model.Description += attachmentsHtml;
+                }
+            }
+
+            int? categoryId = null;
+            string? newCategoryName = null;
+            if (int.TryParse(model.CategoryId, out int catId))
+            {
+                categoryId = catId;
+            }
+            else if (!string.IsNullOrWhiteSpace(model.CategoryId))
+            {
+                newCategoryName = model.CategoryId;
+            }
+
+            var skills = new List<int>();
+            var newSkills = new List<string>();
+            if (model.SkillIds != null)
+            {
+                foreach (var s in model.SkillIds)
+                {
+                    if (int.TryParse(s, out int skId))
+                    {
+                        skills.Add(skId);
+                    }
+                    else if (!string.IsNullOrWhiteSpace(s))
+                    {
+                        newSkills.Add(s);
+                    }
+                }
+            }
+
+            var dto = new CreateJobDto
+            {
+                Title = model.Title,
+                Description = model.Description,
+                Budget = model.Budget,
+                CategoryId = categoryId,
+                NewCategoryName = newCategoryName,
+                Deadline = model.Deadline,
+                Skills = skills,
+                NewSkills = newSkills
+            };
+
+            await PostAsync<CreateJobDto, JobDTO>("api/jobs", dto);
+            TempData["Success"] = "Dang tin tuyen dung thanh cong!";
             return RedirectToAction(nameof(MyJobs));
         }
         catch (Exception ex)
@@ -339,11 +412,11 @@ public class EmployerController : BaseController
                 Description = job.Description,
                 Budget = job.Budget,
                 Deadline = job.Deadline,
-                CategoryId = job.CategoryId,
+                CategoryId = job.CategoryId.ToString(),
 
                 SkillIds = job.Skills != null
-                    ? skills.Where(s => job.Skills.Contains(s.Name)).Select(s => s.Id).ToList()
-                    : new List<int>(),
+                    ? skills.Where(s => job.Skills.Contains(s.Name)).Select(s => s.Id.ToString()).ToList()
+                    : new List<string>(),
 
                 Categories = categories,
                 Skills = skills
@@ -367,14 +440,79 @@ public class EmployerController : BaseController
     {
         try
         {
+            if (model.AttachedImages != null && model.AttachedImages.Any())
+            {
+                var validImages = model.AttachedImages.Where(img => img.Length > 0).ToList();
+                if (validImages.Count > 3)
+                {
+                    ModelState.AddModelError(string.Empty, "Ban chi duoc dinh kem toi da 3 anh!");
+                    model.Categories = await GetAsync<List<CategoryDTO>>("api/categories");
+                    model.Skills = await GetAsync<List<SkillDTO>>("api/skills/all");
+                    ViewBag.IsEdit = true;
+                    ViewBag.JobId = id;
+                    return View("JobForm", model);
+                }
+
+                var imageUrls = new List<string>();
+                foreach (var imgFile in validImages)
+                {
+                    var imgUrl = await UploadJobImageAsync("api/jobs/upload-image", imgFile);
+                    if (!string.IsNullOrEmpty(imgUrl))
+                    {
+                        imageUrls.Add(imgUrl);
+                    }
+                }
+
+                if (imageUrls.Any())
+                {
+                    var attachmentsHtml = "<div class='job-attachments mt-4'><h6 class='fw-bold text-dark mb-2'><i class='bi bi-paperclip'></i> Anh dinh kem:</h6><div class='d-flex gap-2 flex-wrap'>";
+                    foreach (var url in imageUrls)
+                    {
+                        attachmentsHtml += $"<a href='{url}' target='_blank'><img src='{url}' style='max-height: 150px; border-radius: 8px; border: 1px solid #dee2e6;' /></a>";
+                    }
+                    attachmentsHtml += "</div></div>";
+                    model.Description += attachmentsHtml;
+                }
+            }
+
+            int? categoryId = null;
+            string? newCategoryName = null;
+            if (int.TryParse(model.CategoryId, out int catId))
+            {
+                categoryId = catId;
+            }
+            else if (!string.IsNullOrWhiteSpace(model.CategoryId))
+            {
+                newCategoryName = model.CategoryId;
+            }
+
+            var skills = new List<int>();
+            var newSkills = new List<string>();
+            if (model.SkillIds != null)
+            {
+                foreach (var s in model.SkillIds)
+                {
+                    if (int.TryParse(s, out int skId))
+                    {
+                        skills.Add(skId);
+                    }
+                    else if (!string.IsNullOrWhiteSpace(s))
+                    {
+                        newSkills.Add(s);
+                    }
+                }
+            }
+
             var dto = new UpdateJobDto
             {
                 Title = model.Title,
                 Description = model.Description,
                 Budget = model.Budget,
-                CategoryId = model.CategoryId,
+                CategoryId = categoryId,
+                NewCategoryName = newCategoryName,
                 Deadline = model.Deadline,
-                Skills = model.SkillIds
+                Skills = skills,
+                NewSkills = newSkills
             };
 
             await PutAsync($"api/jobs/{id}", dto);
@@ -505,7 +643,7 @@ public class EmployerController : BaseController
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Không thể tải hồ sơ ứng viên: " + ex.Message;
+            TempData["Error"] = "Khong the tai ho so ung vien: " + ex.Message;
             return RedirectToAction("Applications");
         }
     }
@@ -516,11 +654,11 @@ public class EmployerController : BaseController
         try
         {
             var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
-            TempData["Success"] = "Đánh giá ứng viên thành công!";
+            TempData["Success"] = "Danh gia ung vien thanh cong!";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
+            TempData["Error"] = "Dang danh gia that bai: " + ex.Message;
         }
         return RedirectToAction("Applications");
     }

@@ -29,6 +29,8 @@ public class RecentApplicationDto
 {
     public int Id { get; set; }
 
+    public int FreelancerProfileId { get; set; }
+
     public string CandidateName { get; set; }
 
     public string JobTitle { get; set; }
@@ -68,6 +70,8 @@ public class EmployerRecentApplicationDto
     public int Id { get; set; }
 
     public int JobId { get; set; }
+
+    public int FreelancerProfileId { get; set; }
 
     public string JobTitle { get; set; } = "";
 

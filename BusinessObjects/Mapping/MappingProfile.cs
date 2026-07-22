@@ -35,8 +35,8 @@ namespace BusinessObjects.Mapping
                     src.Category != null ? src.Category.Name : ""))
                 .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => 
                     src.JobSkills != null && src.JobSkills.Any()
-                        ? src.JobSkills.Select(js => js.Skill).ToList() 
-                        : new List<Skill>()))
+                        ? src.JobSkills.Select(js => js.Skill.Name).ToList() 
+                        : new List<string>()))
                 .ForMember(dest => dest.EmployerCompanyName, opt => opt.MapFrom(src => 
                     src.EmployerProfile != null ? src.EmployerProfile.CompanyName : ""))
                 .ForMember(dest => dest.EmployerDescription, opt => opt.MapFrom(src => 

@@ -1,4 +1,4 @@
-using API.Services.Auth;
+﻿using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.DTOs;
@@ -22,7 +22,7 @@ namespace API.Controllers
             : base(context, mapper, user) { }
 
         /// <summary>
-        /// Danh sách tất cả ví Employer + Freelancer (có search keyword)
+        /// Danh sach tat ca vi Employer + Freelancer (co search keyword)
         /// </summary>
         [HttpGet("wallets")]
         public async Task<IActionResult> GetWallets([FromQuery] string? keyword)
@@ -60,7 +60,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Nạp tiền cho user
+        /// Nap tien cho user
         /// </summary>
         [HttpPost("deposit")]
         public async Task<IActionResult> Deposit([FromBody] AdjustBalanceDto dto)
@@ -75,7 +75,7 @@ namespace API.Controllers
             if (user == null)
                 return NotFound("User not found");
 
-            // Tạo ví nếu chưa có
+            // Tao vi neu chua co
             if (user.Wallet == null)
             {
                 user.Wallet = new Wallet
@@ -96,7 +96,13 @@ namespace API.Controllers
                 Type = TransactionType.DEPOSIT,
                 Amount = dto.Amount,
                 BalanceAfter = user.Wallet.Balance,
-                Description = dto.Description ?? "Nạp tiền từ Finance Manager"
+                Description = dto.Description ?? "Nap tien tu Finance Manager"
+            });
+
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = user.Id,
+                Content = $"Tai khoan cua ban da duoc nap {dto.Amount:N0} VND vao He thong. Ly do: {dto.Description ?? "Khong co mo ta"}. So du hien tai: {user.Wallet.Balance:N0} VND."
             });
 
             await _context.SaveChangesAsync();
@@ -105,7 +111,7 @@ namespace API.Controllers
         }
 
         /// <summary>
-        /// Rút tiền từ user
+        /// Rut tien tu user
         /// </summary>
         [HttpPost("withdraw")]
         public async Task<IActionResult> Withdraw([FromBody] AdjustBalanceDto dto)
@@ -132,7 +138,13 @@ namespace API.Controllers
                 Type = TransactionType.WITHDRAW,
                 Amount = -dto.Amount,
                 BalanceAfter = user.Wallet.Balance,
-                Description = dto.Description ?? "Rút tiền từ Finance Manager"
+                Description = dto.Description ?? "Rut tien tu Finance Manager"
+            });
+
+            _context.Notifications.Add(new Notification
+            {
+                AccountId = user.Id,
+                Content = $"Tai khoan cua ban da bi rut {dto.Amount:N0} VND boi He thong. Ly do: {dto.Description ?? "Khong co mo ta"}. So du hien tai: {user.Wallet.Balance:N0} VND."
             });
 
             await _context.SaveChangesAsync();

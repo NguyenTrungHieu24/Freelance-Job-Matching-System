@@ -1,4 +1,4 @@
-@inject IUserService CurrentUser
+﻿@inject IUserService CurrentUser
 
 <!DOCTYPE html>
 <html>
@@ -250,7 +250,7 @@
                 fetch("/finance/api-balance")
                     .then(r => r.json())
                     .then(data => {
-                        const formatted = Number(data.balance).toLocaleString('vi-VN') + ' đ';
+                        const formatted = Number(data.balance).toLocaleString('vi-VN') + ' d';
                         const navEl = document.getElementById('walletBalanceNav');
                         const dropEl = document.getElementById('walletBalanceDropdown');
                         if (navEl) navEl.textContent = formatted;

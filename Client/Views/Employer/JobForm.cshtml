@@ -2,7 +2,7 @@
 @model CreateJobViewModel
 
 @{
-    ViewBag.Title = "Post New Job";
+    ViewBag.Title = ViewBag.IsEdit == true ? "Chỉnh sửa tin tuyển dụng" : "Đăng tin tuyển dụng mới";
     Layout = "_Layout";
 }
 
@@ -11,35 +11,37 @@
     <!-- Header -->
     <div class="mb-4">
         <h2 class="fw-bold mb-1">
-            @(ViewBag.IsEdit == true ? "Edit Job" : "Post a New Job")
+            @(ViewBag.IsEdit == true ? "Chỉnh sửa tin tuyển dụng" : "Đăng tin tuyển dụng mới")
         </h2>
 
         <p class="text-muted mb-0">
             @(ViewBag.IsEdit == true
-                        ? "Update job details to attract better candidates."
-                        : "Describe your job clearly to attract the right candidates.")
+                ? "Cập nhật chi tiết công việc để thu hút các ứng viên tốt nhất."
+                : "Mô tả công việc rõ ràng để thu hút đúng ứng viên phù hợp.")
         </p>
     </div>
 
     <form asp-action="@(ViewBag.IsEdit == true ? "EditJob" : "CreateJob")"
           asp-route-id="@(ViewBag.JobId)"
-          method="post">
+          method="post"
+          enctype="multipart/form-data">
         @Html.AntiForgeryToken()
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
         <!-- BASIC INFO -->
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
             <div class="card-body p-4">
 
-                <h5 class="fw-semibold mb-3">Basic Information</h5>
+                <h5 class="fw-bold mb-3"><i class="bi bi-info-circle text-primary me-1"></i> Thông tin cơ bản</h5>
 
                 <!-- Title -->
                 <div class="mb-3">
-                    <label asp-for="Title" class="form-label fw-medium"></label>
+                    <label asp-for="Title" class="form-label fw-semibold">Tiêu đề công việc</label>
                     <input asp-for="Title"
                            class="form-control form-control-lg"
-                           placeholder="e.g. Senior ASP.NET Developer" />
+                           style="border-radius: 10px;"
+                           placeholder="Ví dụ: Lập trình viên Senior ASP.NET Developer" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
@@ -47,30 +49,35 @@
 
                     <!-- Category -->
                     <div class="col-md-6">
-                        <label asp-for="CategoryId" class="form-label fw-medium">Category</label>
+                        <label asp-for="CategoryId" class="form-label fw-semibold">Ngành nghề (Category)</label>
 
                         <select asp-for="CategoryId" class="form-select category-select">
-                            <option value="">Select category</option>
+                            <option value="">Chọn hoặc nhập ngành nghề mới...</option>
                             @foreach (var item in Model.Categories)
                             {
                                 <option value="@item.Id">@item.Name</option>
                             }
                         </select>
+                        <div class="form-text mt-1 text-muted small">
+                            Chọn ngành nghề có sẵn hoặc tự nhập ngành nghề mới nếu chưa có.
+                        </div>
                     </div>
 
                     <!-- Budget -->
                     <div class="col-md-3">
-                        <label asp-for="Budget" class="form-label fw-medium"></label>
+                        <label asp-for="Budget" class="form-label fw-semibold">Ngân sách (VNĐ)</label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input asp-for="Budget" class="form-control" placeholder="1000 - 5000" />
+                            <input asp-for="Budget" class="form-control" style="border-top-left-radius: 10px; border-bottom-left-radius: 10px;" placeholder="Ví dụ: 5000000" />
+                            <span class="input-group-text" style="border-top-right-radius: 10px; border-bottom-right-radius: 10px;">VNĐ</span>
                         </div>
+                        <span asp-validation-for="Budget" class="text-danger"></span>
                     </div>
 
                     <!-- Deadline -->
                     <div class="col-md-3">
-                        <label asp-for="Deadline" class="form-label fw-medium"></label>
-                        <input asp-for="Deadline" type="date" class="form-control" />
+                        <label asp-for="Deadline" class="form-label fw-semibold">Hạn chót ứng tuyển</label>
+                        <input asp-for="Deadline" type="date" class="form-control" style="border-radius: 10px;" />
+                        <span asp-validation-for="Deadline" class="text-danger"></span>
                     </div>
 
                 </div>
@@ -79,28 +86,39 @@
         </div>
 
         <!-- DESCRIPTION -->
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
             <div class="card-body p-4">
 
-                <h5 class="fw-semibold mb-3">Job Description</h5>
+                <h5 class="fw-bold mb-1"><i class="bi bi-file-earmark-text text-primary me-1"></i> Chi tiết công việc</h5>
 
-                <div class="mb-2 text-muted small">
-                    Describe responsibilities, requirements, and benefits clearly.
+                <div class="mb-3 text-muted small">
+                    Mô tả rõ ràng trách nhiệm, yêu cầu và quyền lợi để thu hút ứng viên.
                 </div>
 
                 <textarea asp-for="Description"
                           rows="8"
                           class="form-control"
-                          placeholder="Write detailed job description..."></textarea>
+                          placeholder="Nhập mô tả công việc chi tiết tại đây..."></textarea>
+
+                <!-- Attached Images Upload (Max 3) -->
+                <div class="mt-4 border-top pt-3">
+                    <label class="form-label fw-semibold text-dark"><i class="bi bi-images text-primary me-1"></i> Đính kèm hình ảnh minh họa (Tối đa 3 ảnh)</label>
+                    <input type="file" name="AttachedImages" class="form-control" multiple accept="image/*" id="attachedImagesInput" style="border-radius: 10px; height: 45px;" />
+                    <div class="form-text text-muted small mt-1">
+                        <i class="bi-info-circle"></i> Định dạng: JPG, PNG, WEBP. Chọn tối đa 3 ảnh minh họa kèm theo.
+                    </div>
+                    <!-- Image Preview Container -->
+                    <div id="imagePreviewContainer" class="d-flex gap-2 mt-3 flex-wrap"></div>
+                </div>
 
             </div>
         </div>
 
         <!-- SKILLS -->
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
             <div class="card-body p-4">
 
-                <h5 class="fw-semibold mb-3">Required Skills</h5>
+                <h5 class="fw-bold mb-3"><i class="bi bi-tag text-primary me-1"></i> Kỹ năng yêu cầu</h5>
 
                 <select asp-for="SkillIds"
                         multiple
@@ -113,8 +131,8 @@
 
                 </select>
 
-                <div class="form-text mt-2">
-                    Select multiple skills that best match this job.
+                <div class="form-text mt-2 text-muted small">
+                    Chọn các kỹ năng chuyên môn có sẵn hoặc tự gõ rồi nhấn Enter để thêm mới.
                 </div>
 
             </div>
@@ -122,25 +140,22 @@
 
         @if (ViewBag.IsEdit != true)
         {
-            <div class="alert alert-info mt-4">
-                <i class="bi bi-info-circle-fill"></i>
-                <strong>Lưu ý:</strong> Phí đăng tin tuyển dụng là <strong>50.000 VNĐ</strong> sẽ được trừ trực tiếp từ ví của bạn khi tin tuyển dụng được đăng tải.
+            <div class="alert alert-info mt-4 border-0 shadow-sm" style="border-radius: 12px;">
+                <i class="bi bi-info-circle-fill text-info me-2"></i>
+                <strong>Lưu ý phí đăng tin:</strong> Phí đăng tin tuyển dụng là <strong>50.000 VNĐ</strong> và sẽ được trừ trực tiếp từ số dư ví của bạn khi tin tuyển dụng được xuất bản.
             </div>
         }
 
         <!-- ACTION -->
         <div class="d-flex justify-content-between align-items-center mt-4">
 
-            <a asp-action="MyJobs" class="btn btn-light px-4">
-                Cancel
+            <a asp-action="MyJobs" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;">
+                Hủy bỏ
             </a>
 
-            <button type="submit" class="btn btn-primary px-5">
-
-                <i class="fa fa-rocket me-2"></i>
-
-                @(ViewBag.IsEdit == true ? "Update Job" : "Publish Job")
-
+            <button type="submit" class="btn btn-primary px-5 py-2" style="border-radius: 10px;">
+                <i class="bi bi-send-fill me-2"></i>
+                @(ViewBag.IsEdit == true ? "Cập nhật công việc" : "Đăng tuyển công việc")
             </button>
 
         </div>
@@ -152,34 +167,117 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        $('.category-select').val('@Model.CategoryId').select2({
+        $('.category-select').val('@Model.CategoryId').trigger('change').select2({
             width: '100%',
-            placeholder: 'Select category'
+            placeholder: 'Chọn hoặc nhập ngành nghề...',
+            tags: true
         });
         
         $('.skill-select').val(@Html.Raw(Json.Serialize(Model.SkillIds))).trigger('change');
 
         $('.skill-select').select2({
             width: '100%',
-            placeholder: 'Select required skills'
+            placeholder: 'Chọn hoặc nhập kỹ năng cần thiết...',
+            tags: true
         });
     </script>
     <script src="https://cdn.tiny.cloud/1/j5lkh3arb6mc610jp6lveocbd31njtd87nnjnm0rhdtnrjr2/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script>
         tinymce.init({
-                    selector: 'textarea[name="Description"]',
-                    height: 400,
-                    setup: function (editor) {
-                        editor.on('init', function () {
-                            editor.setContent(`@Html.Raw(Model.Description)`);
-                        });
-                    },
-                    menubar: false,
-                    plugins: [
-                        'lists link image table code help wordcount'
-                    ],
-                    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link table | code',
+            selector: 'textarea[name="Description"]',
+            height: 400,
+            setup: function (editor) {
+                editor.on('init', function () {
+                    editor.setContent(`@Html.Raw(Model.Description)`);
                 });
+            },
+            menubar: false,
+            plugins: [
+                'lists link image table code help wordcount'
+            ],
+            toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link table | code',
+        });
+
+        // Validate and preview attached images
+        const attachedImagesInput = document.getElementById('attachedImagesInput');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        
+        let selectedFiles = [];
+        
+        function updatePreviewsAndInput() {
+            imagePreviewContainer.innerHTML = '';
+            const dataTransfer = new DataTransfer();
+            
+            selectedFiles.forEach((file, index) => {
+                dataTransfer.items.add(file);
+                
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imgContainer = document.createElement('div');
+                        imgContainer.style.position = 'relative';
+                        imgContainer.style.display = 'inline-block';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxHeight = '90px';
+                        img.style.borderRadius = '8px';
+                        img.style.border = '1px solid #dee2e6';
+                        img.className = 'shadow-sm';
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.className = 'btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center';
+                        removeBtn.style.position = 'absolute';
+                        removeBtn.style.top = '-5px';
+                        removeBtn.style.right = '-5px';
+                        removeBtn.style.width = '20px';
+                        removeBtn.style.height = '20px';
+                        removeBtn.style.padding = '0';
+                        removeBtn.style.fontSize = '12px';
+                        removeBtn.style.lineHeight = '1';
+                        removeBtn.style.cursor = 'pointer';
+                        
+                        removeBtn.onclick = function() {
+                            selectedFiles.splice(index, 1);
+                            updatePreviewsAndInput();
+                        };
+                        
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(removeBtn);
+                        imagePreviewContainer.appendChild(imgContainer);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            attachedImagesInput.files = dataTransfer.files;
+        }
+
+        if (attachedImagesInput) {
+            attachedImagesInput.addEventListener('change', function () {
+                const files = Array.from(this.files);
+                
+                if (selectedFiles.length + files.length > 3) {
+                    alert('Ban chi duoc chon toi da 3 anh!');
+                    this.value = '';
+                    const dataTransfer = new DataTransfer();
+                    selectedFiles.forEach(file => dataTransfer.items.add(file));
+                    this.files = dataTransfer.files;
+                    return;
+                }
+                
+                files.forEach(file => {
+                    const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size && f.lastModified === file.lastModified);
+                    if (!exists) {
+                        selectedFiles.push(file);
+                    }
+                });
+                
+                updatePreviewsAndInput();
+            });
+        }
     </script>
 }

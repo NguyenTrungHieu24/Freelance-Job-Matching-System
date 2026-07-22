@@ -20,7 +20,7 @@ namespace Client.Controllers
                 var job = await GetAsync<JobDto>($"api/jobs/{id}");
                 if (job == null) return NotFound();
 
-                return View("Detail", job);
+                return View("~/Views/Jobs/Detail.cshtml", job);
             }
             catch (Exception ex)
             {

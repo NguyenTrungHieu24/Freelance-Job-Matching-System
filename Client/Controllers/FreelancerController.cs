@@ -1,4 +1,4 @@
-using BusinessObjects.Common;
+﻿using BusinessObjects.Common;
 using BusinessObjects.DTOs;
 using BusinessObjects.Enums;
 using Client.Models.Auth;
@@ -249,7 +249,7 @@ public class FreelancerController : BaseController
         var q = new List<KeyValuePair<string, string>>();
 
         if (!string.IsNullOrWhiteSpace(filter.Keyword))
-            q.Add(new("Keyword", filter.Keyword));           // ✅ bỏ "Filter."
+            q.Add(new("Keyword", filter.Keyword));           // ✅ bo "Filter."
 
         if (filter.CategoryId.HasValue)
             q.Add(new("CategoryId", filter.CategoryId.Value.ToString()));
@@ -261,7 +261,7 @@ public class FreelancerController : BaseController
             q.Add(new("MaxBudget", filter.MaxBudget.Value.ToString()));
 
         if (filter.Temperature.HasValue)
-            q.Add(new("Temperature", ((int)filter.Temperature.Value).ToString())); // ✅ gửi số, không gửi string
+            q.Add(new("Temperature", ((int)filter.Temperature.Value).ToString())); // ✅ gui so, khong gui string
 
         if (filter.CreatedFrom.HasValue)
             q.Add(new("CreatedFrom", filter.CreatedFrom.Value.ToString("yyyy-MM-dd")));
@@ -276,7 +276,7 @@ public class FreelancerController : BaseController
             q.Add(new("DeadlineTo", filter.DeadlineTo.Value.ToString("yyyy-MM-dd")));
 
         foreach (var skillId in filter.SkillIds)
-            q.Add(new("SkillIds", skillId.ToString()));      // ✅ bỏ "Filter."
+            q.Add(new("SkillIds", skillId.ToString()));      // ✅ bo "Filter."
 
         if (!string.IsNullOrWhiteSpace(filter.SortBy))
             q.Add(new("SortBy", filter.SortBy));
@@ -478,11 +478,11 @@ public class FreelancerController : BaseController
         try
         {
             var success = await PostAsync<CreateReviewDto, object>("api/reviews", dto);
-            TempData["Success"] = "Đánh giá nhà tuyển dụng thành công!";
+            TempData["Success"] = "Danh gia nha tuyen dung thanh cong!";
         }
         catch (Exception ex)
         {
-            TempData["Error"] = "Đăng đánh giá thất bại: " + ex.Message;
+            TempData["Error"] = "Dang danh gia that bai: " + ex.Message;
         }
         return RedirectToAction("MyJobs");
     }

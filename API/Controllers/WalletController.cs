@@ -1,4 +1,4 @@
-using API.Services.Auth;
+﻿using API.Services.Auth;
 using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.DTOs;
@@ -20,7 +20,7 @@ namespace API.Controllers
             : base(context, mapper, user) { }
 
         /// <summary>
-        /// Lấy số dư ví hiện tại
+        /// Lay so du vi hien tai
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetBalance()

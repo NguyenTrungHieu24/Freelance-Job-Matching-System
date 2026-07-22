@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObjects.DTOs
 {
-    // DTO hiển thị trong bảng danh sách ví
+    // DTO hien thi trong bang danh sach vi
     public class WalletUserDto
     {
         public int UserId { get; set; }
@@ -14,21 +14,21 @@ namespace BusinessObjects.DTOs
         public bool IsActive { get; set; }
     }
 
-    // DTO cho request nạp/rút tiền
+    // DTO cho request nap/rut tien
     public class AdjustBalanceDto
     {
         [Required]
         public int UserId { get; set; }
 
         [Required]
-        [Range(1000, 1000000000, ErrorMessage = "Amount must be at least 1,000 VNĐ")]
+        [Range(1000, 1000000000, ErrorMessage = "Amount must be at least 1,000 VND")]
         public decimal Amount { get; set; }
 
         [MaxLength(500)]
         public string? Description { get; set; }
     }
 
-    // DTO trả về số dư cho navbar
+    // DTO tra ve so du cho navbar
     public class WalletBalanceDto
     {
         public decimal Balance { get; set; }

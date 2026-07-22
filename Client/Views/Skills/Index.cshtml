@@ -1,110 +1,229 @@
-﻿@inject IUserService CurrentUser
-
+@inject IUserService CurrentUser
 @model Client.Models.Skills.ListSkillsModel
 
 @{
-    ViewData["Title"] = "Skills List";
+    ViewBag.Title = "Quản lý kỹ năng";
     Layout = "_Layout";
 }
 
-
-<div class="card">
-    <div class="card-header">
-        <div class="d-flex justify-content-between">
-            <h3>List Skills</h3>
-            <button class="btn btn-sm btn-primary d-flex align-items-center gap-1"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addSkill">
-                <i class="bi bi-plus-circle-dotted"></i> Create
-            </button>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Quản lý kỹ năng</h2>
+            <p class="text-muted mb-0">Quản trị danh sách kỹ năng chuyên môn được sử dụng bởi Freelancer và Tin tuyển dụng</p>
         </div>
-        <div class="d-flex justify-content-between">
-            <div>
-                <form method="get" class="card p-3 mb-4 shadow-sm">
-                    <div class="row g-3">
-
-                        <div class="col-md-3">
-                            <input asp-for="Filter.Keyword" class="form-control"
-                                   placeholder="Search by name..." />
-                        </div>
-
-                        <div class="col-md-1 d-grid">
-                            <button class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-
-                    </div>
-                </form>
-            </div>
-        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2"
+                style="border-radius: 10px;"
+                data-bs-toggle="modal"
+                data-bs-target="#addSkill">
+            <i class="bi bi-plus-circle"></i> Thêm kỹ năng mới
+        </button>
     </div>
 
-    <div class="card-body">
-
-
-        @if (Model.Skills.Items.Count == 0)
-        {
-            <div class="d-flex flex-column gap-2 align-items-center">
-                <h4>Oops... There are no skills</h4>
-                <div class="d-flex gap-2">
-                    @if (Model.HasFilter())
-                    {
-                        <a class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                           asp-action="Index">
-                            Clear filter
-                        </a>
-                    }
-                    <button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addSkill">
-                        <i class="bi bi-plus-circle-dotted"></i> Create
-                    </button>
-                </div>
+    <!-- Search Form -->
+    <form method="get" class="card p-3 mb-4 shadow-sm border-0">
+        <div class="row g-3">
+            <div class="col-md-9">
+                <input asp-for="Filter.Keyword" class="form-control" style="height: 48px; border-radius: 10px;"
+                       placeholder="Tìm kiếm kỹ năng theo tên..." />
             </div>
-        }
-        else
-        {
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1" style="height: 48px; border-radius: 10px;">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+                @if (Model.HasFilter())
+                {
+                    <a class="btn btn-outline-secondary d-flex align-items-center justify-content-center px-3"
+                       style="height: 48px; border-radius: 10px;"
+                       asp-action="Index">
+                        Xóa lọc
+                    </a>
+                }
+            </div>
+        </div>
+    </form>
 
-            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Skills)
 
-            <table class="table table-bordered table-striped">
-                <thead>
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
                     <tr>
-                        <th>Name</th>
-                        <th>Actions</th>
+                        <th class="ps-4" style="width: 15%;">ID</th>
+                        <th style="width: 60%;">Tên kỹ năng chuyên môn</th>
+                        <th class="text-end pe-4" style="width: 25%;">Hành động</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    @foreach (var item in Model.Skills.Items)
+                    @if (Model.Skills == null || Model.Skills.Items == null || !Model.Skills.Items.Any())
                     {
                         <tr>
-                            <td>@item.Name</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-warning"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editSkill"
-                                        data-skill-id="@item.Id"
-                                        data-skill-name="@item.Name">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-
-                                <button class="btn btn-sm btn-outline-danger"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteSkill"
-                                        data-skill-id="@item.Id"
-                                        data-skill-name="@item.Name">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="bi bi-tools fs-2 d-block mb-2"></i>
+                                Không tìm thấy kỹ năng nào.
                             </td>
                         </tr>
                     }
+                    else
+                    {
+                        @foreach (var item in Model.Skills.Items)
+                        {
+                            <tr>
+                                <td class="ps-4 text-secondary fw-semibold">#@item.Id</td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Name</div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-warning me-2"
+                                            style="border-radius: 8px;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editSkill"
+                                            data-skill-id="@item.Id"
+                                            data-skill-name="@item.Name">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </button>
+
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            style="border-radius: 8px;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteSkill"
+                                            data-skill-id="@item.Id"
+                                            data-skill-name="@item.Name">
+                                        <i class="bi bi-trash3"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
                 </tbody>
-
             </table>
+        </div>
 
-            @await Html.PartialAsync("~/Views/Shared/Pagination/_Pagination.cshtml", Model.Skills)
+        <!-- Pagination -->
+        @if (Model.Skills != null && Model.Skills.TotalItems > Model.Skills.PageSize)
+        {
+            var totalPages = (int)Math.Ceiling((double)Model.Skills.TotalItems / Model.Skills.PageSize);
+            <div class="card-footer bg-white d-flex justify-content-between align-items-center py-3 border-top">
+                <span class="text-muted small">Hiển thị trang @Model.Skills.PageNumber / @totalPages (@Model.Skills.TotalItems kết quả)</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @for (int i = 1; i <= totalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.Skills.PageNumber ? "active" : "")">
+                                <a class="page-link" href="?Filter.Keyword=@Model.Filter.Keyword&Filter.Page=@i">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         }
     </div>
 </div>
+
+<!-- ================================= MODALS ================================= -->
+
+<!-- ADD MODAL -->
+<div class="modal fade" id="addSkill" tabindex="-1" aria-labelledby="addSkillLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-action="Create" method="post" class="modal-content" style="border-radius: 16px; border: none; overflow: hidden;">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title fw-bold" id="addSkillLabel"><i class="bi bi-plus-circle me-1"></i> Thêm kỹ năng mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label for="newSkillName" class="form-label fw-semibold">Tên kỹ năng chuyên môn</label>
+                    <input type="text" class="form-control" id="newSkillName" name="name" required 
+                           placeholder="Ví dụ: .NET Core, Angular, Python, Photoshop..." style="height: 48px; border-radius: 10px;">
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-3">
+                <button type="button" class="btn btn-secondary px-4" style="border-radius: 10px;" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="submit" class="btn btn-primary px-4" style="border-radius: 10px;">Thêm mới</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editSkill" tabindex="-1" aria-labelledby="editSkillLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-action="Edit" method="post" class="modal-content" style="border-radius: 16px; border: none; overflow: hidden;">
+            <div class="modal-header bg-warning text-dark py-3">
+                <h5 class="modal-title fw-bold" id="editSkillLabel"><i class="bi bi-pencil-square me-1"></i> Cập nhật kỹ năng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="id" id="editSkillId" />
+                <div class="mb-3">
+                    <label for="editSkillName" class="form-label fw-semibold">Tên kỹ năng chuyên môn</label>
+                    <input type="text" class="form-control" id="editSkillName" name="name" required 
+                           placeholder="Nhập tên kỹ năng..." style="height: 48px; border-radius: 10px;">
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-3">
+                <button type="button" class="btn btn-secondary px-4" style="border-radius: 10px;" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="submit" class="btn btn-warning px-4 text-dark fw-bold" style="border-radius: 10px;">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteSkill" tabindex="-1" aria-labelledby="deleteSkillLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form asp-action="Delete" method="post" class="modal-content" style="border-radius: 16px; border: none; overflow: hidden;">
+            <div class="modal-header bg-danger text-white py-3">
+                <h5 class="modal-title fw-bold" id="deleteSkillLabel"><i class="bi bi-trash3 me-1"></i> Xóa kỹ năng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="id" id="deleteSkillId" />
+                <p class="mb-2">Bạn có chắc chắn muốn xóa kỹ năng <strong id="deleteSkillName" class="text-danger"></strong> khỏi hệ thống không?</p>
+                <div class="alert alert-warning mb-0 border-0 py-2 small" style="border-radius: 8px;">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Lưu ý: Hành động này không thể hoàn tác!
+                </div>
+            </div>
+            <div class="modal-footer bg-light py-3">
+                <button type="button" class="btn btn-secondary px-4" style="border-radius: 10px;" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-danger px-4" style="border-radius: 10px;">Xác nhận xóa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var editModal = document.getElementById('editSkill');
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var id = button.getAttribute('data-skill-id');
+                    var name = button.getAttribute('data-skill-name');
+
+                    var modalIdInput = editModal.querySelector('#editSkillId');
+                    var modalNameInput = editModal.querySelector('#editSkillName');
+
+                    modalIdInput.value = id;
+                    modalNameInput.value = name;
+                });
+            }
+
+            var deleteModal = document.getElementById('deleteSkill');
+            if (deleteModal) {
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var id = button.getAttribute('data-skill-id');
+                    var name = button.getAttribute('data-skill-name');
+
+                    var modalIdInput = deleteModal.querySelector('#deleteSkillId');
+                    var modalNameText = deleteModal.querySelector('#deleteSkillName');
+
+                    modalIdInput.value = id;
+                    modalNameText.textContent = name;
+                });
+            }
+        });
+    </script>
+}

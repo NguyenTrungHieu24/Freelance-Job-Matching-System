@@ -1,4 +1,4 @@
-﻿let userGrowthChart;
+let userGrowthChart;
 let jobGrowthChart;
 
 
@@ -85,8 +85,10 @@ async function loadOverview(range) {
     });
 
     hideSkeleton("revenue");
-    $("#totalRevenue").text(`$${data.revenueStats.totalRevenue}`);
-    $("#monthlyRevenue").text(`$${data.revenueStats.revenueInRange} this month`);
+    const totalRevFormatted = data.revenueStats.totalRevenue.toLocaleString('vi-VN') + " đ";
+    const rangeRevFormatted = data.revenueStats.revenueInRange.toLocaleString('vi-VN') + " đ";
+    $("#totalRevenue").text(totalRevFormatted);
+    $("#monthlyRevenue").text(`${rangeRevFormatted} trong kỳ`);
     renderMiniLineChart('#miniChartRevenue', {
         data: data.revenueStats?.miniChart ?? randArr()
     });
@@ -116,11 +118,11 @@ async function loadUserGrowthChart(range) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Freelancers',
+                    label: 'Freelancer',
                     data: freelancers
                 },
                 {
-                    label: 'Employers',
+                    label: 'Nhà tuyển dụng',
                     data: employers
                 }
             ]
@@ -157,11 +159,11 @@ async function loadJobGrowthChart(range) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Jobs',
+                    label: 'Việc làm',
                     data: jobs
                 },
                 {
-                    label: 'Applications',
+                    label: 'Đơn ứng tuyển',
                     data: applications
                 }
             ]
@@ -181,12 +183,19 @@ async function loadRecentUsers() {
     let html = '';
 
     data.forEach(user => {
+        let roleName = user.role;
+        if (roleName === 'FREELANCER') roleName = 'Freelancer';
+        else if (roleName === 'EMPLOYER') roleName = 'Nhà tuyển dụng';
+        else if (roleName === 'ADMIN') roleName = 'Quản trị viên';
+        else if (roleName === 'FINANCE_MANAGER') roleName = 'Quản lý tài chính';
 
         html += `
             <tr>
-                <td>${user.fullName}</td>
-                <td>${user.role}</td>
-                <td>${formatDate(user.createdAt)}</td>
+                <td class="ps-4 fw-medium">
+                    <a href="/users/detail/${user.userId}" class="text-decoration-none text-primary fw-bold">${user.fullName}</a>
+                </td>
+                <td><span class="badge bg-light text-secondary border">${roleName}</span></td>
+                <td class="pe-4 text-end text-muted">${formatDate(user.createdAt)}</td>
             </tr>
         `;
     });
@@ -209,9 +218,11 @@ async function loadRecentJobs() {
 
         html += `
             <tr>
-                <td>${job.title}</td>
+                <td class="ps-4 fw-medium">
+                    <a href="/jobs/detail/${job.jobId}" class="text-decoration-none text-primary fw-bold">${job.title}</a>
+                </td>
                 <td>${job.employerName}</td>
-                <td>${formatDate(job.createdAt)}</td>
+                <td class="pe-4 text-end text-muted">${formatDate(job.createdAt)}</td>
             </tr>
         `;
     });

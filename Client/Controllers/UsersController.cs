@@ -131,5 +131,28 @@ namespace Client.Controllers
                 return StatusCode(500, ApiResult<bool>.Fail(ex.Message));
             }
         }
+
+        [HttpGet("Detail")]
+        public async Task<IActionResult> Detail([FromQuery] int id)
+        {
+            try
+            {
+                var user = await GetAsync<UserDto>($"api/users/{id}");
+                if (user == null) return NotFound();
+
+                return View("Detail", user);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Cannot load user details: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet("detail/{id}")]
+        public async Task<IActionResult> DetailRoute(int id)
+        {
+            return await Detail(id);
+        }
     }
 }

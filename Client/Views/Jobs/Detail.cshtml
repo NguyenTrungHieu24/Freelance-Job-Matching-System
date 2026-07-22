@@ -6,420 +6,208 @@
     Layout = "_Layout";
 }
 
-@section Styles {
-    <style>
-        .jd-container {
-            max-width: 1220px;
-            margin: 40px auto;
-            padding: 0 20px;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        /* Top Action Bar */
-        .jd-action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            margin-bottom: 28px;
-        }
-
-        .btn-jd-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #4a5568;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            background: #f7fafc;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-jd-back:hover {
-            color: #1a202c;
-            background: #edf2f7;
-            transform: translateX(-2px);
-        }
-
-        .btn-jd-apply {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #f05a1a 0%, #d4440c 100%);
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            padding: 12px 28px;
-            border-radius: 12px;
-            border: none;
-            box-shadow: 0 10px 20px rgba(240, 90, 26, 0.25);
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .btn-jd-apply:hover {
-            background: linear-gradient(135deg, #d4440c 0%, #b83707 100%);
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(240, 90, 26, 0.35);
-        }
-
-        .btn-jd-apply.disabled {
-            background: #cbd5e1;
-            color: #64748b;
-            box-shadow: none;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* 2 Column Layout (6/4 split) */
-        .jd-grid {
-            display: grid;
-            grid-template-columns: 6fr 4fr;
-            gap: 28px;
-            align-items: start;
-        }
-
-        /* Card styles */
-        .jd-card {
-            background: #ffffff;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            padding: 32px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-        }
-
-        .jd-section-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #1a2e4a;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f05a1a;
-            display: inline-block;
-        }
-
-        /* Left Side: Job Info */
-        .job-title {
-            font-size: 1.85rem;
-            font-weight: 800;
-            color: #1a2e4a;
-            line-height: 1.3;
-            margin: 0 0 16px 0;
-        }
-
-        .job-meta-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .job-meta-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.88rem;
-            color: #4a5568;
-            background: #f7fafc;
-            padding: 6px 14px;
-            border-radius: 999px;
-            border: 1px solid #edf2f7;
-        }
-
-        .job-meta-item i {
-            color: #f05a1a;
-        }
-
-        .job-budget-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #fff1ec;
-            color: #f05a1a;
-            padding: 8px 18px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-bottom: 28px;
-        }
-
-        .job-desc-content {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: #2d3748;
-            white-space: pre-line;
-            margin-bottom: 28px;
-        }
-
-        .job-skills-wrap {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .job-skill-chip {
-            display: inline-block;
-            background: #edf2f7;
-            color: #4a5568;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-right: 8px;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-
-        .job-skill-chip:hover {
-            background: #f05a1a;
-            color: #ffffff;
-        }
-
-        /* Right Side: Employer Info */
-        .emp-profile-card {
-            text-align: center;
-        }
-
-        .emp-logo-wrap {
-            width: 96px;
-            height: 96px;
-            border-radius: 20px;
-            border: 2px solid #e2e8f0;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-        }
-
-        .emp-logo-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: cover;
-        }
-
-        .emp-logo-fallback {
-            font-size: 2.5rem;
-            color: #a0aec0;
-        }
-
-        .emp-name {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #1a2e4a;
-            margin: 0 0 6px;
-        }
-
-        .emp-company {
-            font-size: 0.95rem;
-            color: #f05a1a;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-
-        .emp-description {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #4a5568;
-            margin-bottom: 24px;
-            text-align: justify;
-        }
-
-        .emp-contact-list {
-            text-align: left;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #edf2f7;
-        }
-
-        .emp-contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-            color: #4a5568;
-        }
-
-        .emp-contact-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .emp-contact-item i {
-            color: #f05a1a;
-            margin-top: 3px;
-        }
-
-        .emp-contact-label {
-            font-weight: 700;
-            color: #1a2e4a;
-            margin-bottom: 2px;
-        }
-
-        /* Responsive Layout */
-        @@media (max-width: 991px) {
-            .jd-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-}
-
-<div class="jd-container">
-    <!-- Top Action Bar -->
-    <div class="jd-action-bar">
-        <a href="/" class="btn-jd-back">
-            <i class="bi bi-arrow-left"></i> Trở lại trang chủ
+<div class="container py-4">
+    <!-- Back Link -->
+    <div class="mb-3">
+        <a href="/" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Trở lại danh sách công việc
         </a>
-
-        @if (!CurrentUser.IsAuthenticated)
-        {
-            <a href="/auth/login?returnUrl=@Context.Request.Path" class="btn-jd-apply">
-                <i class="bi bi-send-fill"></i> Ứng tuyển ngay
-            </a>
-        }
-        else if (CurrentUser.Role == "FREELANCER")
-        {
-            <a href="/freelancer/jobs/@Model.Id" class="btn-jd-apply">
-                <i class="bi bi-send-fill"></i> Ứng tuyển ngay
-            </a>
-        }
-        else
-        {
-            <button class="btn-jd-apply disabled" disabled title="Chỉ Freelancer mới có thể ứng tuyển">
-                <i class="bi bi-send-fill"></i> Ứng tuyển
-            </button>
-        }
     </div>
 
-    <!-- 2 Column Layout (6/4 split) -->
-    <div class="jd-grid">
-        
-        <!-- Left Column: Job Detail (60%) -->
-        <div class="jd-card">
-            <h1 class="job-title">@Model.Title</h1>
-            
-            <div class="job-meta-list">
-                <div class="job-meta-item">
-                    <i class="bi bi-folder-fill"></i> 
-                    <span>@Model.CategoryName</span>
+    <div class="row g-4">
+        <!-- Left Column: Job Detail (col-lg-8) -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <h1 class="fw-bold text-dark mb-3" style="font-size: 1.85rem; line-height: 1.3;">@Model.Title</h1>
+                
+                <!-- Meta information list -->
+                <div class="d-flex flex-wrap gap-2 mb-3 pb-3 border-bottom">
+                    <span class="badge bg-light text-primary border px-3 py-2" style="border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                        <i class="bi bi-folder-fill me-1"></i> @Model.CategoryName
+                    </span>
+                    <span class="badge bg-light text-secondary border px-3 py-2" style="border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                        <i class="bi bi-calendar-event-fill me-1"></i> Đăng lúc: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                    @if (Model.Deadline.HasValue)
+                    {
+                        <span class="badge bg-light text-danger border px-3 py-2" style="border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                            <i class="bi bi-hourglass-split me-1"></i> Hạn chót: @Model.Deadline.Value.ToString("dd/MM/yyyy")
+                        </span>
+                    }
                 </div>
-                <div class="job-meta-item">
-                    <i class="bi bi-calendar-event-fill"></i> 
-                    <span>Đăng lúc: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+
+                <div class="alert alert-warning border-0 px-3 py-2 d-inline-block mb-4 fw-bold" 
+                     style="border-radius: 10px; font-size: 1.05rem; color: #d97706; background-color: #fef3c7; max-width: fit-content;">
+                    <i class="bi bi-cash-stack me-1"></i> Ngân sách: @Model.Budget.ToString("N0") VNĐ
                 </div>
-                @if (Model.Deadline.HasValue)
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Mô tả công việc</h5>
+                    <div class="job-desc-content">
+                        @Html.Raw(Model.Description)
+                    </div>
+                </div>
+
+                <!-- Skills -->
+                @if (Model.Skills != null && Model.Skills.Any())
                 {
-                    <div class="job-meta-item">
-                        <i class="bi bi-hourglass-split"></i> 
-                        <span>Hạn chót: @Model.Deadline.Value.ToString("dd/MM/yyyy")</span>
+                    <div class="border-top pt-4">
+                        <h5 class="fw-bold text-dark mb-3">Yêu cầu kỹ năng</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var skill in Model.Skills)
+                            {
+                                <span class="badge bg-light text-dark border px-3 py-2" style="border-radius: 8px; font-size: 0.85rem; font-weight: 500;">@skill</span>
+                            }
+                        </div>
                     </div>
                 }
             </div>
+        </div>
 
-            <div class="job-budget-badge">
-                <i class="bi bi-cash-stack"></i> 
-                <span>Ngân sách: @Model.Budget.ToString("N0") VNĐ</span>
-            </div>
+        <!-- Right Column: Employer Profile (col-lg-4) -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 text-center" style="border-radius: 16px;">
+                <h5 class="fw-bold text-dark border-bottom pb-2 mb-4 text-start">Thông tin nhà tuyển dụng</h5>
 
-            <div>
-                <h3 class="jd-section-title">Mô tả công việc</h3>
-                <div class="job-desc-content">@Model.Description</div>
-            </div>
-
-            @if (Model.Skills != null && Model.Skills.Any())
-            {
-                <div class="job-skills-wrap">
-                    <h3 class="jd-section-title" style="border-bottom-color: #4a5568;">Yêu cầu kỹ năng</h3>
-                    <div>
-                        @foreach (var skill in Model.Skills)
+                <!-- Logo -->
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="d-flex align-items-center justify-content-center bg-light border" 
+                         style="width: 80px; height: 80px; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        @if (!string.IsNullOrEmpty(Model.EmployerLogo))
                         {
-                            <span class="job-skill-chip">@skill</span>
+                            <img src="@Model.EmployerLogo" alt="Logo" style="max-width: 100%; max-height: 100%; object-fit: cover;" 
+                                 onerror="this.style.display='none'; document.getElementById('logo-fallback-icon').classList.remove('d-none');" />
+                            <i id="logo-fallback-icon" class="bi bi-building-fill text-muted d-none" style="font-size: 2rem;"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-building-fill text-muted" style="font-size: 2rem;"></i>
                         }
                     </div>
                 </div>
-            }
-        </div>
 
-        <!-- Right Column: Employer Profile (40%) -->
-        <div class="jd-card emp-profile-card">
-            <h3 class="jd-section-title">Thông tin nhà tuyển dụng</h3>
-
-            <div class="emp-logo-wrap">
-                @if (!string.IsNullOrEmpty(Model.EmployerLogo))
+                <h4 class="fw-bold text-dark mb-1" style="font-size: 1.2rem;">@Model.EmployerName</h4>
+                @if (!string.IsNullOrEmpty(Model.EmployerCompanyName))
                 {
-                    <img src="@Model.EmployerLogo" alt="Logo" class="emp-logo-img" />
+                    <div class="text-primary fw-semibold small mb-3">@Model.EmployerCompanyName</div>
                 }
                 else
                 {
-                    <i class="bi bi-building-fill emp-logo-fallback"></i>
+                    <div class="text-muted small mb-3" style="font-style: italic;">Cá nhân</div>
                 }
-            </div>
 
-            <h2 class="emp-name">@Model.EmployerName</h2>
-            @if (!string.IsNullOrEmpty(Model.EmployerCompanyName))
-            {
-                <div class="emp-company">@Model.EmployerCompanyName</div>
-            }
-            else
-            {
-                <div class="emp-company" style="color:#718096; font-style:italic;">Cá nhân</div>
-            }
-
-            @if (!string.IsNullOrEmpty(Model.EmployerDescription))
-            {
-                <p class="emp-description">@Model.EmployerDescription</p>
-            }
-            else
-            {
-                <p class="emp-description" style="color:#a0aec0; font-style:italic;">Chưa có phần giới thiệu chi tiết.</p>
-            }
-
-            <div class="emp-contact-list">
-                @if (!string.IsNullOrEmpty(Model.EmployerEmail))
+                @if (!string.IsNullOrEmpty(Model.EmployerDescription))
                 {
-                    <div class="emp-contact-item">
-                        <i class="bi bi-envelope-fill"></i>
-                        <div>
-                            <div class="emp-contact-label">Email</div>
-                            <div>@Model.EmployerEmail</div>
-                        </div>
+                    <p class="text-muted small px-1 mb-4" style="text-align: justify; line-height: 1.5;">@Model.EmployerDescription</p>
+                }
+                else
+                {
+                    <p class="text-muted small mb-4" style="font-style: italic;">Chưa có phần giới thiệu chi tiết.</p>
+                }
+
+                <!-- Contact Details -->
+                @if (!string.IsNullOrEmpty(Model.EmployerEmail) || !string.IsNullOrEmpty(Model.EmployerPhone) || !string.IsNullOrEmpty(Model.EmployerAddress))
+                {
+                    <div class="bg-light border text-start p-3 mb-4" style="border-radius: 12px; font-size: 0.85rem;">
+                        @if (!string.IsNullOrEmpty(Model.EmployerEmail))
+                        {
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <i class="bi bi-envelope-fill text-primary mt-1"></i>
+                                <div>
+                                    <div class="fw-bold text-dark">Email</div>
+                                    <div class="text-secondary" style="word-break: break-all;">@Model.EmployerEmail</div>
+                                </div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.EmployerPhone))
+                        {
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <i class="bi bi-telephone-fill text-primary mt-1"></i>
+                                <div>
+                                    <div class="fw-bold text-dark">Điện thoại</div>
+                                    <div class="text-secondary">@Model.EmployerPhone</div>
+                                </div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.EmployerAddress))
+                        {
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-geo-alt-fill text-primary mt-1"></i>
+                                <div>
+                                    <div class="fw-bold text-dark">Địa chỉ</div>
+                                    <div class="text-secondary">@Model.EmployerAddress</div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 }
-                @if (!string.IsNullOrEmpty(Model.EmployerPhone))
-                {
-                    <div class="emp-contact-item">
-                        <i class="bi bi-telephone-fill"></i>
-                        <div>
-                            <div class="emp-contact-label">Điện thoại</div>
-                            <div>@Model.EmployerPhone</div>
-                        </div>
-                    </div>
-                }
-                @if (!string.IsNullOrEmpty(Model.EmployerAddress))
-                {
-                    <div class="emp-contact-item">
-                        <i class="bi bi-geo-alt-fill"></i>
-                        <div>
-                            <div class="emp-contact-label">Địa chỉ</div>
-                            <div>@Model.EmployerAddress</div>
-                        </div>
-                    </div>
-                }
+
+                <!-- Apply Button Action -->
+                <div class="mt-2">
+                    @if (!CurrentUser.IsAuthenticated)
+                    {
+                        <a href="/auth/login?returnUrl=@Context.Request.Path" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius: 10px;">
+                            <i class="bi bi-send-fill me-1"></i> Ứng tuyển ngay
+                        </a>
+                    }
+                    else if (CurrentUser.Role == "FREELANCER")
+                    {
+                        <a href="/freelancer/jobs/@Model.Id" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius: 10px;">
+                            <i class="bi bi-send-fill me-1"></i> Ứng tuyển ngay
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary w-100 py-2 fw-bold" disabled style="border-radius: 10px;" title="Chỉ Freelancer mới có thể ứng tuyển">
+                            <i class="bi bi-send-fill me-1"></i> Ứng tuyển
+                        </button>
+                    }
+                </div>
             </div>
         </div>
-
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .job-desc-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #2d3748;
+        }
+
+        .job-desc-content p {
+            margin-bottom: 0.8rem;
+        }
+
+        .job-attachments {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px !important;
+        }
+
+        .job-attachments h6 {
+            color: #0f172a !important;
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 10px !important;
+        }
+
+        .job-attachments img {
+            max-height: 130px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .job-attachments img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+}

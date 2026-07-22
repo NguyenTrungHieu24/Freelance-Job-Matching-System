@@ -41,12 +41,13 @@ namespace BusinessObjects.DTOs
         [Range(0.01, double.MaxValue, ErrorMessage = "Budget must be greater than 0")]
         public decimal Budget { get; set; }
 
-        [Required(ErrorMessage = "CategoryId is required")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
+        public string? NewCategoryName { get; set; }
 
         public DateTime? Deadline { get; set; }
 
         public List<int> Skills { get; set; } = new();
+        public List<string> NewSkills { get; set; } = new();
     }
 
     public class UpdateJobDto
@@ -61,12 +62,13 @@ namespace BusinessObjects.DTOs
         [Range(0.01, double.MaxValue, ErrorMessage = "Budget must be greater than 0")]
         public decimal Budget { get; set; }
 
-        [Required(ErrorMessage = "CategoryId is required")]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
+        public string? NewCategoryName { get; set; }
 
         public DateTime? Deadline { get; set; }
 
         public List<int> Skills { get; set; } = new();
+        public List<string> NewSkills { get; set; } = new();
     }
 
     public class FilterJobDto
